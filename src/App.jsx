@@ -1,7 +1,6 @@
 import React, { useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
-  CalendarCheck,
   CheckCircle2,
   Droplets,
   Fuel,
@@ -90,7 +89,6 @@ const services = [
   },
   {
     name: "車検予約",
-    icon: CalendarCheck,
     visual: "staffBooking",
     hint: "点検の日を決める",
     color: "from-blue-600 to-indigo-600"
@@ -145,7 +143,7 @@ const upgrades = [
     cost: 600,
     effect: "獲得ポイントが増える",
     key: "staff",
-    icon: "🧰"
+    visual: "staff"
   }
 ];
 
@@ -298,8 +296,9 @@ function App() {
 
 function TitleScreen({ onStart }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-gradient-to-b from-sky-200 via-white to-orange-100 px-4 py-8">
-      <SnowBackground />
+    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-4 py-8">
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-200 via-white to-orange-100" />
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-orange-100" />
       <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8 text-center">
         <div className="w-full rounded-[2rem] border-4 border-white bg-white/75 p-5 shadow-2xl backdrop-blur sm:p-8">
           <div className="mx-auto mb-5 flex h-28 w-full max-w-2xl items-end justify-center rounded-3xl bg-sky-100 p-3 shadow-inner sm:h-40">
@@ -311,15 +310,21 @@ function TitleScreen({ onStart }) {
                 className="h-full w-full object-cover object-left-bottom"
                 draggable="false"
               />
+              <div className="absolute bottom-0 left-0 h-14 w-16 bg-gradient-to-b from-sky-100 from-45% to-[#b7d99a] to-45%" />
             </div>
           </div>
           <p className="mb-2 text-sm font-bold tracking-[.18em] text-orange-500 sm:text-base">
             HOKKAIDO SERVICE STATION GAME
           </p>
-          <h1 className="text-4xl font-black leading-tight text-blue-700 sm:text-6xl">
-            道エネ
-            <span className="block text-orange-500">スタンドマスター</span>
-          </h1>
+          <div className="flex items-center justify-center gap-3 sm:gap-5">
+            <div className="flex h-20 w-16 shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-28 sm:w-20">
+              <StaffImage className="h-24 w-20 sm:h-32 sm:w-24" />
+            </div>
+            <h1 className="text-left text-4xl font-black leading-tight text-blue-700 sm:text-6xl">
+              道エネ
+              <span className="block text-orange-500">スタンドマスター</span>
+            </h1>
+          </div>
           <p className="mx-auto mt-5 max-w-2xl text-lg font-bold text-slate-700 sm:text-2xl">
             北海道のくらしを支えるスタンドを育てよう！
           </p>
@@ -342,8 +347,6 @@ function SnowBackground() {
       <div className="absolute bottom-24 left-[-10%] h-32 w-[65%] rounded-t-[100%] bg-white/90" />
       <div className="absolute bottom-24 right-[-10%] h-40 w-[70%] rounded-t-[100%] bg-white/80" />
       <div className="absolute bottom-16 left-0 h-24 w-full bg-slate-600" />
-      <div className="absolute bottom-28 left-8 text-5xl opacity-90">🏔️</div>
-      <div className="absolute bottom-32 right-10 text-5xl opacity-90">🏔️</div>
       {[...Array(18)].map((_, index) => (
         <Snowflake
           key={index}
@@ -421,7 +424,7 @@ function StationScene({ boughtUpgrades, level, pointPop }) {
       {has("kerosene") && (
         <SceneIcon
           className="right-[8%] bottom-[23%]"
-          label={<TankerLorryImage className="h-14 w-24" />}
+          label={<TankerLorryImage className="h-16 w-28" />}
         />
       )}
       {has("ev") && (
@@ -439,8 +442,6 @@ function StationScene({ boughtUpgrades, level, pointPop }) {
 function SapporoCityBackdrop() {
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-28 h-32 sm:h-40" aria-hidden="true">
-      <div className="absolute bottom-16 left-3 text-4xl opacity-80 sm:text-5xl">🏔️</div>
-      <div className="absolute bottom-16 right-4 text-4xl opacity-80 sm:text-5xl">🏔️</div>
       <div className="absolute bottom-0 left-[3%] h-16 w-9 rounded-t-lg bg-blue-200 shadow-sm sm:h-20 sm:w-12">
         <CityWindows />
       </div>
@@ -545,14 +546,14 @@ function ServiceSelector({ onChoose }) {
             aria-label={`${name}、${hint}`}
             className={`group relative flex min-h-40 flex-col items-center justify-center gap-2 overflow-hidden rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97]`}
           >
-            <span className={`flex items-center justify-center rounded-3xl bg-white text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-110 ${visual === "tankerTruck" ? "h-28 w-32" : "h-24 w-24"}`}>
+            <span className={`flex items-center justify-center rounded-3xl bg-white p-1 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${visual === "tankerTruck" ? "h-32 w-40" : visual === "winterTire" ? "h-28 w-28" : visual === "fuelPump" || visual === "insurance" ? "h-28 w-28" : "h-24 w-24"}`}>
               {visual === "fuelPump" && <FuelPumpIcon />}
               {visual === "carWash" && <CarWashImage className="h-[5.5rem] w-[5.5rem]" />}
               {visual === "winterTire" && <WinterTireIcon />}
-              {visual === "tankerTruck" && <TankerLorryImage className="h-24 w-36" />}
+              {visual === "tankerTruck" && <TankerLorryImage className="h-28 w-44" />}
               {visual === "evCharger" && <EvChargeIcon className="h-[5.5rem] w-[5.5rem]" />}
-              {visual === "staffBooking" && <StaffBookingIcon />}
-              {visual === "insurance" && <InsuranceImage className="h-[5.5rem] w-[5.5rem]" />}
+              {visual === "staffBooking" && <InspectionImage className="h-[5.5rem] w-[5.5rem]" />}
+              {visual === "insurance" && <InsuranceImage className="h-28 w-28" />}
               {!visual && emoji}
             </span>
             <span className="text-2xl font-black leading-tight">{name}</span>
@@ -604,15 +605,15 @@ function TankerLorryImage({ className = "h-16 w-16" }) {
 
 function FuelPumpIcon() {
   return (
-    <span className="relative block h-14 w-12" aria-hidden="true">
-      <span className="absolute bottom-0 left-1 h-12 w-8 rounded-t-lg rounded-b-sm border-4 border-orange-600 bg-orange-400 shadow-sm">
-        <span className="absolute left-1 top-2 h-4 w-4 rounded-sm border-2 border-blue-600 bg-sky-100" />
-        <span className="absolute bottom-2 left-1 right-1 h-2 rounded-full bg-white/70" />
+    <span className="relative block h-20 w-16" aria-hidden="true">
+      <span className="absolute bottom-0 left-2 h-[4.25rem] w-11 rounded-t-xl rounded-b-sm border-4 border-orange-600 bg-orange-400 shadow-sm">
+        <span className="absolute left-1.5 top-3 h-6 w-6 rounded-sm border-2 border-blue-600 bg-sky-100" />
+        <span className="absolute bottom-3 left-1.5 right-1.5 h-3 rounded-full bg-white/70" />
       </span>
-      <span className="absolute bottom-0 left-0 h-2 w-10 rounded bg-slate-700" />
-      <span className="absolute right-1 top-4 h-8 w-5 rounded-r-full border-r-4 border-t-4 border-slate-700" />
-      <span className="absolute right-0 top-6 h-5 w-2 rounded bg-slate-700" />
-      <span className="absolute right-[-3px] top-9 h-3 w-1 rounded bg-orange-600" />
+      <span className="absolute bottom-0 left-0 h-3 w-14 rounded bg-slate-700" />
+      <span className="absolute right-1 top-5 h-11 w-6 rounded-r-full border-r-4 border-t-4 border-slate-700" />
+      <span className="absolute right-0 top-8 h-6 w-3 rounded bg-slate-700" />
+      <span className="absolute right-[-4px] top-12 h-4 w-1.5 rounded bg-orange-600" />
     </span>
   );
 }
@@ -653,7 +654,7 @@ function CarWashIcon() {
 
 function WinterTireIcon() {
   return (
-    <TireImage className="h-[5.5rem] w-[5.5rem]" />
+    <TireImage className="h-28 w-28" />
   );
 }
 
@@ -688,19 +689,15 @@ function TankerTruckIcon() {
   );
 }
 
-function StaffBookingIcon() {
+function InspectionImage({ className = "h-16 w-16" }) {
   return (
-    <span className="relative block h-14 w-14" aria-hidden="true">
-      <span className="absolute inset-x-2 top-1 h-12 rounded-lg border-4 border-blue-700 bg-white shadow-sm">
-        <span className="absolute left-2 top-2 h-2 w-6 rounded bg-sky-200" />
-        <span className="absolute left-2 top-5 h-1.5 w-8 rounded bg-sky-200" />
-        <span className="absolute left-2 top-8 h-1.5 w-5 rounded bg-sky-200" />
-      </span>
-      <span className="absolute left-4 top-0 h-3 w-6 rounded-t bg-orange-500" />
-      <span className="absolute bottom-0 right-0 flex h-7 w-7 items-center justify-center rounded-full border-2 border-white bg-emerald-500 text-lg font-black leading-none text-white shadow">
-        ✓
-      </span>
-    </span>
+    <img
+      src="/inspection.png"
+      alt=""
+      aria-hidden="true"
+      className={`${className} object-contain`}
+      draggable="false"
+    />
   );
 }
 
@@ -708,6 +705,18 @@ function InsuranceImage({ className = "h-16 w-16" }) {
   return (
     <img
       src="/insurance.png"
+      alt=""
+      aria-hidden="true"
+      className={`${className} object-contain`}
+      draggable="false"
+    />
+  );
+}
+
+function StaffImage({ className = "h-16 w-16" }) {
+  return (
+    <img
+      src="/staff.png"
       alt=""
       aria-hidden="true"
       className={`${className} object-contain`}
@@ -815,7 +824,9 @@ function TireGame({ onComplete }) {
                 : "border-slate-200 bg-slate-100"
           }`}
         >
-          <TireImage className="mx-auto h-16 w-20" />
+          <span className="mx-auto flex h-20 w-24 items-center justify-center overflow-hidden rounded-2xl bg-white">
+            <TireImage className="h-24 w-28" />
+          </span>
           <span className="mt-2 block text-sm text-slate-700">{index + 1}番</span>
         </button>
       ))}
@@ -885,7 +896,7 @@ function KeroseneGame({ onComplete }) {
             className="absolute bottom-8 flex h-24 w-44 items-center justify-center rounded-2xl bg-white/80 transition-all duration-500"
             style={{ left: `${4 + Math.min(steps * 17, 82)}%` }}
           >
-            <TankerLorryImage className="h-24 w-48" />
+            <TankerLorryImage className="h-28 w-56" />
           </div>
           <div className="absolute bottom-9 right-4 text-5xl">🏠</div>
           <div className="absolute right-14 top-4 text-2xl">♨️</div>
@@ -998,7 +1009,7 @@ function InspectionGame({ onComplete }) {
             onClick={() => chooseDate(date)}
             className="min-h-28 rounded-2xl border-4 border-blue-200 bg-white p-3 text-xl font-black text-blue-700 shadow"
           >
-            <CalendarCheck className="mx-auto mb-2" />
+            <InspectionImage className="mx-auto mb-2 h-12 w-14" />
             {date.label}
           </button>
         ))}
@@ -1096,13 +1107,15 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
                     : "border-slate-200 bg-slate-50"
               }`}
             >
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center text-3xl">
+              <span className={`flex shrink-0 items-center justify-center text-3xl ${upgrade.visual === "staff" ? "h-14 w-14 rounded-2xl bg-white" : "h-10 w-10"}`}>
                 {upgrade.visual === "carWash" ? (
                   <CarWashImage className="h-10 w-10" />
                 ) : upgrade.visual === "tankerTruck" ? (
-                  <TankerLorryImage className="h-12 w-20" />
+                  <TankerLorryImage className="h-14 w-24" />
                 ) : upgrade.visual === "evCharger" ? (
                   <EvChargeIcon className="h-10 w-10" />
+                ) : upgrade.visual === "staff" ? (
+                  <StaffImage className="h-14 w-12" />
                 ) : (
                   upgrade.icon
                 )}
