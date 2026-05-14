@@ -181,6 +181,7 @@ function App() {
   const [boughtUpgrades, setBoughtUpgrades] = useState([]);
   const [levelMessage, setLevelMessage] = useState("");
   const [pointPop, setPointPop] = useState("");
+  const [upgradePop, setUpgradePop] = useState(null);
 
   const level = getLevel(totalPoints);
 
@@ -250,7 +251,9 @@ function App() {
     }
     setPoints((value) => value - upgrade.cost);
     setBoughtUpgrades((value) => [...value, upgrade.key]);
+    setUpgradePop(upgrade);
     setMessage(`${upgrade.name}を購入！スタンドがもっと便利になりました。`);
+    window.setTimeout(() => setUpgradePop(null), 2600);
   };
 
   if (screen === "title") {
@@ -289,6 +292,7 @@ function App() {
           </aside>
         </main>
         {levelMessage && <LevelUpToast message={levelMessage} />}
+        {upgradePop && <UpgradePurchaseToast upgrade={upgradePop} />}
       </div>
     </div>
   );
@@ -417,29 +421,35 @@ function StationScene({ boughtUpgrades, level, pointPop }) {
       <div className="absolute bottom-3 left-0 right-0 h-14 bg-gradient-to-t from-black/10 to-transparent" />
       {has("wash") && (
         <SceneIcon
-          className="left-[4%] bottom-[22%]"
-          label={<CarWashImage className="h-12 w-12" />}
+          className="left-[4%] bottom-[20%]"
+          label={<UpgradeVisual upgrade={{ visual: "carWash", icon: "洗" }} size="scene" />}
         />
       )}
       {has("kerosene") && (
         <SceneIcon
-          className="right-[8%] bottom-[23%]"
-          label={<TankerLorryImage className="h-16 w-28" />}
+          className="right-[4%] bottom-[21%] w-32"
+          label={<UpgradeVisual upgrade={{ visual: "tankerTruck" }} size="sceneWide" />}
         />
       )}
       {has("ev") && (
         <SceneIcon
           className="right-[24%] bottom-[22%]"
-          label={<EvChargeIcon className="h-12 w-12" />}
+          label={<UpgradeVisual upgrade={{ visual: "evCharger" }} size="scene" />}
         />
       )}
       {has("insurance") && (
         <SceneIcon
           className="left-[34%] bottom-[22%]"
-          label={<InsuranceImage className="h-12 w-12" />}
+          label={<UpgradeVisual upgrade={{ visual: "insurance" }} size="scene" />}
         />
       )}
-      {has("family") && <SceneIcon className="right-[38%] bottom-[33%]" label="🧸" />}
+      {has("family") && <SceneIcon className="right-[38%] bottom-[33%]" label={<UpgradeVisual upgrade={{ icon: "🧸" }} size="scene" />} />}
+      {has("staff") && (
+        <SceneIcon
+          className="left-[52%] bottom-[18%]"
+          label={<UpgradeVisual upgrade={{ visual: "staff" }} size="scene" />}
+        />
+      )}
     </div>
   );
 }
@@ -489,8 +499,11 @@ function CityWindows() {
 function SceneIcon({ className, label }) {
   return (
     <div
-      className={`absolute flex h-14 w-14 animate-pop items-center justify-center rounded-2xl border-4 border-white bg-white/90 text-3xl shadow-lg ${className}`}
+      className={`absolute flex h-20 w-20 animate-pop items-center justify-center rounded-3xl border-4 border-yellow-300 bg-gradient-to-br from-white via-yellow-50 to-orange-100 text-4xl shadow-2xl ring-4 ring-white/60 ${className}`}
     >
+      <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-2 py-1 text-xs font-black text-white shadow">
+        UP
+      </span>
       {label}
     </div>
   );
@@ -785,6 +798,57 @@ function InsuranceImage({ className = "h-16 w-16" }) {
   );
 }
 
+function UpgradeVisual({ upgrade, size = "panel" }) {
+  const classes = {
+    panel: {
+      wrap: "h-16 w-16 rounded-2xl",
+      image: "h-12 w-12",
+      wide: "h-14 w-20",
+      staff: "h-16 w-14"
+    },
+    scene: {
+      wrap: "h-16 w-16 rounded-2xl",
+      image: "h-14 w-14",
+      wide: "h-16 w-24",
+      staff: "h-20 w-14"
+    },
+    sceneWide: {
+      wrap: "h-16 w-28 rounded-2xl",
+      image: "h-14 w-14",
+      wide: "h-16 w-28",
+      staff: "h-20 w-14"
+    },
+    pop: {
+      wrap: "h-28 w-28 rounded-[2rem]",
+      image: "h-24 w-24",
+      wide: "h-24 w-36",
+      staff: "h-28 w-24"
+    }
+  }[size];
+
+  return (
+    <span className={`relative flex shrink-0 items-center justify-center overflow-hidden bg-white shadow-inner ${classes.wrap}`}>
+      <span className="absolute inset-0 bg-gradient-to-br from-yellow-100 via-white to-sky-100" />
+      <span className="absolute -left-6 top-2 h-6 w-24 rotate-[-25deg] bg-white/70" />
+      <span className="relative z-10 flex items-center justify-center text-5xl">
+        {upgrade.visual === "carWash" ? (
+          <CarWashImage className={classes.image} />
+        ) : upgrade.visual === "tankerTruck" ? (
+          <TankerLorryImage className={classes.wide} />
+        ) : upgrade.visual === "evCharger" ? (
+          <EvChargeIcon className={classes.image} />
+        ) : upgrade.visual === "insurance" ? (
+          <InsuranceImage className={classes.image} />
+        ) : upgrade.visual === "staff" ? (
+          <StaffImage className={classes.staff} />
+        ) : (
+          upgrade.icon
+        )}
+      </span>
+    </span>
+  );
+}
+
 function StaffImage({ className = "h-16 w-16" }) {
   return (
     <img
@@ -911,10 +975,18 @@ function WashGame({ onComplete }) {
     { left: "24%", top: "54%" }
   ];
   const [washed, setWashed] = useState(0);
+  const [bursts, setBursts] = useState([]);
   const currentSpot = foamSpots[washed];
   const dirtLeft = Math.max(0, foamSpots.length - washed);
 
   const washSpot = () => {
+    if (!currentSpot) return;
+    const burstId = `${washed}-${Date.now()}`;
+    setBursts((value) => [...value.slice(-2), { id: burstId, ...currentSpot }]);
+    window.setTimeout(() => {
+      setBursts((value) => value.filter((burst) => burst.id !== burstId));
+    }, 900);
+
     const next = washed + 1;
     setWashed(next);
     if (next === foamSpots.length) onComplete("ピカピカになりました！");
@@ -956,6 +1028,24 @@ function WashGame({ onComplete }) {
           </button>
         )}
 
+        {bursts.map((burst) => (
+          <div
+            key={burst.id}
+            className="pointer-events-none absolute z-20 h-24 w-24 -translate-x-2 -translate-y-2 animate-pop"
+            style={{ left: burst.left, top: burst.top }}
+            aria-hidden="true"
+          >
+            <div className="absolute inset-0 rounded-full bg-yellow-200/80 blur-sm" />
+            <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-yellow-300 bg-white/80 shadow-xl" />
+            <span className="absolute -left-4 top-5 text-3xl animate-bounce">✨</span>
+            <span className="absolute right-0 top-0 text-4xl animate-pulse">💦</span>
+            <span className="absolute bottom-0 right-2 text-3xl animate-bounce">⭐</span>
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-orange-500 px-3 py-1 text-sm font-black text-white shadow-lg">
+              ピカッ!
+            </span>
+          </div>
+        ))}
+
         <div className="absolute left-4 top-4 rounded-full bg-orange-400 px-3 py-1 text-sm font-black text-white shadow">
           あと {dirtLeft} こ
         </div>
@@ -963,7 +1053,8 @@ function WashGame({ onComplete }) {
 
       <button
         onClick={washSpot}
-        className="w-full rounded-2xl bg-sky-500 py-4 text-xl font-black text-white shadow-lg active:scale-95"
+        disabled={!currentSpot}
+        className="w-full rounded-2xl bg-sky-500 py-4 text-xl font-black text-white shadow-lg active:scale-95 disabled:bg-slate-300"
       >
         あわをタッチ！
       </button>
@@ -1457,20 +1548,11 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
                     : "border-slate-200 bg-slate-50"
               }`}
             >
-              <span className={`flex shrink-0 items-center justify-center text-3xl ${upgrade.visual === "staff" ? "h-14 w-14 rounded-2xl bg-white" : "h-10 w-10"}`}>
-                {upgrade.visual === "carWash" ? (
-                  <CarWashImage className="h-10 w-10" />
-                ) : upgrade.visual === "tankerTruck" ? (
-                  <TankerLorryImage className="h-14 w-24" />
-                ) : upgrade.visual === "evCharger" ? (
-                  <EvChargeIcon className="h-10 w-10" />
-                ) : upgrade.visual === "insurance" ? (
-                  <InsuranceImage className="h-10 w-10" />
-                ) : upgrade.visual === "staff" ? (
-                  <StaffImage className="h-14 w-12" />
-                ) : (
-                  upgrade.icon
-                )}
+              <span className="relative shrink-0">
+                <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow">
+                  {bought ? "UP" : "GET"}
+                </span>
+                <UpgradeVisual upgrade={upgrade} size="panel" />
               </span>
               <span className="min-w-0 flex-1">
                 <span className="block font-black text-slate-800">{upgrade.name}</span>
@@ -1516,6 +1598,29 @@ function LevelUpToast({ message }) {
         <Sparkles className="animate-sparkle [animation-delay:.4s]" />
       </div>
       <p className="text-xl font-black text-blue-700">{message}</p>
+    </div>
+  );
+}
+
+function UpgradePurchaseToast({ upgrade }) {
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-950/45 p-5">
+      <div className="relative w-full max-w-md animate-pop overflow-hidden rounded-[2rem] border-4 border-yellow-300 bg-white p-6 text-center shadow-2xl">
+        <div className="absolute left-5 top-5 text-4xl animate-bounce">✨</div>
+        <div className="absolute right-6 top-7 text-4xl animate-pulse">⭐</div>
+        <div className="absolute bottom-7 left-7 text-4xl animate-bounce">🎉</div>
+        <div className="absolute bottom-8 right-8 text-4xl animate-pulse">✨</div>
+        <div className="mx-auto mb-4 flex justify-center">
+          <div className="rounded-[2rem] bg-gradient-to-br from-yellow-300 via-orange-300 to-sky-300 p-2 shadow-xl">
+            <UpgradeVisual upgrade={upgrade} size="pop" />
+          </div>
+        </div>
+        <p className="text-sm font-black tracking-[.18em] text-orange-500">STAND UPGRADE</p>
+        <p className="mt-1 text-3xl font-black text-blue-700">設備パワーアップ！</p>
+        <p className="mt-3 rounded-2xl bg-yellow-100 px-4 py-3 text-lg font-black text-orange-700">
+          {upgrade.name}
+        </p>
+      </div>
     </div>
   );
 }
