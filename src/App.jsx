@@ -48,7 +48,7 @@ const customers = [
   {
     speech: "もしもの事故や雪道のトラブルに備えて、保険を見直したいな",
     correctService: "自動車保険",
-    icon: "🛡️"
+    visual: "insurance"
   }
 ];
 
@@ -125,16 +125,16 @@ const upgrades = [
     visual: "evCharger"
   },
   {
-    name: "休憩スペースを作る",
+    name: "自動車保険相談を強化する",
     cost: 300,
-    effect: "お客さんの満足度が上がる",
-    key: "rest",
-    icon: "☕"
+    effect: "自動車保険の提案力が上がる",
+    key: "insurance",
+    visual: "insurance"
   },
   {
     name: "子育て応援スペースを作る",
     cost: 500,
-    effect: "ファミリーのお客さんが増える",
+    effect: "ファミリーのお客さまが増える",
     key: "family",
     icon: "🧸"
   },
@@ -176,7 +176,7 @@ function App() {
   const [streak, setStreak] = useState(0);
   const [customer, setCustomer] = useState(() => randomCustomer());
   const [phase, setPhase] = useState("select");
-  const [message, setMessage] = useState("いらっしゃいませ！お客さんの話を聞いてサービスを選ぼう。");
+  const [message, setMessage] = useState("いらっしゃいませ！お客さまの話を聞いてサービスを選ぼう。");
   const [activeService, setActiveService] = useState(null);
   const [boughtUpgrades, setBoughtUpgrades] = useState([]);
   const [levelMessage, setLevelMessage] = useState("");
@@ -188,7 +188,7 @@ function App() {
     setScreen("game");
     setCustomer(randomCustomer());
     setPhase("select");
-    setMessage("お客さんの困りごとに合うサービスを選ぼう。");
+    setMessage("お客さまの困りごとに合うサービスを選ぼう。");
   };
 
   const chooseService = (service) => {
@@ -239,7 +239,7 @@ function App() {
     setCustomer(randomCustomer());
     setPhase("select");
     setActiveService(null);
-    setMessage("次のお客さんです。セリフをよく読んでね。");
+    setMessage("次のお客さまです。セリフをよく読んでね。");
   };
 
   const buyUpgrade = (upgrade) => {
@@ -275,7 +275,7 @@ function App() {
                 onClick={nextCustomer}
                 className="w-full rounded-2xl bg-orange-500 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-orange-200 transition hover:bg-orange-600 active:scale-[.98]"
               >
-                次のお客さんへ
+                次のお客さまへ
               </button>
             )}
           </section>
@@ -397,7 +397,7 @@ function StationScene({ boughtUpgrades, level, pointPop }) {
   const has = (key) => boughtUpgrades.includes(key);
 
   return (
-    <div className="relative min-h-[230px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[300px]">
+    <div className="relative min-h-[180px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[220px]">
       <img
         src="/station-background.png"
         alt=""
@@ -433,7 +433,12 @@ function StationScene({ boughtUpgrades, level, pointPop }) {
           label={<EvChargeIcon className="h-12 w-12" />}
         />
       )}
-      {has("rest") && <SceneIcon className="left-[34%] bottom-[22%]" label="☕" />}
+      {has("insurance") && (
+        <SceneIcon
+          className="left-[34%] bottom-[22%]"
+          label={<InsuranceImage className="h-12 w-12" />}
+        />
+      )}
       {has("family") && <SceneIcon className="right-[38%] bottom-[33%]" label="🧸" />}
     </div>
   );
@@ -495,18 +500,22 @@ function CustomerPanel({ customer, message, phase }) {
   return (
     <div className="rounded-3xl border-4 border-white bg-white/90 p-4 shadow-xl">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="mx-auto flex h-24 w-24 shrink-0 animate-floaty items-center justify-center rounded-full bg-orange-100 text-5xl shadow-inner sm:mx-0">
-          {customer.icon}
+        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-orange-100 text-4xl shadow-inner sm:mx-0">
+          {customer.visual === "insurance" ? (
+            <InsuranceImage className="h-16 w-16" />
+          ) : (
+            customer.icon
+          )}
         </div>
         <div className="min-w-0 flex-1">
           <div className="mb-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
-            来店中のお客さん
+            お客さま
           </div>
-          <p className="text-xl font-black leading-relaxed text-slate-800 sm:text-2xl">
+          <p className="text-lg font-black leading-relaxed text-slate-800 sm:text-xl">
             「{customer.speech}」
           </p>
           <p
-            className={`mt-3 rounded-2xl px-4 py-3 text-base font-bold ${
+            className={`mt-2 rounded-2xl px-4 py-2 text-base font-bold ${
               phase === "mini"
                 ? "bg-emerald-100 text-emerald-700"
                 : phase === "done"
@@ -534,7 +543,7 @@ function ServiceSelector({ onChoose }) {
             サービスを選んでね
           </h2>
           <p className="text-sm font-bold text-slate-600 sm:text-base">
-            お客さんのセリフに合うボタンを押そう
+            お客さまのセリフに合うボタンを押そう
           </p>
         </div>
       </div>
@@ -544,16 +553,16 @@ function ServiceSelector({ onChoose }) {
             key={name}
             onClick={() => onChoose(name)}
             aria-label={`${name}、${hint}`}
-            className={`group relative flex min-h-40 flex-col items-center justify-center gap-2 overflow-hidden rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97]`}
+            className={`group relative flex min-h-40 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97]`}
           >
-            <span className={`flex items-center justify-center rounded-3xl bg-white p-1 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${visual === "tankerTruck" ? "h-32 w-40" : visual === "winterTire" ? "h-28 w-28" : visual === "fuelPump" || visual === "insurance" ? "h-28 w-28" : "h-24 w-24"}`}>
+            <span className={`flex items-center justify-center rounded-3xl bg-white p-2 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${visual === "tankerTruck" ? "h-28 w-36" : "h-28 w-28"}`}>
               {visual === "fuelPump" && <FuelPumpIcon />}
-              {visual === "carWash" && <CarWashImage className="h-[5.5rem] w-[5.5rem]" />}
+              {visual === "carWash" && <CarWashImage className="h-24 w-24" />}
               {visual === "winterTire" && <WinterTireIcon />}
-              {visual === "tankerTruck" && <TankerLorryImage className="h-28 w-44" />}
-              {visual === "evCharger" && <EvChargeIcon className="h-[5.5rem] w-[5.5rem]" />}
-              {visual === "staffBooking" && <InspectionImage className="h-[5.5rem] w-[5.5rem]" />}
-              {visual === "insurance" && <InsuranceImage className="h-28 w-28" />}
+              {visual === "tankerTruck" && <TankerLorryImage className="h-24 w-32" />}
+              {visual === "evCharger" && <EvChargeIcon className="h-24 w-24" />}
+              {visual === "staffBooking" && <InspectionImage className="h-24 w-24" />}
+              {visual === "insurance" && <InsuranceImage className="h-24 w-24" />}
               {!visual && emoji}
             </span>
             <span className="text-2xl font-black leading-tight">{name}</span>
@@ -654,7 +663,7 @@ function CarWashIcon() {
 
 function WinterTireIcon() {
   return (
-    <TireImage className="h-28 w-28" />
+    <TireImage className="h-20 w-20" />
   );
 }
 
@@ -1057,7 +1066,7 @@ function InsuranceGame({ onComplete }) {
         </div>
         <p className="text-lg font-black text-rose-700">自動車保険の安心カードを選ぼう</p>
         <p className="mt-2 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
-          事故、雪道、急なトラブルに備えたいお客さんです。
+          事故、雪道、急なトラブルに備えたいお客さまです。
         </p>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -1114,6 +1123,8 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
                   <TankerLorryImage className="h-14 w-24" />
                 ) : upgrade.visual === "evCharger" ? (
                   <EvChargeIcon className="h-10 w-10" />
+                ) : upgrade.visual === "insurance" ? (
+                  <InsuranceImage className="h-10 w-10" />
                 ) : upgrade.visual === "staff" ? (
                   <StaffImage className="h-14 w-12" />
                 ) : (
