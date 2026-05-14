@@ -148,7 +148,7 @@ const upgrades = [
 ];
 
 const basePoint = 100;
-const levelThresholds = [0, 500, 1000, 2000, 3500];
+const levelThresholds = [0, 200, 400, 600, 800];
 
 function randomCustomer() {
   return customers[Math.floor(Math.random() * customers.length)];
@@ -501,7 +501,7 @@ function CustomerPanel({ customer, message, phase }) {
     <div className="rounded-3xl border-4 border-white bg-white/90 p-4 shadow-xl">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-orange-100 text-4xl shadow-inner sm:mx-0">
-          {customer.visual === "insurance" && <InsuranceImage className="h-16 w-16" />}
+          {customer.visual === "insurance" && <InsuranceCustomerIcon className="h-16 w-16" />}
           {customer.visual === "staffBooking" && <InspectionImage className="h-16 w-16" />}
           {!customer.visual && customer.icon}
         </div>
@@ -730,6 +730,46 @@ function InspectionImage({ className = "h-16 w-16" }) {
       className={`${className} object-contain`}
       draggable="false"
     />
+  );
+}
+
+function InsuranceCustomerIcon({ className = "h-16 w-16" }) {
+  return (
+    <svg viewBox="0 0 80 80" className={className} aria-hidden="true">
+      <g filter="url(#insuranceCustomerShadow)">
+        <path
+          d="M15 41c2-9 7-19 13-23h25c6 4 11 14 13 23l6 4v13c0 4-3 7-7 7H15c-4 0-7-3-7-7V45l7-4Z"
+          fill="#5ab3e8"
+        />
+        <path d="M29 23h21c4 4 7 10 9 17H21c2-7 4-13 8-17Z" fill="#ffffff" opacity=".92" />
+        <path d="M12 47h12l-5 6h-7v-6Zm55 0H55l5 6h7v-6Z" fill="#ffffff" />
+        <path d="M26 56h20" stroke="#3f4650" strokeWidth="4" strokeLinecap="round" />
+        <circle cx="22" cy="65" r="6" fill="#3f4650" />
+        <circle cx="58" cy="65" r="6" fill="#3f4650" />
+      </g>
+      <g filter="url(#insuranceCustomerShadow)">
+        <path
+          d="M55 34 72 41v13c0 11-7 18-17 22-10-4-17-11-17-22V41l17-7Z"
+          fill="#5ab3e8"
+          stroke="#3f4650"
+          strokeWidth="3.5"
+          strokeLinejoin="round"
+        />
+        <path
+          d="m47 55 6 6 12-14"
+          fill="none"
+          stroke="#ffffff"
+          strokeWidth="5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </g>
+      <defs>
+        <filter id="insuranceCustomerShadow" x="-10" y="-10" width="100" height="100">
+          <feDropShadow dx="0" dy="2" stdDeviation="1.5" floodColor="#334155" floodOpacity=".18" />
+        </filter>
+      </defs>
+    </svg>
   );
 }
 
