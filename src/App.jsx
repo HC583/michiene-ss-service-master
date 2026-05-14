@@ -258,7 +258,7 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen overflow-hidden bg-sky-100 text-slate-800">
+    <div className="min-h-screen bg-sky-100 text-slate-800">
       <div className="relative min-h-screen">
         <SnowBackground />
         <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-4 sm:px-5 lg:grid lg:grid-cols-[1.2fr_.8fr] lg:gap-5">
