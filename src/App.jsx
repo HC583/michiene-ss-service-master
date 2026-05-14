@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   CheckCircle2,
@@ -182,6 +182,7 @@ function App() {
   const [levelMessage, setLevelMessage] = useState("");
   const [pointPop, setPointPop] = useState("");
   const [upgradePop, setUpgradePop] = useState(null);
+  const [gameClear, setGameClear] = useState(false);
 
   const level = getLevel(totalPoints);
 
@@ -190,6 +191,22 @@ function App() {
     setCustomer(randomCustomer());
     setPhase("select");
     setMessage("お客さまの困りごとに合うサービスを選ぼう。");
+  };
+
+  const resetGame = () => {
+    setScreen("title");
+    setPoints(0);
+    setTotalPoints(0);
+    setStreak(0);
+    setCustomer(randomCustomer());
+    setPhase("select");
+    setMessage("いらっしゃいませ！お客さまの話を聞いてサービスを選ぼう。");
+    setActiveService(null);
+    setBoughtUpgrades([]);
+    setLevelMessage("");
+    setPointPop("");
+    setUpgradePop(null);
+    setGameClear(false);
   };
 
   const chooseService = (service) => {
@@ -249,11 +266,16 @@ function App() {
       setMessage("ポイントが足りません。もう少し接客してためよう！");
       return;
     }
+    const nextBoughtUpgrades = [...boughtUpgrades, upgrade.key];
     setPoints((value) => value - upgrade.cost);
-    setBoughtUpgrades((value) => [...value, upgrade.key]);
+    setBoughtUpgrades(nextBoughtUpgrades);
     setUpgradePop(upgrade);
     setMessage(`${upgrade.name}を購入！スタンドがもっと便利になりました。`);
     window.setTimeout(() => setUpgradePop(null), 2600);
+    if (nextBoughtUpgrades.length === upgrades.length) {
+      setGameClear(true);
+      window.setTimeout(resetGame, 5000);
+    }
   };
 
   if (screen === "title") {
@@ -293,6 +315,7 @@ function App() {
         </main>
         {levelMessage && <LevelUpToast message={levelMessage} />}
         {upgradePop && <UpgradePurchaseToast upgrade={upgradePop} />}
+        {gameClear && <GoodJobClearOverlay />}
       </div>
     </div>
   );
@@ -305,24 +328,23 @@ function TitleScreen({ onStart }) {
       <div className="absolute inset-x-0 bottom-0 h-48 bg-orange-100" />
       <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8 text-center">
         <div className="w-full rounded-[2rem] border-4 border-white bg-white/75 p-5 shadow-2xl backdrop-blur sm:p-8">
-          <div className="mx-auto mb-5 flex h-28 w-full max-w-2xl items-end justify-center rounded-3xl bg-sky-100 p-3 shadow-inner sm:h-40">
-            <div className="relative h-full w-full overflow-hidden rounded-2xl bg-sky-100">
+          <div className="mx-auto mb-5 flex h-40 w-full max-w-4xl items-end justify-center rounded-3xl bg-sky-100 shadow-inner sm:h-56">
+            <div className="relative h-full w-full overflow-hidden rounded-3xl bg-sky-100">
               <img
-                src="/station-background.png"
+                src="/station-background-new.png?v=2"
                 alt=""
                 aria-hidden="true"
-                className="h-full w-full object-cover object-left-bottom"
+                className="h-full w-full object-contain object-center"
                 draggable="false"
               />
-              <div className="absolute bottom-0 left-0 h-14 w-16 bg-gradient-to-b from-sky-100 from-45% to-[#b7d99a] to-45%" />
             </div>
           </div>
           <p className="mb-2 text-sm font-bold tracking-[.18em] text-orange-500 sm:text-base">
             HOKKAIDO SERVICE STATION GAME
           </p>
           <div className="flex items-center justify-center gap-3 sm:gap-5">
-            <div className="flex h-20 w-16 shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-28 sm:w-20">
-              <StaffImage className="h-24 w-20 sm:h-32 sm:w-24" />
+            <div className="flex h-24 w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-32 sm:w-24">
+              <StaffImage className="h-[5.5rem] w-16 object-contain sm:h-28 sm:w-20" />
             </div>
             <h1 className="text-left text-4xl font-black leading-tight text-blue-700 sm:text-6xl">
               道エネ
@@ -398,15 +420,15 @@ function StatCard({ label, value, icon, tone }) {
 }
 
 function StationScene({ boughtUpgrades, level, pointPop }) {
-  const has = (key) => boughtUpgrades.includes(key);
+  const purchasedUpgrades = upgrades.filter((upgrade) => boughtUpgrades.includes(upgrade.key));
 
   return (
-    <div className="relative min-h-[180px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[220px]">
+    <div className="relative min-h-[230px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[270px]">
       <img
-        src="/station-background.png"
+        src="/station-background-new.png?v=2"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-cover object-left-bottom"
+        className="absolute inset-0 h-full w-full object-contain object-center"
         draggable="false"
       />
       <div className="absolute inset-0 bg-white/5" />
@@ -418,38 +440,21 @@ function StationScene({ boughtUpgrades, level, pointPop }) {
       <div className="absolute left-4 top-4 z-10 rounded-full bg-white/85 px-4 py-2 text-sm font-black text-blue-700 shadow">
         道エネ SS Lv.{level}
       </div>
+      <div className="absolute left-4 right-4 top-14 z-10">
+        <div className="mb-2 flex items-center gap-2">
+          <span className="rounded-full bg-blue-700/90 px-3 py-1 text-xs font-black text-white shadow">
+            購入済み設備 {purchasedUpgrades.length}/{upgrades.length}
+          </span>
+          {purchasedUpgrades.length > 0 && <span className="text-2xl animate-pulse">✨</span>}
+        </div>
+        <div className="flex min-h-20 flex-wrap items-center gap-3">
+          {purchasedUpgrades.length > 0 &&
+            purchasedUpgrades.map((upgrade) => (
+              <SceneIcon key={upgrade.key} label={<UpgradeVisual upgrade={upgrade} size="scene" />} />
+            ))}
+        </div>
+      </div>
       <div className="absolute bottom-3 left-0 right-0 h-14 bg-gradient-to-t from-black/10 to-transparent" />
-      {has("wash") && (
-        <SceneIcon
-          className="left-[4%] bottom-[20%]"
-          label={<UpgradeVisual upgrade={{ visual: "carWash", icon: "洗" }} size="scene" />}
-        />
-      )}
-      {has("kerosene") && (
-        <SceneIcon
-          className="right-[4%] bottom-[21%] w-32"
-          label={<UpgradeVisual upgrade={{ visual: "tankerTruck" }} size="sceneWide" />}
-        />
-      )}
-      {has("ev") && (
-        <SceneIcon
-          className="right-[24%] bottom-[22%]"
-          label={<UpgradeVisual upgrade={{ visual: "evCharger" }} size="scene" />}
-        />
-      )}
-      {has("insurance") && (
-        <SceneIcon
-          className="left-[34%] bottom-[22%]"
-          label={<UpgradeVisual upgrade={{ visual: "insurance" }} size="scene" />}
-        />
-      )}
-      {has("family") && <SceneIcon className="right-[38%] bottom-[33%]" label={<UpgradeVisual upgrade={{ icon: "🧸" }} size="scene" />} />}
-      {has("staff") && (
-        <SceneIcon
-          className="left-[52%] bottom-[18%]"
-          label={<UpgradeVisual upgrade={{ visual: "staff" }} size="scene" />}
-        />
-      )}
     </div>
   );
 }
@@ -496,15 +501,13 @@ function CityWindows() {
   );
 }
 
-function SceneIcon({ className, label }) {
+function SceneIcon({ label }) {
   return (
-    <div
-      className={`absolute flex h-20 w-20 animate-pop items-center justify-center rounded-3xl border-4 border-yellow-300 bg-gradient-to-br from-white via-yellow-50 to-orange-100 text-4xl shadow-2xl ring-4 ring-white/60 ${className}`}
-    >
-      <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-2 py-1 text-xs font-black text-white shadow">
-        UP
+    <div className="relative flex h-20 w-20 animate-pop items-center justify-center rounded-3xl border-4 border-yellow-300 bg-gradient-to-br from-white via-yellow-50 to-orange-100 text-4xl shadow-2xl ring-4 ring-white/60">
+      <span className="absolute -right-1 -top-1 text-2xl animate-pulse">✨</span>
+      <span className="relative z-10 flex h-full w-full items-center justify-center">
+        {label}
       </span>
-      {label}
     </div>
   );
 }
@@ -515,7 +518,7 @@ function CustomerPanel({ customer, message, phase }) {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
         <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-orange-100 text-4xl shadow-inner sm:mx-0">
           {customer.visual === "insurance" && <InsuranceCustomerIcon className="h-16 w-16" />}
-          {customer.visual === "staffBooking" && <InspectionImage className="h-16 w-16" />}
+          {customer.visual === "staffBooking" && <InspectionCustomerIcon />}
           {!customer.visual && customer.icon}
         </div>
         <div className="min-w-0 flex-1">
@@ -559,7 +562,7 @@ function ServiceSelector({ onChoose }) {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-        {services.map(({ name, emoji, visual, hint, color }) => (
+        {services.map(({ name, visual, hint, color }) => (
           <button
             key={name}
             onClick={() => onChoose(name)}
@@ -567,14 +570,7 @@ function ServiceSelector({ onChoose }) {
             className={`group relative flex min-h-40 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97]`}
           >
             <span className={`flex items-center justify-center rounded-3xl bg-white p-2 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${visual === "tankerTruck" ? "h-28 w-36" : "h-28 w-28"}`}>
-              {visual === "fuelPump" && <FuelPumpIcon />}
-              {visual === "carWash" && <CarWashImage className="h-24 w-24" />}
-              {visual === "winterTire" && <WinterTireIcon />}
-              {visual === "tankerTruck" && <TankerLorryImage className="h-24 w-32" />}
-              {visual === "evCharger" && <EvChargeIcon className="h-24 w-24" />}
-              {visual === "staffBooking" && <InspectionImage className="h-24 w-24" />}
-              {visual === "insurance" && <InsuranceImage className="h-24 w-24" />}
-              {!visual && emoji}
+              <ServiceVisualIcon visual={visual} />
             </span>
             <span className="text-2xl font-black leading-tight">{name}</span>
             <span className="rounded-full bg-white/25 px-3 py-1 text-sm font-bold leading-tight">
@@ -587,39 +583,58 @@ function ServiceSelector({ onChoose }) {
   );
 }
 
+function ServiceVisualIcon({ visual }) {
+  if (visual === "fuelPump") return <FuelPumpIcon />;
+  if (visual === "carWash") return <CarWashImage className="h-24 w-24" fallback="洗" />;
+  if (visual === "winterTire") return <TireImage className="h-24 w-24" fallback="🛞" />;
+  if (visual === "tankerTruck") return <TankerLorryImage className="h-24 w-32" fallback="🚚" />;
+  if (visual === "evCharger") return <EvChargeIcon className="h-24 w-24" fallback="🚙" />;
+  if (visual === "staffBooking") return <InspectionImage className="h-24 w-24" fallback="車検" />;
+  if (visual === "insurance") return <InsuranceImage className="h-24 w-24" fallback="🛡️" />;
+  return <span aria-hidden="true">?</span>;
+}
+
+function ImageIcon({ src, className, fallback }) {
+  const [failed, setFailed] = useState(false);
+  return (
+    <span className={`relative flex shrink-0 items-center justify-center ${className}`}>
+      <span
+        className={`absolute inset-0 z-0 flex items-center justify-center rounded-2xl bg-white text-4xl font-black text-blue-700 ${
+          failed ? "opacity-100" : "opacity-20"
+        }`}
+        aria-hidden="true"
+      >
+        {fallback}
+      </span>
+      {!failed && (
+        <img
+          src={src}
+          alt=""
+          aria-hidden="true"
+          className="relative z-10 h-full w-full object-contain"
+          draggable="false"
+          onError={() => setFailed(true)}
+        />
+      )}
+    </span>
+  );
+}
+
 function EvChargeIcon({ className = "h-16 w-16" }) {
   return (
-    <img
-      src="/EV.png"
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/EV.png" className={className} fallback="🚙" />
   );
 }
 
-function CarWashImage({ className = "h-16 w-16" }) {
+function CarWashImage({ className = "h-16 w-16", fallback = "洗" }) {
   return (
-    <img
-      src="/car-wash.png"
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/car-wash.png" className={className} fallback={fallback} />
   );
 }
 
-function TankerLorryImage({ className = "h-16 w-16" }) {
+function TankerLorryImage({ className = "h-16 w-16", fallback = "🚚" }) {
   return (
-    <img
-      src="/tanker-lorry.png"
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/tanker-lorry.png" className={className} fallback={fallback} />
   );
 }
 
@@ -678,15 +693,9 @@ function WinterTireIcon() {
   );
 }
 
-function TireImage({ className = "h-16 w-16" }) {
+function TireImage({ className = "h-16 w-16", fallback = "🛞" }) {
   return (
-    <img
-      src="/tire.png"
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/tire.png" className={className} fallback={fallback} />
   );
 }
 
@@ -734,15 +743,17 @@ function TankerTruckIcon() {
   );
 }
 
-function InspectionImage({ className = "h-16 w-16" }) {
+function InspectionImage({ className = "h-16 w-16", fallback = "車検" }) {
   return (
-    <img
-      src="/inspection.png"
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/inspection.png" className={className} fallback={fallback} />
+  );
+}
+
+function InspectionCustomerIcon() {
+  return (
+    <span className="relative flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-white p-2 shadow-inner">
+      <InspectionImage className="h-12 w-12 object-contain" />
+    </span>
   );
 }
 
@@ -786,15 +797,9 @@ function InsuranceCustomerIcon({ className = "h-16 w-16" }) {
   );
 }
 
-function InsuranceImage({ className = "h-16 w-16" }) {
+function InsuranceImage({ className = "h-16 w-16", fallback = "🛡️" }) {
   return (
-    <img
-      src="/insurance.png"
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/insurance.png" className={className} fallback={fallback} />
   );
 }
 
@@ -818,6 +823,12 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
       wide: "h-16 w-28",
       staff: "h-20 w-14"
     },
+    sky: {
+      wrap: "h-20 w-20 rounded-full",
+      image: "h-16 w-16",
+      wide: "h-16 w-24",
+      staff: "h-20 w-16"
+    },
     pop: {
       wrap: "h-28 w-28 rounded-[2rem]",
       image: "h-24 w-24",
@@ -825,11 +836,13 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
       staff: "h-28 w-24"
     }
   }[size];
+  const isSky = size === "sky";
 
   return (
-    <span className={`relative flex shrink-0 items-center justify-center overflow-hidden bg-white shadow-inner ${classes.wrap}`}>
-      <span className="absolute inset-0 bg-gradient-to-br from-yellow-100 via-white to-sky-100" />
-      <span className="absolute -left-6 top-2 h-6 w-24 rotate-[-25deg] bg-white/70" />
+    <span className={`relative flex shrink-0 items-center justify-center overflow-visible ${isSky ? "" : "bg-white shadow-inner"} ${classes.wrap}`}>
+      {!isSky && <span className="absolute inset-0 bg-gradient-to-br from-yellow-100 via-white to-sky-100" />}
+      {isSky && <span className="absolute inset-0 rounded-full bg-gradient-to-br from-white/90 via-yellow-100/70 to-sky-100/70 shadow-inner" />}
+      {!isSky && <span className="absolute -left-6 top-2 h-6 w-24 rotate-[-25deg] bg-white/70" />}
       <span className="relative z-10 flex items-center justify-center text-5xl">
         {upgrade.visual === "carWash" ? (
           <CarWashImage className={classes.image} />
@@ -851,13 +864,7 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
 
 function StaffImage({ className = "h-16 w-16" }) {
   return (
-    <img
-      src="/staff.png"
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/staff.png" className={className} fallback="👨‍🔧" />
   );
 }
 
@@ -1081,13 +1088,43 @@ function WashGame({ onComplete }) {
 }
 
 function TireGame({ onComplete, onFail }) {
-  const wheelNames = ["左前", "右前", "左後", "右後"];
+  const tirePositions = [
+    { label: "左前輪", short: "左前", x: "22%", y: "27%" },
+    { label: "右前輪", short: "右前", x: "78%", y: "27%" },
+    { label: "左後輪", short: "左後", x: "22%", y: "73%" },
+    { label: "右後輪", short: "右後", x: "78%", y: "73%" }
+  ];
   const [currentWheel, setCurrentWheel] = useState(0);
   const [stage, setStage] = useState("pick");
-  const [tightenCount, setTightenCount] = useState(0);
-  const [note, setNote] = useState("光っている場所に冬タイヤをつけよう！");
+  const [tighteningStep, setTighteningStep] = useState(0);
+  const [note, setNote] = useState("光っているタイヤ位置のボタンを押そう！");
+  const activeTirePosition = tirePositions[currentWheel];
+
+  useEffect(() => {
+    if (stage !== "tighten") return undefined;
+
+    const timers = [
+      window.setTimeout(() => setTighteningStep(1), 150),
+      window.setTimeout(() => setTighteningStep(2), 550),
+      window.setTimeout(() => setTighteningStep(3), 950),
+      window.setTimeout(() => {
+        const nextWheel = currentWheel + 1;
+        if (nextWheel === tirePositions.length) {
+          onComplete("冬道の準備完了！");
+          return;
+        }
+        setCurrentWheel(nextWheel);
+        setStage("pick");
+        setTighteningStep(0);
+        setNote(`カチッと固定！次は${tirePositions[nextWheel].label}だよ。`);
+      }, 1450)
+    ];
+
+    return () => timers.forEach((timer) => window.clearTimeout(timer));
+  }, [currentWheel, onComplete, stage, tirePositions.length]);
 
   const pickWheel = (index) => {
+    if (stage !== "pick") return;
     if (index < currentWheel) {
       setNote("そのタイヤはもう交換できているよ！");
       return;
@@ -1097,31 +1134,9 @@ function TireGame({ onComplete, onFail }) {
       onFail("光っている場所と違うタイヤを選びました。順番に交換しよう！");
       return;
     }
-    if (stage !== "pick") return;
     setStage("tighten");
-    setTightenCount(0);
-    setNote(`${wheelNames[index]}のタイヤをつけたよ。ナットを3回しめよう！`);
-  };
-
-  const tightenBolt = () => {
-    const nextTighten = tightenCount + 1;
-    setTightenCount(nextTighten);
-
-    if (nextTighten < 3) {
-      setNote(`いいね！あと${3 - nextTighten}回しめよう。`);
-      return;
-    }
-
-    const nextWheel = currentWheel + 1;
-    if (nextWheel === 4) {
-      onComplete("冬道の準備完了！");
-      return;
-    }
-
-    setCurrentWheel(nextWheel);
-    setStage("pick");
-    setTightenCount(0);
-    setNote(`ナイス！次は${wheelNames[nextWheel]}のタイヤだよ。`);
+    setTighteningStep(0);
+    setNote(`${tirePositions[index].label}を取り付け中。ナットをしめるよ！`);
   };
 
   return (
@@ -1133,89 +1148,99 @@ function TireGame({ onComplete, onFail }) {
       <div className="relative mx-auto max-w-md overflow-hidden rounded-3xl border-4 border-blue-200 bg-gradient-to-b from-sky-100 to-white p-5 shadow-inner">
         <div className="absolute left-4 top-4 text-3xl animate-bounce">❄️</div>
         <div className="absolute right-5 top-6 text-2xl animate-pulse">✨</div>
-        <div className="relative mx-auto mb-4 h-32 max-w-xs">
-          <div className="absolute left-1/2 top-2 h-16 w-44 -translate-x-1/2 rounded-t-[2.5rem] bg-gradient-to-r from-orange-600 via-orange-400 to-red-500 shadow-lg">
-            <div className="absolute left-7 top-3 h-9 w-20 skew-x-[-14deg] rounded-t-2xl bg-sky-100 shadow-inner" />
-            <div className="absolute right-7 top-3 h-9 w-12 skew-x-[16deg] rounded-t-2xl bg-sky-200 shadow-inner" />
-            <div className="absolute bottom-0 left-4 h-2 w-36 rounded-full bg-white/35" />
-          </div>
-          <div className="absolute bottom-4 left-1/2 h-16 w-64 -translate-x-1/2 rounded-[2.5rem] bg-gradient-to-r from-orange-600 via-orange-500 to-red-500 shadow-xl">
-            <div className="absolute left-3 top-6 h-4 w-10 rounded-full bg-yellow-200 shadow" />
-            <div className="absolute right-4 top-6 h-4 w-9 rounded-full bg-red-200 shadow" />
-            <div className="absolute left-20 top-2 h-3 w-28 rounded-full bg-white/30" />
-            <div className="absolute bottom-2 left-8 h-2 w-48 rounded-full bg-red-700/35" />
-            <div className="absolute -right-1 bottom-3 h-8 w-8 rounded-full bg-slate-800/80" />
-            <div className="absolute -left-1 bottom-3 h-8 w-8 rounded-full bg-slate-800/80" />
-          </div>
-          <div className="absolute bottom-0 left-12 h-12 w-12 rounded-full border-4 border-slate-950 bg-slate-800 shadow-lg">
-            <div className="m-auto mt-2 h-5 w-5 rounded-full border-4 border-slate-300 bg-slate-500" />
-          </div>
-          <div className="absolute bottom-0 right-12 h-12 w-12 rounded-full border-4 border-slate-950 bg-slate-800 shadow-lg">
-            <div className="m-auto mt-2 h-5 w-5 rounded-full border-4 border-slate-300 bg-slate-500" />
-          </div>
-        </div>
-        <div className="grid grid-cols-2 gap-4">
-          {[0, 1, 2, 3].map((index) => {
-            const done = index < currentWheel;
-            const active = index === currentWheel;
-            return (
-              <button
-                key={index}
-                onClick={() => pickWheel(index)}
-                className={`min-h-32 rounded-3xl border-4 p-3 font-black shadow-lg transition active:scale-95 ${
-                  done
-                    ? "border-emerald-300 bg-emerald-100"
-                    : active
-                      ? "border-orange-300 bg-orange-100 ring-4 ring-orange-200"
-                      : "border-slate-200 bg-slate-100"
-                }`}
-              >
-                <span className="mx-auto flex h-20 w-24 items-center justify-center overflow-hidden rounded-2xl bg-white">
-                  <TireImage className={`${done || active ? "h-24 w-28" : "h-20 w-24 opacity-50"}`} />
-                </span>
-                <span className="mt-2 block text-sm text-slate-700">{wheelNames[index]}</span>
-                <span className="mt-1 block text-xl">{done ? "OK!" : active ? "ここ!" : "まってね"}</span>
-              </button>
-            );
-          })}
-        </div>
+        <OverheadTireCar
+          positions={tirePositions}
+          activeIndex={currentWheel}
+          stage={stage}
+          tighteningStep={tighteningStep}
+        />
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+        {tirePositions.map((position, index) => {
+          const done = index < currentWheel;
+          const active = index === currentWheel;
+          return (
+            <button
+              key={position.label}
+              onClick={() => pickWheel(index)}
+              disabled={stage !== "pick" && active}
+              className={`min-h-20 rounded-3xl border-4 p-3 text-lg font-black shadow-lg transition active:scale-95 ${
+                done
+                  ? "border-emerald-300 bg-emerald-100 text-emerald-700"
+                  : active
+                    ? "border-orange-300 bg-orange-100 text-orange-700 ring-4 ring-orange-200"
+                    : "border-slate-200 bg-white text-slate-500"
+              }`}
+            >
+              <span className="block text-2xl">{done ? "✅" : active ? "🛞" : "○"}</span>
+              {position.label}
+            </button>
+          );
+        })}
       </div>
 
       {stage === "tighten" && (
-        <div className="rounded-3xl bg-slate-100 p-4">
-          <div className="mb-3 rounded-2xl bg-white p-3 text-center shadow-inner">
-            <p className="mb-2 text-sm font-black text-slate-700">ナットを3つしめよう</p>
-            <div className="flex justify-center gap-3">
-              {[0, 1, 2].map((index) => (
-                <NutIcon
-                  key={index}
-                  tightened={index < tightenCount}
-                  className={`h-12 w-12 transition ${
-                    index === tightenCount ? "scale-110 animate-pulse" : ""
-                  }`}
-                />
-              ))}
-            </div>
+        <div className="rounded-3xl bg-slate-100 p-4 text-center shadow-inner">
+          <div className="mb-3 flex items-center justify-center gap-3 text-lg font-black text-orange-700">
+            <Wrench className="h-8 w-8 animate-spin" />
+            ナット締め中！
           </div>
-          <div className="mb-3 flex justify-center gap-2">
+          <div className="flex justify-center gap-3">
             {[0, 1, 2].map((index) => (
-              <span
+              <NutIcon
                 key={index}
-                className={`h-5 w-5 rounded-full border-2 border-slate-500 ${
-                  index < tightenCount ? "bg-orange-400" : "bg-white"
-                }`}
+                tightened={index < tighteningStep}
+                className={`h-12 w-12 transition ${index === tighteningStep ? "scale-110 animate-pulse" : ""}`}
               />
             ))}
           </div>
-          <button
-            onClick={tightenBolt}
-            className="flex w-full items-center justify-center gap-3 rounded-2xl bg-orange-500 py-4 text-xl font-black text-white shadow-lg active:scale-95"
-          >
-            <NutIcon tightened className="h-9 w-9" />
-            ナットをしめる {tightenCount}/3
-          </button>
+          <p className="mt-3 text-sm font-bold text-slate-600">
+            {activeTirePosition.label}をカチッと固定しています
+          </p>
         </div>
       )}
+    </div>
+  );
+}
+
+function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
+  return (
+    <div className="relative mx-auto h-96 max-w-sm overflow-hidden rounded-[2rem] bg-white/55 shadow-inner">
+      <img
+        src="/car-top-view.png"
+        alt=""
+        aria-hidden="true"
+        className="absolute left-1/2 top-1/2 h-[22rem] -translate-x-1/2 -translate-y-1/2 object-contain"
+        draggable="false"
+      />
+      {positions.map((position, index) => {
+        const done = index < activeIndex;
+        const active = index === activeIndex;
+        return (
+          <div
+            key={position.label}
+            className={`absolute flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border-4 shadow-xl transition ${
+              done
+                ? "border-emerald-300 bg-emerald-100"
+                : active
+                  ? "border-yellow-300 bg-orange-100 ring-8 ring-yellow-200"
+                  : "border-slate-300 bg-white"
+            }`}
+            style={{ left: position.x, top: position.y }}
+          >
+            <TireImage className={`${active ? "h-16 w-16 animate-pulse" : "h-14 w-14"}`} />
+            {active && stage === "tighten" && (
+              <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/75">
+                <NutIcon tightened={tighteningStep > 0} className="h-10 w-10 animate-spin" />
+              </div>
+            )}
+            <span className="absolute -bottom-6 rounded-full bg-blue-700 px-2 py-0.5 text-xs font-black text-white">
+              {position.short}
+            </span>
+          </div>
+        );
+      })}
     </div>
   );
 }
@@ -1373,10 +1398,18 @@ function EvGame({ onComplete, onFail }) {
 }
 
 function InspectionGame({ onComplete, onFail }) {
+  const correctItems = ["ブレーキ", "ライト", "ワイパー", "タイヤ溝", "バッテリー", "エンジンオイル"];
   const checkItems = [
-    { label: "ライト", icon: "💡" },
-    { label: "タイヤ", icon: "🛞" },
-    { label: "ブレーキ", icon: "🛑" }
+    { label: "ブレーキ", icon: "🛑", correct: true },
+    { label: "ライト", icon: "💡", correct: true },
+    { label: "ワイパー", icon: "🌧️", correct: true },
+    { label: "タイヤ溝", icon: "🛞", correct: true },
+    { label: "バッテリー", icon: "🔋", correct: true },
+    { label: "エンジンオイル", icon: "🛢️", correct: true },
+    { label: "洗車", icon: "🚿", correct: false },
+    { label: "ドリンク補充", icon: "🥤", correct: false },
+    { label: "景品交換", icon: "🎁", correct: false },
+    { label: "レシート確認", icon: "🧾", correct: false }
   ];
   const dates = useMemo(
     () => [
@@ -1387,18 +1420,27 @@ function InspectionGame({ onComplete, onFail }) {
     []
   );
   const [checkedItems, setCheckedItems] = useState([]);
-  const [note, setNote] = useState("まずは車の点検スタンプを3つ集めよう！");
+  const [note, setNote] = useState("車検に必要な点検を6つ選ぼう！");
 
   const checkItem = (item) => {
     if (checkedItems.includes(item.label)) return;
+    if (!item.correct) {
+      setNote("それは車検の点検とは少し違うよ。車の安全に関係するものを選ぼう。");
+      onFail("車検の点検項目ではないものを選びました。安全に関係する項目を探そう！");
+      return;
+    }
     const next = [...checkedItems, item.label];
     setCheckedItems(next);
-    setNote(next.length === 3 ? "点検OK！空いている日を選んで予約しよう。" : `いいね！あと${3 - next.length}つ点検しよう。`);
+    setNote(
+      next.length === correctItems.length
+        ? "点検OK！空いている日を選んで予約しよう。"
+        : `いいね！あと${correctItems.length - next.length}つ点検しよう。`
+    );
   };
 
   const chooseDate = (date) => {
-    if (checkedItems.length < 3) {
-      setNote("先にライト・タイヤ・ブレーキを点検してね。");
+    if (checkedItems.length < correctItems.length) {
+      setNote("先に車検に必要な点検を全部チェックしてね。");
       return;
     }
     if (date.open) onComplete("車検予約を受け付けました！");
@@ -1416,10 +1458,10 @@ function InspectionGame({ onComplete, onFail }) {
         </div>
         <p className="text-lg font-black text-blue-700">車検まえの点検スタンプ</p>
         <p className="mt-2 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
-          3つチェックできたら予約に進めます。
+          正しい点検を6つチェックできたら予約に進めます。
         </p>
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         {checkItems.map((item) => {
           const checked = checkedItems.includes(item.label);
           return (
@@ -1444,7 +1486,7 @@ function InspectionGame({ onComplete, onFail }) {
             key={date.label}
             onClick={() => chooseDate(date)}
             className={`min-h-24 rounded-2xl border-4 p-3 text-xl font-black shadow transition active:scale-[.97] ${
-              checkedItems.length === 3
+              checkedItems.length === correctItems.length
                 ? "border-blue-200 bg-white text-blue-700 hover:bg-blue-50"
                 : "border-slate-200 bg-slate-100 text-slate-400"
             }`}
@@ -1460,13 +1502,18 @@ function InspectionGame({ onComplete, onFail }) {
 }
 
 function InsuranceGame({ onComplete, onFail }) {
-  const correctCards = ["事故の補償", "雪道トラブル", "ロードサービス"];
+  const correctCards = ["事故の補償", "車のトラブル", "ロードサービス"];
   const cards = [
     { label: "事故の補償", icon: "🚗", correct: true },
-    { label: "雪道トラブル", icon: "❄️", correct: true },
+    { label: "車のトラブル", icon: "⚠️", correct: true },
     { label: "ロードサービス", icon: "🔧", correct: true },
     { label: "洗車チケット", icon: "🚿", correct: false },
-    { label: "カフェ割引", icon: "☕", correct: false }
+    { label: "カフェ割引", icon: "☕", correct: false },
+    { label: "タイヤ交換", icon: "🛞", correct: false },
+    { label: "オイル交換", icon: "🛢️", correct: false },
+    { label: "ガソリン割引", icon: "⛽", correct: false },
+    { label: "車検予約", icon: "📅", correct: false },
+    { label: "店内清掃", icon: "🧹", correct: false }
   ];
   const [selected, setSelected] = useState([]);
   const [mistakes, setMistakes] = useState(0);
@@ -1529,28 +1576,32 @@ function InsuranceGame({ onComplete, onFail }) {
 }
 
 function UpgradePanel({ points, boughtUpgrades, onBuy }) {
+  const availableUpgrades = upgrades.filter((upgrade) => !boughtUpgrades.includes(upgrade.key));
+
   return (
     <div className="rounded-3xl border-4 border-white bg-white/95 p-4 shadow-xl">
       <h2 className="mb-3 text-2xl font-black text-blue-700">スタンド成長</h2>
       <div className="grid gap-3">
-        {upgrades.map((upgrade) => {
-          const bought = boughtUpgrades.includes(upgrade.key);
+        {availableUpgrades.length === 0 && (
+          <div className="rounded-3xl bg-emerald-50 p-5 text-center font-black text-emerald-700">
+            すべて購入済みです！
+          </div>
+        )}
+        {availableUpgrades.map((upgrade) => {
           return (
             <button
               key={upgrade.key}
               onClick={() => onBuy(upgrade)}
-              disabled={bought}
+              disabled={points < upgrade.cost}
               className={`flex items-center gap-3 rounded-2xl border-2 p-3 text-left shadow-sm transition active:scale-[.99] ${
-                bought
-                  ? "border-emerald-200 bg-emerald-50"
-                  : points >= upgrade.cost
+                points >= upgrade.cost
                     ? "border-orange-200 bg-orange-50 hover:bg-orange-100"
                     : "border-slate-200 bg-slate-50"
               }`}
             >
               <span className="relative shrink-0">
                 <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow">
-                  {bought ? "UP" : "GET"}
+                  UP
                 </span>
                 <UpgradeVisual upgrade={upgrade} size="panel" />
               </span>
@@ -1559,7 +1610,7 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
                 <span className="block text-sm font-bold text-slate-500">{upgrade.effect}</span>
               </span>
               <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600">
-                {bought ? "購入済" : `${upgrade.cost}pt`}
+                {upgrade.cost}pt
               </span>
             </button>
           );
@@ -1619,6 +1670,41 @@ function UpgradePurchaseToast({ upgrade }) {
         <p className="mt-1 text-3xl font-black text-blue-700">設備パワーアップ！</p>
         <p className="mt-3 rounded-2xl bg-yellow-100 px-4 py-3 text-lg font-black text-orange-700">
           {upgrade.name}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function GoodJobClearOverlay() {
+  return (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-hidden bg-gradient-to-br from-sky-300 via-white to-yellow-200 p-5">
+      {[...Array(18)].map((_, index) => (
+        <span
+          key={index}
+          className="absolute animate-bounce text-3xl"
+          style={{
+            left: `${(index * 17) % 96}%`,
+            top: `${(index * 29) % 90}%`,
+            animationDelay: `${index * 0.08}s`
+          }}
+          aria-hidden="true"
+        >
+          {index % 3 === 0 ? "✨" : index % 3 === 1 ? "🎉" : "⭐"}
+        </span>
+      ))}
+      <div className="relative w-full max-w-lg animate-pop rounded-[2rem] border-4 border-yellow-300 bg-white/95 p-6 text-center shadow-2xl">
+        <div className="mx-auto mb-4 flex h-32 w-32 items-end justify-center overflow-hidden rounded-full bg-orange-100 shadow-inner">
+          <StaffImage className="h-40 w-32" />
+        </div>
+        <p className="text-6xl font-black leading-none text-blue-700 sm:text-7xl">
+          Good Job
+        </p>
+        <p className="mt-4 rounded-2xl bg-yellow-100 px-4 py-3 text-xl font-black text-orange-700">
+          すべての設備がそろいました！
+        </p>
+        <p className="mt-3 text-base font-bold text-slate-600">
+          5秒後にスタート画面へ戻ります
         </p>
       </div>
     </div>
