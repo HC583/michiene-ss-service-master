@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createRoot } from "react-dom/client";
 import {
   CheckCircle2,
@@ -26,12 +26,12 @@ const customers = [
     icon: "🚙"
   },
   {
-    speech: "来週から雪が降りそう。そろそろ準備したいな",
+    speech: "来週から雪が降りそう。\nそろそろ準備したいな",
     correctService: "タイヤ交換",
     icon: "🛞"
   },
   {
-    speech: "家のストーブ用の灯油が少なくなってきたよ",
+    speech: "家のストーブ用の灯油が\n少なくなってきたよ",
     correctService: "灯油配達",
     icon: "🏠"
   },
@@ -46,7 +46,7 @@ const customers = [
     visual: "staffBooking"
   },
   {
-    speech: "もしもの事故や車のトラブルに備えて保険を見直したい",
+    speech: "もしもの事故や車のトラブルに備えて\n保険を見直したい",
     correctService: "自動車保険",
     visual: "insurance"
   }
@@ -886,6 +886,7 @@ function MiniGame({ service, onComplete }) {
   const [retryKey, setRetryKey] = useState(0);
   const [failMessage, setFailMessage] = useState("");
   const [clearMessage, setClearMessage] = useState("");
+  const isBookedFailure = failMessage.startsWith("予約済みです。");
   const miniGames = {
     給油: FuelGame,
     洗車: WashGame,
@@ -944,7 +945,15 @@ function MiniGame({ service, onComplete }) {
               ×
             </div>
             <p className="text-xl font-black text-red-700">もう一度やりなおそう！</p>
-            <p className="mt-2 min-h-7 text-base font-bold text-slate-700">{failMessage}</p>
+            <p
+              className={`mt-2 min-h-7 font-black ${
+                isBookedFailure
+                  ? "rounded-2xl bg-white px-4 py-3 text-3xl text-red-600 shadow-sm"
+                  : "text-base text-slate-700"
+              }`}
+            >
+              {failMessage}
+            </p>
             <button
               onClick={retryGame}
               className="mt-4 w-full rounded-2xl bg-orange-500 py-4 text-xl font-black text-white shadow-lg active:scale-95"
@@ -1260,18 +1269,23 @@ function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
 }
 
 function KeroseneGame({ onComplete, onFail }) {
-  const obstacles = [0, 2, 1, 0, 2];
+  const obstacles = [[0], [2], [0, 1], [1, 2], [0, 2]];
   const laneNames = ["上の道", "まんなか", "下の道"];
   const [steps, setSteps] = useState(0);
   const [lane, setLane] = useState(1);
+  const [crashed, setCrashed] = useState(false);
   const [note, setNote] = useState("雪だるまをよけて、おうちまで灯油を届けよう！");
-  const obstacleLane = obstacles[steps % obstacles.length];
+  const obstacleLanes = obstacles[steps % obstacles.length];
 
   const chooseLane = (nextLane) => {
+    if (crashed) return;
     setLane(nextLane);
-    if (nextLane === obstacleLane) {
-      setNote("あっ、雪でストップ！別の道を選んでね。");
-      onFail("雪だるまのある道に入ってしまいました。雪だるまのない道を選ぼう！");
+    if (obstacleLanes.includes(nextLane)) {
+      setCrashed(true);
+      setNote("ドン！雪だるまにぶつかった！");
+      window.setTimeout(() => {
+        onFail("雪だるまにぶつかりました。雪だるまのない道を選んでもう一度やろう！");
+      }, 450);
       return;
     }
 
@@ -1301,14 +1315,24 @@ function KeroseneGame({ onComplete, onFail }) {
               <div className="mx-auto mt-4 h-1 w-4/5 rounded-full bg-yellow-200" />
             </div>
           ))}
+          {obstacleLanes.map((obstacleLane, index) => (
+            <div
+              key={obstacleLane}
+              className={`absolute flex h-10 w-10 items-center justify-center rounded-full bg-white text-3xl shadow ${
+                crashed ? "ring-4 ring-red-300 animate-bounce" : ""
+              }`}
+              style={{
+                left: obstacleLanes.length > 1 ? `${55 + index * 8}%` : "58%",
+                top: `${20 + obstacleLane * 46}px`
+              }}
+            >
+              ☃️
+            </div>
+          ))}
           <div
-            className="absolute left-[58%] flex h-10 w-10 items-center justify-center rounded-full bg-white text-3xl shadow"
-            style={{ top: `${20 + obstacleLane * 46}px` }}
-          >
-            ☃️
-          </div>
-          <div
-            className="absolute flex h-16 w-32 items-center justify-center rounded-2xl bg-white/80 transition-all duration-500"
+            className={`absolute flex h-16 w-32 items-center justify-center rounded-2xl bg-white/80 transition-all duration-500 ${
+              crashed ? "ring-4 ring-red-400 animate-pulse" : ""
+            }`}
             style={{
               left: `${4 + Math.min(steps * 10, 42)}%`,
               top: `${8 + lane * 46}px`
@@ -1316,6 +1340,14 @@ function KeroseneGame({ onComplete, onFail }) {
           >
             <TankerLorryImage className="h-16 w-32" />
           </div>
+          {crashed && (
+            <div
+              className="absolute left-[50%] z-20 animate-pop text-5xl"
+              style={{ top: `${8 + lane * 46}px` }}
+            >
+              💥
+            </div>
+          )}
           <div className="absolute right-2 top-16 text-5xl">🏠</div>
           <div className="absolute right-10 top-7 text-2xl">♨️</div>
         </div>
@@ -1329,9 +1361,10 @@ function KeroseneGame({ onComplete, onFail }) {
           <button
             key={label}
             onClick={() => chooseLane(index)}
+            disabled={crashed}
             className={`rounded-2xl py-4 text-base font-black text-white shadow-lg transition hover:brightness-105 active:scale-[.97] sm:text-xl ${
               index === 1 ? "bg-orange-500" : "bg-blue-600"
-            }`}
+            } disabled:bg-slate-300`}
           >
             {label}
           </button>
@@ -1412,68 +1445,79 @@ function EvGame({ onComplete, onFail }) {
 }
 
 function InspectionGame({ onComplete, onFail }) {
-  const correctItems = ["ブレーキ", "ライト", "ワイパー", "タイヤ溝", "バッテリー", "エンジンオイル"];
+  const correctItems = ["ブレーキ", "ライト", "タイヤ溝"];
   const checkItems = [
     { label: "ブレーキ", icon: "🛑", correct: true },
     { label: "ライト", icon: "💡", correct: true },
-    { label: "ワイパー", icon: "🌧️", correct: true },
     { label: "タイヤ溝", icon: "🛞", correct: true },
-    { label: "バッテリー", icon: "🔋", correct: true },
-    { label: "エンジンオイル", icon: "🛢️", correct: true },
     { label: "洗車", icon: "🚿", correct: false },
-    { label: "ドリンク補充", icon: "🥤", correct: false },
-    { label: "景品交換", icon: "🎁", correct: false },
-    { label: "レシート確認", icon: "🧾", correct: false }
+    { label: "景品交換", icon: "🎁", correct: false }
   ];
-  const dates = useMemo(
-    () => [
-      { label: "5/18", open: false },
-      { label: "5/22", open: true },
-      { label: "5/29", open: false }
-    ],
-    []
-  );
+  const reservationDates = [
+    { label: "5/18 13:00", open: false },
+    { label: "5/22 10:00", open: true }
+  ];
   const [checkedItems, setCheckedItems] = useState([]);
-  const [note, setNote] = useState("車検に必要な点検を6つ選ぼう！");
+  const [note, setNote] = useState("点検スタンプを3つ集めて、予約日を確定しよう！");
 
   const checkItem = (item) => {
     if (checkedItems.includes(item.label)) return;
     if (!item.correct) {
-      setNote("それは車検の点検とは少し違うよ。車の安全に関係するものを選ぼう。");
-      onFail("車検の点検項目ではないものを選びました。安全に関係する項目を探そう！");
+      setNote("それは車検前の点検スタンプではありません。");
+      onFail("車検に必要な点検ではないものを選びました。点検スタンプを集め直そう！");
       return;
     }
     const next = [...checkedItems, item.label];
     setCheckedItems(next);
     setNote(
       next.length === correctItems.length
-        ? "点検OK！空いている日を選んで予約しよう。"
-        : `いいね！あと${correctItems.length - next.length}つ点検しよう。`
+        ? "点検OK！予約日を確認して、必ず予約しよう。"
+        : `いいね！あと${correctItems.length - next.length}つスタンプを集めよう。`
     );
   };
 
-  const chooseDate = (date) => {
+  const chooseReservationDate = (date) => {
     if (checkedItems.length < correctItems.length) {
-      setNote("先に車検に必要な点検を全部チェックしてね。");
+      setNote("先に点検スタンプを3つ集めてね。");
       return;
     }
-    if (date.open) onComplete("車検予約を受け付けました！");
-    else {
-      setNote("その日は予約でいっぱい。別の日を選んでね。");
-      onFail("予約がいっぱいの日を選びました。空いている日を探そう！");
+    if (!date.open) {
+      setNote("予約済みです。");
+      onFail("予約済みです。空いている予約日を選ぼう！");
+      return;
     }
+    onComplete("車検予約を受け付けました！");
+  };
+
+  const skipReservation = () => {
+    setNote("予約を確定しないと受付できません。");
+    onFail("予約日を確定しませんでした。必ず予約ボタンを押そう！");
   };
 
   return (
     <div className="space-y-4">
-      <div className="rounded-3xl bg-blue-100 p-4 text-center">
+      <div className="rounded-3xl bg-blue-100 p-4 text-center shadow-inner">
         <div className="mx-auto mb-3 flex h-24 w-28 items-center justify-center rounded-3xl bg-white shadow-inner">
           <InspectionImage className="h-20 w-24" />
         </div>
-        <p className="text-lg font-black text-blue-700">車検まえの点検スタンプ</p>
+        <p className="text-lg font-black text-blue-700">車検予約チャレンジ</p>
         <p className="mt-2 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
-          正しい点検を6つチェックできたら予約に進めます。
+          点検スタンプを集めたら、1つの予約日を必ず確定しよう。
         </p>
+        <div className="mt-3 grid grid-cols-3 gap-2">
+          {correctItems.map((item) => (
+            <span
+              key={item}
+              className={`rounded-full px-2 py-2 text-xs font-black shadow-sm ${
+                checkedItems.includes(item)
+                  ? "bg-emerald-400 text-white"
+                  : "bg-white text-blue-300"
+              }`}
+            >
+              {checkedItems.includes(item) ? "OK" : "待機"}
+            </span>
+          ))}
+        </div>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
         {checkItems.map((item) => {
@@ -1494,21 +1538,32 @@ function InspectionGame({ onComplete, onFail }) {
           );
         })}
       </div>
-      <div className="grid grid-cols-3 gap-3">
-        {dates.map((date) => (
+      <div className="rounded-3xl border-4 border-blue-200 bg-white p-4 text-center shadow-lg">
+        <p className="text-sm font-black tracking-[.14em] text-blue-500">RESERVATION DATE</p>
+        <div className="mt-3 grid grid-cols-2 gap-3">
+          {reservationDates.map((date) => (
+            <button
+              key={date.label}
+              onClick={() => chooseReservationDate(date)}
+              className={`rounded-2xl border-4 px-3 py-4 text-lg font-black shadow transition active:scale-[.97] ${
+                checkedItems.length === correctItems.length
+                  ? "border-blue-200 bg-blue-50 text-blue-700 hover:border-orange-300 hover:bg-orange-50"
+                  : "border-slate-200 bg-slate-100 text-slate-400"
+              }`}
+            >
+              <span className="mb-1 block text-3xl">📅</span>
+              {date.label}
+            </button>
+          ))}
+        </div>
+        <div className="mt-3 grid grid-cols-1 gap-3">
           <button
-            key={date.label}
-            onClick={() => chooseDate(date)}
-            className={`min-h-24 rounded-2xl border-4 p-3 text-xl font-black shadow transition active:scale-[.97] ${
-              checkedItems.length === correctItems.length
-                ? "border-blue-200 bg-white text-blue-700 hover:bg-blue-50"
-                : "border-slate-200 bg-slate-100 text-slate-400"
-            }`}
+            onClick={skipReservation}
+            className="rounded-2xl border-4 border-slate-200 bg-slate-100 px-3 py-4 text-lg font-black text-slate-500 shadow transition active:scale-[.97]"
           >
-            <span className="mb-2 block text-2xl">📅</span>
-            {date.label}
+            予約しない
           </button>
-        ))}
+        </div>
       </div>
       <p className="text-center font-bold text-blue-700">{note}</p>
     </div>
@@ -1670,32 +1725,39 @@ function UpgradePurchaseToast({ upgrade }) {
 
 function GoodJobClearOverlay() {
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-hidden bg-gradient-to-br from-sky-300 via-white to-yellow-200 p-5">
-      {[...Array(18)].map((_, index) => (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-hidden bg-gradient-to-br from-yellow-300 via-orange-100 to-sky-200 p-5">
+      {[...Array(28)].map((_, index) => (
         <span
           key={index}
-          className="absolute animate-bounce text-3xl"
+          className="absolute animate-upgrade-confetti text-4xl"
           style={{
-            left: `${(index * 17) % 96}%`,
-            top: `${(index * 29) % 90}%`,
-            animationDelay: `${index * 0.08}s`
+            left: `${(index * 23) % 98}%`,
+            top: `${4 + (index * 31) % 82}%`,
+            animationDelay: `${index * 0.05}s`
           }}
           aria-hidden="true"
         >
-          {index % 3 === 0 ? "✨" : index % 3 === 1 ? "🎉" : "⭐"}
+          {index % 4 === 0 ? "✨" : index % 4 === 1 ? "🎉" : index % 4 === 2 ? "⭐" : "🏆"}
         </span>
       ))}
-      <div className="relative w-full max-w-lg animate-pop rounded-[2rem] border-4 border-yellow-300 bg-white/95 p-6 text-center shadow-2xl">
-        <div className="mx-auto mb-4 flex h-32 w-32 items-end justify-center overflow-hidden rounded-full bg-orange-100 shadow-inner">
-          <StaffImage className="h-40 w-32" />
+      <div className="absolute inset-0 bg-white/35" />
+      <div className="relative w-full max-w-lg animate-upgrade-burst overflow-hidden rounded-[2rem] border-4 border-yellow-400 bg-white/95 p-6 text-center shadow-2xl">
+        <div className="absolute -left-16 -top-16 h-40 w-40 rounded-full bg-yellow-300/55 blur-2xl" />
+        <div className="absolute -bottom-14 -right-14 h-44 w-44 rounded-full bg-orange-300/55 blur-2xl" />
+        <div className="relative mx-auto mb-4 flex h-36 w-36 animate-upgrade-arrive items-center justify-center rounded-full bg-gradient-to-br from-yellow-200 via-yellow-400 to-orange-500 text-7xl shadow-2xl ring-8 ring-yellow-100">
+          🥇
+          <span className="absolute -right-2 -top-2 animate-bounce text-4xl">✨</span>
         </div>
-        <p className="text-6xl font-black leading-none text-blue-700 sm:text-7xl">
-          Good Job
+        <p className="relative text-sm font-black tracking-[.2em] text-orange-500">
+          STAND COMPLETE
         </p>
-        <p className="mt-4 rounded-2xl bg-yellow-100 px-4 py-3 text-xl font-black text-orange-700">
-          すべての設備がそろいました！
+        <p className="relative text-5xl font-black leading-tight text-blue-700 sm:text-6xl">
+          金メダル獲得！
         </p>
-        <p className="mt-3 text-base font-bold text-slate-600">
+        <p className="relative mt-4 rounded-2xl bg-yellow-100 px-4 py-3 text-xl font-black text-orange-700">
+          スタンド成長コンプリート！
+        </p>
+        <p className="relative mt-3 text-base font-bold text-slate-600">
           5秒後にスタート画面へ戻ります
         </p>
       </div>
