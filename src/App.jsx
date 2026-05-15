@@ -982,7 +982,11 @@ function FuelGame({ onComplete, onFail }) {
   return (
     <div className="space-y-4">
       <div className="relative h-16 overflow-hidden rounded-full bg-slate-200 p-2">
-        <div className="absolute left-[42%] top-2 h-12 w-[22%] rounded-full bg-emerald-400" />
+        <div className="absolute left-[42%] top-2 flex h-12 w-[22%] items-center justify-center rounded-full bg-emerald-400">
+          <span className="whitespace-nowrap rounded-full bg-white/90 px-2 py-1 text-xs font-black text-emerald-700 shadow-sm">
+            給油中
+          </span>
+        </div>
         <div
           id="fuel-marker"
           className="absolute top-1 h-14 w-4 animate-gauge rounded-full bg-orange-500 shadow-lg"
@@ -1421,7 +1425,11 @@ function EvGame({ onComplete, onFail }) {
         <p className="text-3xl font-black text-emerald-700">{charge}%</p>
         <div className="mt-4 rounded-2xl bg-white p-3 shadow-sm">
           <div className="relative h-12 overflow-hidden rounded-full bg-slate-200">
-            <div className="absolute left-[43%] top-1 h-10 w-[20%] rounded-full bg-emerald-400 shadow-inner" />
+            <div className="absolute left-[43%] top-1 flex h-10 w-[20%] items-center justify-center rounded-full bg-emerald-400 shadow-inner">
+              <span className="whitespace-nowrap rounded-full bg-white/90 px-2 py-1 text-xs font-black text-emerald-700 shadow-sm">
+                充電中
+              </span>
+            </div>
             <div className="absolute left-[32%] top-2 h-8 w-[42%] rounded-full border-2 border-dashed border-emerald-500" />
             <div
               id="ev-charge-marker"
@@ -1444,21 +1452,58 @@ function EvGame({ onComplete, onFail }) {
   );
 }
 
+function InspectionItemIcon({ icon }) {
+  if (icon === "engine") return <EnginePartIcon />;
+  if (icon === "muffler") return <MufflerPartIcon />;
+  return <span>{icon}</span>;
+}
+
+function EnginePartIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-12 w-14 drop-shadow-sm" aria-hidden="true">
+      <rect x="24" y="24" width="38" height="30" rx="6" fill="#60a5fa" stroke="#1e3a8a" strokeWidth="5" />
+      <rect x="34" y="14" width="18" height="12" rx="3" fill="#bfdbfe" stroke="#1e3a8a" strokeWidth="4" />
+      <path d="M17 31h9v16h-9c-4 0-7-3-7-7v-2c0-4 3-7 7-7Z" fill="#93c5fd" stroke="#1e3a8a" strokeWidth="4" />
+      <path d="M62 33h11l8 8v11H62Z" fill="#f97316" stroke="#1e3a8a" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M31 35h24M31 44h18" stroke="#ffffff" strokeWidth="5" strokeLinecap="round" />
+      <path d="M42 14V8M58 24l6-8" stroke="#1e3a8a" strokeWidth="4" strokeLinecap="round" />
+      <circle cx="75" cy="55" r="5" fill="#1e3a8a" />
+    </svg>
+  );
+}
+
+function MufflerPartIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-12 w-14 drop-shadow-sm" aria-hidden="true">
+      <path d="M10 42h22" stroke="#475569" strokeWidth="9" strokeLinecap="round" />
+      <rect x="29" y="29" width="38" height="24" rx="12" fill="#cbd5e1" stroke="#334155" strokeWidth="5" />
+      <path d="M66 41h12c5 0 8-3 8-8v-4" fill="none" stroke="#475569" strokeWidth="8" strokeLinecap="round" />
+      <path d="M84 21h8" stroke="#475569" strokeWidth="8" strokeLinecap="round" />
+      <path d="M38 36h20M38 46h16" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" />
+      <path d="M12 29c-4 0-7-3-7-7M20 24c-5-2-7-6-6-10" fill="none" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
 function InspectionGame({ onComplete, onFail }) {
-  const correctItems = ["ブレーキ", "ライト", "タイヤ溝"];
+  const correctItems = ["ブレーキ", "ライト", "タイヤ溝", "マフラー", "エンジン"];
   const checkItems = [
     { label: "ブレーキ", icon: "🛑", correct: true },
     { label: "ライト", icon: "💡", correct: true },
     { label: "タイヤ溝", icon: "🛞", correct: true },
+    { label: "マフラー", icon: "muffler", correct: true },
+    { label: "エンジン", icon: "engine", correct: true },
     { label: "洗車", icon: "🚿", correct: false },
-    { label: "景品交換", icon: "🎁", correct: false }
+    { label: "景品交換", icon: "🎁", correct: false },
+    { label: "ドリンク補充", icon: "🥤", correct: false },
+    { label: "店内清掃", icon: "🧹", correct: false }
   ];
   const reservationDates = [
     { label: "5/18 13:00", open: false },
     { label: "5/22 10:00", open: true }
   ];
   const [checkedItems, setCheckedItems] = useState([]);
-  const [note, setNote] = useState("点検スタンプを3つ集めて、予約日を確定しよう！");
+  const [note, setNote] = useState("点検スタンプを5つ集めて、予約日を確定しよう！");
 
   const checkItem = (item) => {
     if (checkedItems.includes(item.label)) return;
@@ -1478,7 +1523,7 @@ function InspectionGame({ onComplete, onFail }) {
 
   const chooseReservationDate = (date) => {
     if (checkedItems.length < correctItems.length) {
-      setNote("先に点検スタンプを3つ集めてね。");
+      setNote("先に点検スタンプを5つ集めてね。");
       return;
     }
     if (!date.open) {
@@ -1501,10 +1546,10 @@ function InspectionGame({ onComplete, onFail }) {
           <InspectionImage className="h-20 w-24" />
         </div>
         <p className="text-lg font-black text-blue-700">車検予約チャレンジ</p>
-        <p className="mt-2 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
-          点検スタンプを集めたら、1つの予約日を必ず確定しよう。
+        <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">
+          点検スタンプを集めたら、{"\n"}1つの予約日を必ず確定しよう。
         </p>
-        <div className="mt-3 grid grid-cols-3 gap-2">
+        <div className="mt-3 grid grid-cols-5 gap-2">
           {correctItems.map((item) => (
             <span
               key={item}
@@ -1519,7 +1564,7 @@ function InspectionGame({ onComplete, onFail }) {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
         {checkItems.map((item) => {
           const checked = checkedItems.includes(item.label);
           return (
@@ -1532,7 +1577,9 @@ function InspectionGame({ onComplete, onFail }) {
                   : "border-white bg-white text-blue-700 hover:border-blue-300"
               }`}
             >
-              <span className="block text-4xl">{checked ? "✅" : item.icon}</span>
+              <span className="flex h-12 items-center justify-center text-4xl">
+                {checked ? "✅" : <InspectionItemIcon icon={item.icon} />}
+              </span>
               <span className="mt-2 block text-sm font-black sm:text-base">{item.label}</span>
             </button>
           );
