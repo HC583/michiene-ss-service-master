@@ -5,9 +5,9 @@ import {
   Droplets,
   Fuel,
   Home,
+  MousePointerClick,
   ShieldCheck,
   Snowflake,
-  Sparkles,
   Star,
   Users,
   Wrench
@@ -16,7 +16,7 @@ import "./index.css";
 
 const customers = [
   {
-    speech: "札幌から函館まで行くから、満タンにしたい！",
+    speech: "札幌から函館まで行くから、\nガソリンを満タンにしたい！",
     correctService: "給油",
     icon: "🚗"
   },
@@ -148,16 +148,9 @@ const upgrades = [
 ];
 
 const basePoint = 100;
-const levelThresholds = [0, 200, 400, 600, 800];
 
 function randomCustomer() {
   return customers[Math.floor(Math.random() * customers.length)];
-}
-
-function getLevel(totalPoints) {
-  return levelThresholds.reduce((level, threshold, index) => {
-    return totalPoints >= threshold ? index + 1 : level;
-  }, 1);
 }
 
 function servicePointBonus(service, boughtUpgrades) {
@@ -179,12 +172,9 @@ function App() {
   const [message, setMessage] = useState("いらっしゃいませ！お客さまの話を聞いてサービスを選ぼう。");
   const [activeService, setActiveService] = useState(null);
   const [boughtUpgrades, setBoughtUpgrades] = useState([]);
-  const [levelMessage, setLevelMessage] = useState("");
   const [pointPop, setPointPop] = useState("");
   const [upgradePop, setUpgradePop] = useState(null);
   const [gameClear, setGameClear] = useState(false);
-
-  const level = getLevel(totalPoints);
 
   const startGame = () => {
     setScreen("game");
@@ -203,7 +193,6 @@ function App() {
     setMessage("いらっしゃいませ！お客さまの話を聞いてサービスを選ぼう。");
     setActiveService(null);
     setBoughtUpgrades([]);
-    setLevelMessage("");
     setPointPop("");
     setUpgradePop(null);
     setGameClear(false);
@@ -227,12 +216,9 @@ function App() {
       nextStreak % 5 === 0 ? 100 : nextStreak % 3 === 0 ? 50 : 0;
     const serviceBonus = servicePointBonus(activeService, boughtUpgrades);
     const earned = basePoint + serviceBonus + bonus;
-    const nextTotal = totalPoints + earned;
-    const oldLevel = getLevel(totalPoints);
-    const nextLevel = getLevel(nextTotal);
 
     setPoints((value) => value + earned);
-    setTotalPoints(nextTotal);
+    setTotalPoints((value) => value + earned);
     setStreak(nextStreak);
     setPhase("done");
     setPointPop(`+${earned}`);
@@ -244,12 +230,6 @@ function App() {
           : "")
     );
 
-    if (nextLevel > oldLevel) {
-      setLevelMessage(
-        `スタンドレベルが${nextLevel}にアップ！地域に頼られるスタンドになってきました！`
-      );
-      window.setTimeout(() => setLevelMessage(""), 2800);
-    }
     window.setTimeout(() => setPointPop(""), 1000);
   };
 
@@ -283,13 +263,17 @@ function App() {
   }
 
   return (
-    <div className="min-h-screen bg-sky-100 text-slate-800">
+    <div className="cute-orange-bg min-h-screen text-slate-800">
       <div className="relative min-h-screen">
         <SnowBackground />
         <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-4 sm:px-5 lg:grid lg:grid-cols-[1.2fr_.8fr] lg:gap-5">
           <section className="flex flex-col gap-4">
-            <TopBar points={points} totalPoints={totalPoints} level={level} streak={streak} />
-            <StationScene boughtUpgrades={boughtUpgrades} level={level} pointPop={pointPop} />
+            <TopBar points={points} totalPoints={totalPoints} streak={streak} />
+            <StationScene
+              boughtUpgrades={boughtUpgrades}
+              pointPop={pointPop}
+              activeUpgradeKey={upgradePop?.key}
+            />
             <CustomerPanel customer={customer} message={message} phase={phase} />
             {phase === "select" && <ServiceSelector onChoose={chooseService} />}
             {phase === "mini" && (
@@ -310,10 +294,8 @@ function App() {
               boughtUpgrades={boughtUpgrades}
               onBuy={buyUpgrade}
             />
-            <ProgressPanel totalPoints={totalPoints} level={level} />
           </aside>
         </main>
-        {levelMessage && <LevelUpToast message={levelMessage} />}
         {upgradePop && <UpgradePurchaseToast upgrade={upgradePop} />}
         {gameClear && <GoodJobClearOverlay />}
       </div>
@@ -323,11 +305,11 @@ function App() {
 
 function TitleScreen({ onStart }) {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-white px-4 py-8">
-      <div className="absolute inset-0 bg-gradient-to-b from-sky-200 via-white to-orange-100" />
-      <div className="absolute inset-x-0 bottom-0 h-48 bg-orange-100" />
+    <div className="cute-orange-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8">
+      <div className="absolute inset-0 bg-gradient-to-b from-orange-200/70 via-orange-50/70 to-amber-200/80" />
+      <div className="absolute inset-x-0 bottom-0 h-48 bg-orange-200/80" />
       <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8 text-center">
-        <div className="w-full rounded-[2rem] border-4 border-white bg-white/75 p-5 shadow-2xl backdrop-blur sm:p-8">
+        <div className="w-full rounded-[2rem] border-4 border-orange-100 bg-orange-50/85 p-5 shadow-2xl backdrop-blur sm:p-8">
           <div className="mx-auto mb-5 flex h-40 w-full max-w-4xl items-end justify-center rounded-3xl bg-sky-100 shadow-inner sm:h-56">
             <div className="relative h-full w-full overflow-hidden rounded-3xl bg-sky-100">
               <img
@@ -346,13 +328,14 @@ function TitleScreen({ onStart }) {
             <div className="flex h-24 w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-32 sm:w-24">
               <StaffImage className="h-[5.5rem] w-16 object-contain sm:h-28 sm:w-20" />
             </div>
-            <h1 className="text-left text-4xl font-black leading-tight text-blue-700 sm:text-6xl">
-              道エネ
-              <span className="block text-orange-500">スタンドマスター</span>
+            <h1 className="text-left text-2xl font-black leading-tight text-blue-700 sm:text-4xl lg:text-5xl">
+              道エネSS
+              <span className="block text-orange-500">サービスマスター</span>
             </h1>
           </div>
           <p className="mx-auto mt-5 max-w-2xl text-lg font-bold text-slate-700 sm:text-2xl">
-            北海道のくらしを支えるスタンドを育てよう！
+            <span className="block">北海道の暮らしを支える</span>
+            <span className="block">サービスステーションを育てよう！</span>
           </p>
           <button
             onClick={onStart}
@@ -369,9 +352,9 @@ function TitleScreen({ onStart }) {
 function SnowBackground() {
   return (
     <div className="pointer-events-none absolute inset-0 overflow-hidden">
-      <div className="absolute inset-x-0 bottom-0 h-28 bg-white" />
-      <div className="absolute bottom-24 left-[-10%] h-32 w-[65%] rounded-t-[100%] bg-white/90" />
-      <div className="absolute bottom-24 right-[-10%] h-40 w-[70%] rounded-t-[100%] bg-white/80" />
+      <div className="absolute inset-x-0 bottom-0 h-28 bg-orange-100" />
+      <div className="absolute bottom-24 left-[-10%] h-32 w-[65%] rounded-t-[100%] bg-orange-50/90" />
+      <div className="absolute bottom-24 right-[-10%] h-40 w-[70%] rounded-t-[100%] bg-amber-100/80" />
       <div className="absolute bottom-16 left-0 h-24 w-full bg-slate-600" />
       {[...Array(18)].map((_, index) => (
         <Snowflake
@@ -390,11 +373,10 @@ function SnowBackground() {
   );
 }
 
-function TopBar({ points, totalPoints, level, streak }) {
+function TopBar({ points, totalPoints, streak }) {
   return (
-    <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
       <StatCard label="ポイント" value={`${points} pt`} icon={<Star />} tone="orange" />
-      <StatCard label="スタンドレベル" value={`Lv.${level}`} icon={<Sparkles />} tone="blue" />
       <StatCard label="合計獲得" value={`${totalPoints} pt`} icon={<CheckCircle2 />} tone="green" />
       <StatCard label="連続正解" value={`${streak} 回`} icon={<Users />} tone="pink" />
     </div>
@@ -419,16 +401,16 @@ function StatCard({ label, value, icon, tone }) {
   );
 }
 
-function StationScene({ boughtUpgrades, level, pointPop }) {
+function StationScene({ boughtUpgrades, pointPop, activeUpgradeKey }) {
   const purchasedUpgrades = upgrades.filter((upgrade) => boughtUpgrades.includes(upgrade.key));
 
   return (
     <div className="relative min-h-[230px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[270px]">
       <img
-        src="/station-background-new.png?v=2"
+        src="/station-background-new.png?v=3"
         alt=""
         aria-hidden="true"
-        className="absolute inset-0 h-full w-full object-contain object-center"
+        className="absolute inset-0 h-full w-full object-cover object-center"
         draggable="false"
       />
       <div className="absolute inset-0 bg-white/5" />
@@ -438,19 +420,22 @@ function StationScene({ boughtUpgrades, level, pointPop }) {
         </div>
       )}
       <div className="absolute left-4 top-4 z-10 rounded-full bg-white/85 px-4 py-2 text-sm font-black text-blue-700 shadow">
-        道エネ SS Lv.{level}
+        道エネ SS
       </div>
-      <div className="absolute left-4 right-4 top-14 z-10">
-        <div className="mb-2 flex items-center gap-2">
-          <span className="rounded-full bg-blue-700/90 px-3 py-1 text-xs font-black text-white shadow">
-            購入済み設備 {purchasedUpgrades.length}/{upgrades.length}
+      <div className="absolute left-[43%] top-3 z-10 w-[52%] sm:left-[46%] sm:w-[48%]">
+        <div className="mb-2 flex items-center justify-start gap-2">
+          <span className="rounded-full bg-blue-700/90 px-3 py-1 text-[10px] font-black text-white shadow sm:text-xs">
+            設備 {purchasedUpgrades.length}/{upgrades.length}
           </span>
-          {purchasedUpgrades.length > 0 && <span className="text-2xl animate-pulse">✨</span>}
         </div>
-        <div className="flex min-h-20 flex-wrap items-center gap-3">
+        <div className="grid min-h-[7rem] grid-cols-3 justify-items-start gap-2">
           {purchasedUpgrades.length > 0 &&
             purchasedUpgrades.map((upgrade) => (
-              <SceneIcon key={upgrade.key} label={<UpgradeVisual upgrade={upgrade} size="scene" />} />
+              <SceneIcon
+                key={upgrade.key}
+                active={upgrade.key === activeUpgradeKey}
+                label={<UpgradeVisual upgrade={upgrade} size="scene" />}
+              />
             ))}
         </div>
       </div>
@@ -501,10 +486,15 @@ function CityWindows() {
   );
 }
 
-function SceneIcon({ label }) {
+function SceneIcon({ label, active = false }) {
   return (
-    <div className="relative flex h-20 w-20 animate-pop items-center justify-center rounded-3xl border-4 border-yellow-300 bg-gradient-to-br from-white via-yellow-50 to-orange-100 text-4xl shadow-2xl ring-4 ring-white/60">
-      <span className="absolute -right-1 -top-1 text-2xl animate-pulse">✨</span>
+    <div
+      className={`relative flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-yellow-300 bg-white/92 text-3xl shadow-xl ring-2 ring-white/70 sm:h-16 sm:w-16 ${
+        active ? "animate-upgrade-arrive" : "animate-pop"
+      }`}
+    >
+      {active && <span className="absolute -inset-3 rounded-full bg-yellow-300/35 animate-ping" aria-hidden="true" />}
+      {active && <span className="absolute -right-1 -top-2 text-xl animate-bounce">✨</span>}
       <span className="relative z-10 flex h-full w-full items-center justify-center">
         {label}
       </span>
@@ -514,32 +504,46 @@ function SceneIcon({ label }) {
 
 function CustomerPanel({ customer, message, phase }) {
   return (
-    <div className="rounded-3xl border-4 border-white bg-white/90 p-4 shadow-xl">
+    <div className="customer-card-bg relative overflow-hidden rounded-3xl border-4 border-orange-100 p-4 shadow-xl">
+      <span className="absolute -right-6 top-6 h-20 w-20 rounded-full bg-orange-200/45" aria-hidden="true" />
+      <span className="absolute bottom-4 right-12 h-6 w-6 rounded-full bg-sky-200/55" aria-hidden="true" />
+      <div key={customer.speech} className="relative z-10 mb-3 flex animate-welcome-pop items-center justify-center gap-2 sm:gap-3">
+        <div className="flex h-16 w-14 shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-white shadow-lg ring-4 ring-orange-200 sm:h-20 sm:w-16">
+          <StaffImage className="h-[3.75rem] w-11 object-contain sm:h-[5rem] sm:w-14" />
+        </div>
+        <div className="relative whitespace-nowrap rounded-[1.25rem] bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-3 py-3 text-base font-black text-white shadow-xl ring-4 ring-white sm:rounded-[1.5rem] sm:px-5 sm:text-3xl">
+          <span className="mr-1" aria-hidden="true">✨</span>
+          いらっしゃいませ！
+          <span className="ml-1" aria-hidden="true">✨</span>
+        </div>
+      </div>
+      <div className="customer-request-bg relative z-10 rounded-[1.5rem] p-4 shadow-inner ring-2 ring-orange-100">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-orange-100 text-4xl shadow-inner sm:mx-0">
+        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-md ring-4 ring-blue-100 sm:mx-0">
           {customer.visual === "insurance" && <InsuranceCustomerIcon className="h-16 w-16" />}
           {customer.visual === "staffBooking" && <InspectionCustomerIcon />}
           {!customer.visual && customer.icon}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="mb-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700">
+          <div className="mb-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700 shadow-sm ring-2 ring-white">
             お客さま
           </div>
-          <p className="text-lg font-black leading-relaxed text-slate-800 sm:text-xl">
+          <p className="whitespace-pre-line rounded-2xl bg-white px-3 py-3 text-center text-lg font-black leading-relaxed text-slate-800 shadow-sm ring-2 ring-blue-100 sm:text-xl">
             「{customer.speech}」
           </p>
           <p
-            className={`mt-2 rounded-2xl px-4 py-2 text-base font-bold ${
+            className={`mt-2 rounded-2xl px-4 py-2 text-base font-bold shadow-sm ring-2 ring-white ${
               phase === "mini"
                 ? "bg-emerald-100 text-emerald-700"
-                : phase === "done"
+              : phase === "done"
                   ? "bg-orange-100 text-orange-700"
-                  : "bg-sky-100 text-blue-700"
+                  : "bg-blue-50 text-blue-700"
             }`}
           >
             {message}
           </p>
         </div>
+      </div>
       </div>
     </div>
   );
@@ -549,8 +553,8 @@ function ServiceSelector({ onChoose }) {
   return (
     <div className="rounded-[2rem] border-4 border-orange-300 bg-orange-50 p-3 shadow-xl shadow-orange-100 sm:p-4">
       <div className="mb-3 flex items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-center shadow-sm">
-        <span className="text-3xl" aria-hidden="true">
-          👇
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 ring-2 ring-orange-200" aria-hidden="true">
+          <MousePointerClick size={30} strokeWidth={3} />
         </span>
         <div>
           <h2 className="text-2xl font-black leading-tight text-orange-600">
@@ -596,11 +600,14 @@ function ServiceVisualIcon({ visual }) {
 
 function ImageIcon({ src, className, fallback }) {
   const [failed, setFailed] = useState(false);
+  const [loaded, setLoaded] = useState(false);
+  const showFallback = failed || !loaded;
+
   return (
     <span className={`relative flex shrink-0 items-center justify-center ${className}`}>
       <span
         className={`absolute inset-0 z-0 flex items-center justify-center rounded-2xl bg-white text-4xl font-black text-blue-700 ${
-          failed ? "opacity-100" : "opacity-20"
+          showFallback ? "opacity-100" : "opacity-0"
         }`}
         aria-hidden="true"
       >
@@ -611,8 +618,9 @@ function ImageIcon({ src, className, fallback }) {
           src={src}
           alt=""
           aria-hidden="true"
-          className="relative z-10 h-full w-full object-contain"
+          className={`relative z-10 h-full w-full object-contain ${loaded ? "opacity-100" : "opacity-0"}`}
           draggable="false"
+          onLoad={() => setLoaded(true)}
           onError={() => setFailed(true)}
         />
       )}
@@ -806,16 +814,16 @@ function InsuranceImage({ className = "h-16 w-16", fallback = "🛡️" }) {
 function UpgradeVisual({ upgrade, size = "panel" }) {
   const classes = {
     panel: {
-      wrap: "h-16 w-16 rounded-2xl",
+      wrap: "h-16 w-16 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner",
       image: "h-12 w-12",
-      wide: "h-14 w-20",
+      wide: "h-11 w-14",
       staff: "h-16 w-14"
     },
     scene: {
-      wrap: "h-16 w-16 rounded-2xl",
-      image: "h-14 w-14",
-      wide: "h-16 w-24",
-      staff: "h-20 w-14"
+      wrap: "h-12 w-12 rounded-xl sm:h-14 sm:w-14",
+      image: "h-10 w-10 sm:h-12 sm:w-12",
+      wide: "h-10 w-14 sm:h-12 sm:w-16",
+      staff: "h-12 w-10 sm:h-14 sm:w-12"
     },
     sceneWide: {
       wrap: "h-16 w-28 rounded-2xl",
@@ -837,12 +845,18 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
     }
   }[size];
   const isSky = size === "sky";
+  const isPanel = size === "panel";
 
   return (
-    <span className={`relative flex shrink-0 items-center justify-center overflow-visible ${isSky ? "" : "bg-white shadow-inner"} ${classes.wrap}`}>
-      {!isSky && <span className="absolute inset-0 bg-gradient-to-br from-yellow-100 via-white to-sky-100" />}
+    <span className={`relative flex shrink-0 items-center justify-center ${isPanel ? "overflow-hidden" : "overflow-visible"} ${!isSky && !isPanel ? "bg-white shadow-inner" : ""} ${classes.wrap}`}>
+      {!isSky && (
+        <span
+          className={`absolute inset-0 ${
+            isPanel ? "bg-yellow-50" : "bg-gradient-to-br from-yellow-100 via-white to-sky-100"
+          }`}
+        />
+      )}
       {isSky && <span className="absolute inset-0 rounded-full bg-gradient-to-br from-white/90 via-yellow-100/70 to-sky-100/70 shadow-inner" />}
-      {!isSky && <span className="absolute -left-6 top-2 h-6 w-24 rotate-[-25deg] bg-white/70" />}
       <span className="relative z-10 flex items-center justify-center text-5xl">
         {upgrade.visual === "carWash" ? (
           <CarWashImage className={classes.image} />
@@ -1620,55 +1634,33 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
   );
 }
 
-function ProgressPanel({ totalPoints, level }) {
-  const nextThreshold = levelThresholds[level] ?? levelThresholds[levelThresholds.length - 1];
-  const currentThreshold = levelThresholds[level - 1] ?? 0;
-  const progress =
-    level >= 5
-      ? 100
-      : ((totalPoints - currentThreshold) / (nextThreshold - currentThreshold)) * 100;
-  return (
-    <div className="rounded-3xl border-4 border-white bg-blue-700 p-4 text-white shadow-xl">
-      <h2 className="mb-3 text-xl font-black">レベルアップ進行</h2>
-      <div className="h-5 overflow-hidden rounded-full bg-white/25">
-        <div className="h-full bg-orange-400 transition-all" style={{ width: `${Math.max(0, Math.min(progress, 100))}%` }} />
-      </div>
-      <p className="mt-3 font-bold">
-        {level >= 5 ? "最高レベル！すごいスタンドです。" : `次のレベルまで ${Math.max(nextThreshold - totalPoints, 0)} pt`}
-      </p>
-    </div>
-  );
-}
-
-function LevelUpToast({ message }) {
-  return (
-    <div className="fixed inset-x-3 top-6 z-50 mx-auto max-w-xl animate-pop rounded-3xl border-4 border-yellow-300 bg-white p-5 text-center shadow-2xl">
-      <div className="mb-2 flex justify-center gap-2 text-3xl text-yellow-400">
-        <Sparkles className="animate-sparkle" />
-        <Sparkles className="animate-sparkle [animation-delay:.2s]" />
-        <Sparkles className="animate-sparkle [animation-delay:.4s]" />
-      </div>
-      <p className="text-xl font-black text-blue-700">{message}</p>
-    </div>
-  );
-}
-
 function UpgradePurchaseToast({ upgrade }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-blue-950/45 p-5">
-      <div className="relative w-full max-w-md animate-pop overflow-hidden rounded-[2rem] border-4 border-yellow-300 bg-white p-6 text-center shadow-2xl">
-        <div className="absolute left-5 top-5 text-4xl animate-bounce">✨</div>
-        <div className="absolute right-6 top-7 text-4xl animate-pulse">⭐</div>
-        <div className="absolute bottom-7 left-7 text-4xl animate-bounce">🎉</div>
-        <div className="absolute bottom-8 right-8 text-4xl animate-pulse">✨</div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-blue-950/45 p-5">
+      {[...Array(18)].map((_, index) => (
+        <span
+          key={index}
+          className="absolute animate-upgrade-confetti text-3xl"
+          style={{
+            left: `${(index * 29) % 100}%`,
+            top: `${8 + (index * 17) % 76}%`,
+            animationDelay: `${index * 0.06}s`
+          }}
+        >
+          {index % 3 === 0 ? "✨" : index % 3 === 1 ? "⭐" : "🎉"}
+        </span>
+      ))}
+      <div className="relative w-full max-w-md animate-upgrade-burst overflow-hidden rounded-[2rem] border-4 border-yellow-300 bg-white p-6 text-center shadow-2xl">
+        <div className="absolute -left-10 -top-10 h-28 w-28 rounded-full bg-yellow-300/45 blur-xl" />
+        <div className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-orange-300/45 blur-xl" />
         <div className="mx-auto mb-4 flex justify-center">
-          <div className="rounded-[2rem] bg-gradient-to-br from-yellow-300 via-orange-300 to-sky-300 p-2 shadow-xl">
+          <div className="animate-upgrade-arrive rounded-[2rem] bg-gradient-to-br from-yellow-300 via-orange-300 to-sky-300 p-2 shadow-xl ring-8 ring-yellow-200/70">
             <UpgradeVisual upgrade={upgrade} size="pop" />
           </div>
         </div>
-        <p className="text-sm font-black tracking-[.18em] text-orange-500">STAND UPGRADE</p>
-        <p className="mt-1 text-3xl font-black text-blue-700">設備パワーアップ！</p>
-        <p className="mt-3 rounded-2xl bg-yellow-100 px-4 py-3 text-lg font-black text-orange-700">
+        <p className="relative text-sm font-black tracking-[.18em] text-orange-500">STAND UPGRADE</p>
+        <p className="relative mt-1 text-3xl font-black text-blue-700">設備パワーアップ！</p>
+        <p className="relative mt-3 rounded-2xl bg-yellow-100 px-4 py-3 text-lg font-black text-orange-700">
           {upgrade.name}
         </p>
       </div>

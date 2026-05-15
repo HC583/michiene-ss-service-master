@@ -1,0 +1,14 @@
+道エネSSサービスマスター 起動アドレス
+
+保存場所:
+/Users/takahata/Documents/New project
+
+起動アドレス:
+http://127.0.0.1:5173/
+
+起動方法:
+1. /Users/takahata/Documents/New project/start.command をダブルクリック
+2. ブラウザで http://127.0.0.1:5173/ を開く
+
+次回編集するときは Codex に以下を伝えてください。
+/Users/takahata/Documents/New project の道エネSSサービスマスターを開いて編集して
