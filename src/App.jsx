@@ -407,10 +407,9 @@ function TitleScreen({ onStart }) {
             <span className="block">サービスステーションを育てよう！</span>
           </p>
           <div className="mx-auto mt-6 max-w-3xl overflow-hidden rounded-[1.5rem] border-4 border-yellow-300 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-4 py-4 text-white shadow-xl shadow-orange-200 ring-4 ring-white">
-            <p className="flex animate-pulse items-center justify-center gap-3 text-2xl font-black leading-tight sm:gap-5 sm:text-4xl lg:text-5xl">
-              <span className="shrink-0 text-6xl leading-none sm:text-8xl" aria-hidden="true">🏅</span>
-              <span className="text-left">
-                <span aria-hidden="true">✨ </span>
+            <p className="flex animate-pulse items-center justify-center gap-1 text-xl font-black leading-tight sm:gap-2 sm:text-4xl lg:text-5xl">
+              <span className="shrink-0 text-5xl leading-none sm:text-8xl" aria-hidden="true">🏅</span>
+              <span className="whitespace-nowrap text-left">
                 スタンドを成長させよう！！
               </span>
             </p>
