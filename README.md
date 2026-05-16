@@ -60,6 +60,18 @@ Macでは `start-mobile-preview.command`、Windowsでは `start-mobile-preview-w
 http://127.0.0.1:5173/mobile-app.html
 ```
 
+## VercelでHTTPS公開する方法
+
+Vercelに公開すると、Android、iPhone、Windows、MacからHTTPSのURLで開けます。
+
+合言葉:
+
+```text
+583
+```
+
+公開後は、VercelのURLをスマホで開いて「ホーム画面に追加」するとアプリのように使えます。
+
 ## スマホアプリ風に使う方法
 
 このプロジェクトはPWA対応済みです。スマホでURLを開いて、ブラウザのメニューから「ホーム画面に追加」を選ぶと、アプリのように起動できます。
