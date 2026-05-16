@@ -1589,7 +1589,9 @@ function InspectionGame({ onComplete, onFail }) {
   ];
   const reservationDates = [
     { label: "5/18 13:00", open: false },
-    { label: "5/22 10:00", open: true }
+    { label: "5/20 15:00", open: false },
+    { label: "5/22 10:00", open: true },
+    { label: "5/24 14:00", open: false }
   ];
   const [checkedItems, setCheckedItems] = useState([]);
   const [note, setNote] = useState("点検スタンプを5つ集めて、予約日を確定しよう！");
@@ -1676,19 +1678,31 @@ function InspectionGame({ onComplete, onFail }) {
       </div>
       <div className="rounded-3xl border-4 border-blue-200 bg-white p-4 text-center shadow-lg">
         <p className="text-sm font-black tracking-[.14em] text-blue-500">RESERVATION DATE</p>
-        <div className="mt-3 grid grid-cols-2 gap-3">
+        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {reservationDates.map((date) => (
             <button
               key={date.label}
               onClick={() => chooseReservationDate(date)}
-              className={`rounded-2xl border-4 px-3 py-4 text-lg font-black shadow transition active:scale-[.97] ${
-                checkedItems.length === correctItems.length
-                  ? "border-blue-200 bg-blue-50 text-blue-700 hover:border-orange-300 hover:bg-orange-50"
-                  : "border-slate-200 bg-slate-100 text-slate-400"
+              className={`relative rounded-2xl border-4 px-3 py-4 text-lg font-black shadow transition active:scale-[.97] ${
+                checkedItems.length === correctItems.length && date.open
+                  ? "animate-pulse border-yellow-300 bg-yellow-100 text-orange-700 ring-4 ring-yellow-300 hover:border-orange-400 hover:bg-orange-100"
+                  : checkedItems.length === correctItems.length
+                    ? "border-slate-200 bg-slate-100 text-slate-400"
+                    : "border-slate-200 bg-slate-100 text-slate-400"
               }`}
             >
+              {checkedItems.length === correctItems.length && date.open && (
+                <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-2 py-1 text-[10px] font-black text-white shadow">
+                  空きあり
+                </span>
+              )}
               <span className="mb-1 block text-3xl">📅</span>
               {date.label}
+              {checkedItems.length === correctItems.length && !date.open && (
+                <span className="mt-1 block text-xs font-black text-slate-500">
+                  予約済み
+                </span>
+              )}
             </button>
           ))}
         </div>
