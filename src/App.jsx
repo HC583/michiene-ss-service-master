@@ -14,6 +14,8 @@ import {
 } from "lucide-react";
 import "./index.css";
 
+const assetPath = (path) => `${import.meta.env.BASE_URL}${path.replace(/^\/+/, "")}`;
+
 const customers = [
   {
     speech: "札幌から函館まで行くから、\nガソリンを満タンにしたい！",
@@ -148,6 +150,7 @@ const upgrades = [
 ];
 
 const basePoint = 100;
+const accessCode = "583";
 
 function randomCustomer() {
   return customers[Math.floor(Math.random() * customers.length)];
@@ -164,6 +167,7 @@ function servicePointBonus(service, boughtUpgrades) {
 
 function App() {
   const [screen, setScreen] = useState("title");
+  const [isUnlocked, setIsUnlocked] = useState(() => localStorage.getItem("michieneAccess") === "ok");
   const [points, setPoints] = useState(0);
   const [totalPoints, setTotalPoints] = useState(0);
   const [streak, setStreak] = useState(0);
@@ -175,6 +179,11 @@ function App() {
   const [pointPop, setPointPop] = useState("");
   const [upgradePop, setUpgradePop] = useState(null);
   const [gameClear, setGameClear] = useState(false);
+
+  const unlockApp = () => {
+    localStorage.setItem("michieneAccess", "ok");
+    setIsUnlocked(true);
+  };
 
   const startGame = () => {
     setScreen("game");
@@ -258,6 +267,10 @@ function App() {
     }
   };
 
+  if (!isUnlocked) {
+    return <AccessGate onUnlock={unlockApp} />;
+  }
+
   if (screen === "title") {
     return <TitleScreen onStart={startGame} />;
   }
@@ -303,6 +316,62 @@ function App() {
   );
 }
 
+function AccessGate({ onUnlock }) {
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+
+  const submitCode = (event) => {
+    event.preventDefault();
+    if (code.trim().normalize("NFKC") === accessCode) {
+      setError("");
+      onUnlock();
+      return;
+    }
+    setError("合言葉が違います。");
+  };
+
+  return (
+    <div className="cute-orange-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8 text-slate-800">
+      <div className="absolute inset-0 bg-gradient-to-b from-sky-100 via-orange-50 to-orange-200" />
+      <div className="relative z-10 w-full max-w-md rounded-[2rem] border-4 border-white bg-white/90 p-6 text-center shadow-2xl">
+        <div className="mx-auto mb-4 flex h-24 w-24 items-end justify-center overflow-hidden rounded-3xl bg-orange-100 ring-4 ring-orange-200">
+          <StaffImage className="h-24 w-20 object-contain" />
+        </div>
+        <p className="text-sm font-black tracking-[.12em] text-orange-500">
+          PRIVATE GAME
+        </p>
+        <h1 className="mt-2 text-3xl font-black text-blue-700">
+          道エネSS
+        </h1>
+        <p className="mt-3 text-base font-bold leading-relaxed text-slate-700">
+          合言葉を知っている人だけ遊べます。
+        </p>
+        <form onSubmit={submitCode} className="mt-5 flex flex-col gap-3">
+          <input
+            value={code}
+            onChange={(event) => setCode(event.target.value)}
+            inputMode="numeric"
+            aria-label="合言葉"
+            className="rounded-2xl border-4 border-orange-200 bg-orange-50 px-4 py-4 text-center text-3xl font-black text-blue-700 outline-none transition focus:border-orange-400"
+            placeholder="合言葉"
+          />
+          {error && (
+            <p className="rounded-2xl bg-rose-100 px-4 py-2 text-base font-black text-rose-700">
+              {error}
+            </p>
+          )}
+          <button
+            type="submit"
+            className="rounded-full bg-orange-500 px-8 py-4 text-xl font-black text-white shadow-xl shadow-orange-200 transition hover:bg-orange-600 active:scale-95"
+          >
+            ゲームを開く
+          </button>
+        </form>
+      </div>
+    </div>
+  );
+}
+
 function TitleScreen({ onStart }) {
   return (
     <div className="cute-orange-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8">
@@ -313,7 +382,7 @@ function TitleScreen({ onStart }) {
           <div className="mx-auto mb-5 flex h-40 w-full max-w-4xl items-end justify-center rounded-3xl bg-sky-100 shadow-inner sm:h-56">
             <div className="relative h-full w-full overflow-hidden rounded-3xl bg-sky-100">
               <img
-                src="/station-background-new.png?v=2"
+                src={assetPath("/station-background-new.png?v=2")}
                 alt=""
                 aria-hidden="true"
                 className="h-full w-full object-contain object-center"
@@ -337,6 +406,13 @@ function TitleScreen({ onStart }) {
             <span className="block">北海道の暮らしを支える</span>
             <span className="block">サービスステーションを育てよう！</span>
           </p>
+          <div className="mx-auto mt-6 max-w-3xl overflow-hidden rounded-[1.5rem] border-4 border-yellow-300 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-4 py-4 text-white shadow-xl shadow-orange-200 ring-4 ring-white">
+            <p className="animate-pulse text-2xl font-black leading-tight sm:text-4xl lg:text-5xl">
+              <span className="mr-2 inline-block align-middle text-7xl sm:text-9xl" aria-hidden="true">🏅</span>
+              <span aria-hidden="true">✨ </span>
+              スタンドを成長させて伝説のSSへ
+            </p>
+          </div>
           <button
             onClick={onStart}
             className="mt-8 rounded-full bg-orange-500 px-10 py-5 text-xl font-black text-white shadow-xl shadow-orange-200 transition hover:bg-orange-600 active:scale-95 sm:text-2xl"
@@ -407,7 +483,7 @@ function StationScene({ boughtUpgrades, pointPop, activeUpgradeKey }) {
   return (
     <div className="relative min-h-[230px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[270px]">
       <img
-        src="/station-background-new.png?v=3"
+        src={assetPath("/station-background-new.png?v=3")}
         alt=""
         aria-hidden="true"
         className="absolute inset-0 h-full w-full object-cover object-center"
@@ -615,7 +691,7 @@ function ImageIcon({ src, className, fallback }) {
       </span>
       {!failed && (
         <img
-          src={src}
+          src={assetPath(src)}
           alt=""
           aria-hidden="true"
           className={`relative z-10 h-full w-full object-contain ${loaded ? "opacity-100" : "opacity-0"}`}
@@ -640,9 +716,15 @@ function CarWashImage({ className = "h-16 w-16", fallback = "洗" }) {
   );
 }
 
-function TankerLorryImage({ className = "h-16 w-16", fallback = "🚚" }) {
+function TankerLorryImage({ className = "h-16 w-16" }) {
   return (
-    <ImageIcon src="/tanker-lorry.png" className={className} fallback={fallback} />
+    <img
+      src={assetPath("/tanker-lorry.png?v=original-tanker")}
+      alt=""
+      aria-hidden="true"
+      className={`${className} object-contain`}
+      draggable="false"
+    />
   );
 }
 
@@ -878,7 +960,13 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
 
 function StaffImage({ className = "h-16 w-16" }) {
   return (
-    <ImageIcon src="/staff.png" className={className} fallback="👨‍🔧" />
+    <img
+      src={assetPath("/staff.png?v=original-staff")}
+      alt=""
+      aria-hidden="true"
+      className={className}
+      draggable="false"
+    />
   );
 }
 
@@ -1235,7 +1323,7 @@ function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
   return (
     <div className="relative mx-auto h-96 max-w-sm overflow-hidden rounded-[2rem] bg-white/55 shadow-inner">
       <img
-        src="/car-top-view.png"
+        src={assetPath("/car-top-view.png")}
         alt=""
         aria-hidden="true"
         className="absolute left-1/2 top-1/2 h-[22rem] -translate-x-1/2 -translate-y-1/2 object-contain"
@@ -1620,16 +1708,16 @@ function InspectionGame({ onComplete, onFail }) {
 function InsuranceGame({ onComplete, onFail }) {
   const correctCards = ["事故の補償", "車のトラブル", "ロードサービス"];
   const cards = [
-    { label: "事故の補償", icon: "🚗", correct: true },
-    { label: "車のトラブル", icon: "⚠️", correct: true },
-    { label: "ロードサービス", icon: "🔧", correct: true },
-    { label: "洗車チケット", icon: "🚿", correct: false },
-    { label: "カフェ割引", icon: "☕", correct: false },
-    { label: "タイヤ交換", icon: "🛞", correct: false },
-    { label: "オイル交換", icon: "🛢️", correct: false },
-    { label: "ガソリン割引", icon: "⛽", correct: false },
-    { label: "車検予約", icon: "📅", correct: false },
-    { label: "店内清掃", icon: "🧹", correct: false }
+    { label: "事故の補償", type: "crash", correct: true },
+    { label: "車のトラブル", type: "trouble", correct: true },
+    { label: "ロードサービス", type: "road", correct: true },
+    { label: "洗車チケット", type: "wash", correct: false },
+    { label: "カフェ割引", type: "cafe", correct: false },
+    { label: "タイヤ交換", type: "tire", correct: false },
+    { label: "オイル交換", type: "oil", correct: false },
+    { label: "ガソリン割引", type: "fuel", correct: false },
+    { label: "車検予約", type: "inspection", correct: false },
+    { label: "店内清掃", type: "clean", correct: false }
   ];
   const [selected, setSelected] = useState([]);
   const [mistakes, setMistakes] = useState(0);
@@ -1678,7 +1766,14 @@ function InsuranceGame({ onComplete, onFail }) {
                   : "border-white bg-white text-slate-800 hover:border-rose-300 hover:bg-rose-50"
               }`}
             >
-              <span className="block text-4xl">{picked ? "✅" : card.icon}</span>
+              <span className="relative mx-auto flex h-14 w-14 items-center justify-center">
+                <InsuranceMiniCardIcon type={card.type} />
+                {picked && (
+                  <span className="absolute -right-2 -top-2 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-black text-white shadow">
+                    OK
+                  </span>
+                )}
+              </span>
               <span className="mt-2 block text-base font-black">{card.label}</span>
             </button>
           );
@@ -1688,6 +1783,49 @@ function InsuranceGame({ onComplete, onFail }) {
         {note}
       </p>
     </div>
+  );
+}
+
+function InsuranceMiniCardIcon({ type }) {
+  const details = {
+    crash: { mark: "!", color: "#ef4444", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    trouble: { mark: "?", color: "#f97316", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    road: { mark: "+", color: "#2563eb", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    wash: { mark: "W", color: "#38bdf8", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    cafe: { mark: "C", color: "#a16207", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    tire: { mark: "T", color: "#475569", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    oil: { mark: "O", color: "#334155", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    fuel: { mark: "F", color: "#f59e0b", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    inspection: { mark: "R", color: "#4f46e5", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" },
+    clean: { mark: "S", color: "#64748b", path: "M18 39h28l-5-13c-1-3-4-5-7-5h-4c-3 0-6 2-7 5l-5 13Z" }
+  }[type];
+
+  return (
+    <svg viewBox="0 0 64 64" className="h-14 w-14 drop-shadow-sm" aria-hidden="true">
+      <rect x="6" y="8" width="52" height="48" rx="14" fill="#ffffff" stroke="#fecdd3" strokeWidth="4" />
+      <path d={details.path} fill="#dbeafe" stroke="#334155" strokeWidth="3" strokeLinejoin="round" />
+      <rect x="23" y="25" width="18" height="9" rx="2" fill="#ffffff" opacity=".95" />
+      <circle cx="23" cy="43" r="4" fill="#334155" />
+      <circle cx="41" cy="43" r="4" fill="#334155" />
+      <path
+        d="M45 17 54 21v7c0 6-4 10-9 12-5-2-9-6-9-12v-7l9-4Z"
+        fill={details.color}
+        stroke="#334155"
+        strokeWidth="2.5"
+        strokeLinejoin="round"
+      />
+      <text
+        x="45"
+        y="31"
+        textAnchor="middle"
+        fontFamily="Arial, sans-serif"
+        fontSize="14"
+        fontWeight="900"
+        fill="#ffffff"
+      >
+        {details.mark}
+      </text>
+    </svg>
   );
 }
 

@@ -6,9 +6,37 @@
 起動アドレス:
 http://127.0.0.1:5173/
 
+同じWi-Fiの人に渡すアドレス:
+http://192.168.1.7:5173/
+
 起動方法:
 1. /Users/takahata/Documents/New project/start.command をダブルクリック
 2. ブラウザで http://127.0.0.1:5173/ を開く
+
+アプリ風に起動する方法:
+/Users/takahata/Documents/New project/道エネSSサービスマスター.app をダブルクリック
+
+Windowsで起動する方法:
+このフォルダの start-windows.bat をダブルクリック
+
+スマホアプリ風に使う方法:
+スマホでURLを開いて、ホーム画面に追加
+iPhone: Safari の共有ボタン → ホーム画面に追加
+Android: Chrome のメニュー → アプリをインストール / ホーム画面に追加
+
+合言葉:
+583
+
+もっと簡単にスマホで開く:
+/Users/takahata/Documents/New project/スマホで開くURL.txt のURLをコピーして、LINE・メール・AirDropで自分のスマホへ送る
+
+注意:
+スマホで本物のアプリのように入れるには、基本的にHTTPSのURLが必要です。
+同じWi-FiのURLでは表示確認はできます。
+
+同じWi-Fiの人に見せる時:
+1. /Users/takahata/Documents/New project/start-lan.command をダブルクリック
+2. 相手に http://192.168.1.7:5173/ を開いてもらう
 
 次回編集するときは Codex に以下を伝えてください。
 /Users/takahata/Documents/New project の道エネSSサービスマスターを開いて編集して
