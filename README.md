@@ -44,6 +44,22 @@ npm run dev -- --host 127.0.0.1
 
 Windowsでは、このフォルダの `start-windows.bat` をダブルクリックすると、ゲームを起動してブラウザで開きます。
 
+## パソコン用16:9で起動する方法
+
+Macでは `start-pc-16-9.command`、Windowsでは `start-pc-16-9-windows.bat` をダブルクリックします。
+
+```text
+http://127.0.0.1:5173/pc-16-9.html
+```
+
+## 携帯用サイズで確認する方法
+
+Macでは `start-mobile-preview.command`、Windowsでは `start-mobile-preview-windows.bat` をダブルクリックします。
+
+```text
+http://127.0.0.1:5173/mobile-app.html
+```
+
 ## スマホアプリ風に使う方法
 
 このプロジェクトはPWA対応済みです。スマホでURLを開いて、ブラウザのメニューから「ホーム画面に追加」を選ぶと、アプリのように起動できます。

@@ -19,6 +19,16 @@ http://192.168.1.7:5173/
 Windowsで起動する方法:
 このフォルダの start-windows.bat をダブルクリック
 
+パソコン用16:9で起動する方法:
+Mac: /Users/takahata/Documents/New project/start-pc-16-9.command をダブルクリック
+Windows: start-pc-16-9-windows.bat をダブルクリック
+アドレス: http://127.0.0.1:5173/pc-16-9.html
+
+携帯用サイズで確認する方法:
+Mac: /Users/takahata/Documents/New project/start-mobile-preview.command をダブルクリック
+Windows: start-mobile-preview-windows.bat をダブルクリック
+アドレス: http://127.0.0.1:5173/mobile-app.html
+
 スマホアプリ風に使う方法:
 スマホでURLを開いて、ホーム画面に追加
 iPhone: Safari の共有ボタン → ホーム画面に追加
