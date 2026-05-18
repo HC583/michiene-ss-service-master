@@ -1212,9 +1212,8 @@ function WashGame({ onComplete }) {
             <span className="absolute left-3 top-3 h-5 w-5 rounded-full bg-stone-950/45" />
             <span className="absolute bottom-4 right-4 h-6 w-6 rounded-full bg-stone-950/45" />
             <span className="absolute right-7 top-5 h-3 w-4 rounded-full bg-yellow-900/60" />
-            <span className="absolute -left-2 top-7 h-5 w-5 rounded-full bg-amber-800" />
-            <span className="absolute -right-2 bottom-5 h-4 w-4 rounded-full bg-stone-800" />
-            <span className="absolute bottom-5 left-7 h-4 w-7 rounded-full bg-amber-950/55" />
+            <span className="absolute left-5 top-11 h-4 w-8 rounded-full bg-amber-950/55" />
+            <span className="absolute bottom-6 left-8 h-3 w-6 rounded-full bg-stone-950/45" />
           </span>
         ))}
 
