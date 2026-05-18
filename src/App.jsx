@@ -1202,7 +1202,7 @@ function WashGame({ onComplete }) {
         {[...Array(dirtLeft)].map((_, index) => (
           <span
             key={`dirt-${index}`}
-            className="absolute flex h-20 w-24 rotate-[-8deg] items-center justify-center rounded-[48%] bg-gradient-to-br from-amber-700 via-amber-900 to-stone-800 shadow-xl ring-4 ring-amber-200"
+            className="absolute flex h-24 w-24 rotate-[-8deg] items-center justify-center rounded-full bg-gradient-to-br from-amber-700 via-amber-900 to-stone-800 shadow-xl ring-4 ring-amber-200"
             style={{
               left: `${20 + (index * 13) % 58}%`,
               bottom: `${90 + (index % 2) * 48}px`
@@ -1214,7 +1214,7 @@ function WashGame({ onComplete }) {
             <span className="absolute right-7 top-5 h-3 w-4 rounded-full bg-yellow-900/60" />
             <span className="absolute -left-2 top-7 h-5 w-5 rounded-full bg-amber-800" />
             <span className="absolute -right-2 bottom-5 h-4 w-4 rounded-full bg-stone-800" />
-            <span className="absolute bottom-3 left-7 h-3 w-8 rounded-full bg-amber-950/55" />
+            <span className="absolute bottom-5 left-7 h-4 w-7 rounded-full bg-amber-950/55" />
           </span>
         ))}
 
@@ -2060,11 +2060,11 @@ function UpgradePurchaseToast({ upgrade }) {
 
 function GoodJobClearOverlay() {
   return (
-    <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-hidden bg-gradient-to-br from-yellow-300 via-orange-100 to-sky-200 p-5">
-      {[...Array(28)].map((_, index) => (
+    <div className="fixed inset-0 z-[70] flex items-center justify-center overflow-hidden bg-gradient-to-br from-yellow-300 via-orange-100 to-sky-300 p-4">
+      {[...Array(52)].map((_, index) => (
         <span
           key={index}
-          className="absolute animate-upgrade-confetti text-4xl"
+          className="absolute animate-upgrade-confetti text-6xl"
           style={{
             left: `${(index * 23) % 98}%`,
             top: `${4 + (index * 31) % 82}%`,
@@ -2075,24 +2075,28 @@ function GoodJobClearOverlay() {
           {index % 4 === 0 ? "✨" : index % 4 === 1 ? "🎉" : index % 4 === 2 ? "⭐" : "🏆"}
         </span>
       ))}
-      <div className="absolute inset-0 bg-white/35" />
-      <div className="relative w-full max-w-lg animate-upgrade-burst overflow-hidden rounded-[2rem] border-4 border-yellow-400 bg-white/95 p-6 text-center shadow-2xl">
-        <div className="absolute -left-16 -top-16 h-40 w-40 rounded-full bg-yellow-300/55 blur-2xl" />
-        <div className="absolute -bottom-14 -right-14 h-44 w-44 rounded-full bg-orange-300/55 blur-2xl" />
-        <div className="relative mx-auto mb-4 flex h-36 w-36 animate-upgrade-arrive items-center justify-center rounded-full bg-gradient-to-br from-yellow-200 via-yellow-400 to-orange-500 text-7xl shadow-2xl ring-8 ring-yellow-100">
+      <div className="absolute inset-0 bg-white/25" />
+      <div className="absolute left-8 top-8 text-8xl animate-bounce">✨</div>
+      <div className="absolute right-10 top-10 text-8xl animate-pulse">🏆</div>
+      <div className="absolute bottom-8 left-10 text-8xl animate-bounce">🎉</div>
+      <div className="relative flex min-h-[86vh] w-full max-w-6xl animate-upgrade-burst flex-col items-center justify-center overflow-hidden rounded-[3.5rem] border-8 border-yellow-400 bg-white/96 p-8 text-center shadow-2xl xl:p-12">
+        <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-yellow-300/60 blur-3xl" />
+        <div className="absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-orange-300/60 blur-3xl" />
+        <div className="relative mx-auto mb-8 flex h-72 w-72 animate-upgrade-arrive items-center justify-center rounded-full bg-gradient-to-br from-yellow-200 via-yellow-400 to-orange-500 text-[11rem] shadow-2xl ring-[18px] ring-yellow-100 xl:h-80 xl:w-80 xl:text-[13rem]">
           🥇
-          <span className="absolute -right-2 -top-2 animate-bounce text-4xl">✨</span>
+          <span className="absolute -right-2 -top-2 animate-bounce text-7xl">✨</span>
+          <span className="absolute -bottom-4 -left-4 animate-pulse text-7xl">⭐</span>
         </div>
-        <p className="relative text-sm font-black tracking-[.2em] text-orange-500">
+        <p className="relative text-3xl font-black tracking-[.2em] text-orange-500 xl:text-4xl">
           STAND COMPLETE
         </p>
-        <p className="relative text-5xl font-black leading-tight text-blue-700 sm:text-6xl">
+        <p className="relative mt-3 text-7xl font-black leading-tight text-blue-700 xl:text-9xl">
           金メダル獲得！
         </p>
-        <p className="relative mt-4 rounded-2xl bg-yellow-100 px-4 py-3 text-xl font-black text-orange-700">
+        <p className="relative mt-7 rounded-[2rem] bg-yellow-100 px-8 py-6 text-4xl font-black text-orange-700 shadow-inner xl:text-6xl">
           スタンド成長コンプリート！
         </p>
-        <p className="relative mt-3 text-base font-bold text-slate-600">
+        <p className="relative mt-6 text-2xl font-bold text-slate-600 xl:text-3xl">
           5秒後にスタート画面へ戻ります
         </p>
       </div>
