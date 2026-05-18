@@ -650,7 +650,11 @@ function ServiceSelector({ onChoose }) {
             aria-label={`${name}、${hint}`}
             className={`group relative flex min-h-36 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97] sm:min-h-40 xl:min-h-44`}
           >
-            <span className={`flex items-center justify-center rounded-3xl bg-white p-2 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${visual === "tankerTruck" ? "h-24 w-32 sm:h-28 sm:w-36" : "h-24 w-24 sm:h-28 sm:w-28"}`}>
+            <span
+              className={`flex items-center justify-center overflow-hidden rounded-3xl bg-white p-2 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${
+                visual === "tankerTruck" ? "h-24 w-32 sm:h-28 sm:w-36" : "h-24 w-24 sm:h-28 sm:w-28"
+              }`}
+            >
               <ServiceVisualIcon visual={visual} />
             </span>
             <span className="text-xl font-black leading-tight sm:text-2xl">{name}</span>
@@ -1593,6 +1597,16 @@ function InspectionGame({ onComplete, onFail }) {
     { label: "5/22 10:00", open: true },
     { label: "5/24 14:00", open: false }
   ];
+  const shuffleItems = (items) => {
+    const shuffled = [...items];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+    return shuffled;
+  };
+  const [randomCheckItems] = useState(() => shuffleItems(checkItems));
+  const [randomReservationDates] = useState(() => shuffleItems(reservationDates));
   const [checkedItems, setCheckedItems] = useState([]);
   const [note, setNote] = useState("点検スタンプを5つ集めて、予約日を確定しよう！");
   const isReadyToReserve = checkedItems.length === correctItems.length;
@@ -1669,7 +1683,7 @@ function InspectionGame({ onComplete, onFail }) {
         </div>
       </div>
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
-        {checkItems.map((item) => {
+        {randomCheckItems.map((item) => {
           const checked = checkedItems.includes(item.label);
           return (
             <button
@@ -1698,7 +1712,7 @@ function InspectionGame({ onComplete, onFail }) {
           空きありのカレンダーだけを選ぼう
         </p>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
-          {reservationDates.map((date) => (
+          {randomReservationDates.map((date) => (
             <button
               key={date.label}
               onClick={() => chooseReservationDate(date)}
@@ -1741,7 +1755,7 @@ function InspectionGame({ onComplete, onFail }) {
 
 function InsuranceGame({ onComplete, onFail }) {
   const correctCards = ["事故の補償", "車のトラブル", "ロードサービス"];
-  const cards = [
+  const insuranceCards = [
     { label: "事故の補償", type: "crash", correct: true },
     { label: "車のトラブル", type: "trouble", correct: true },
     { label: "ロードサービス", type: "road", correct: true },
@@ -1753,6 +1767,15 @@ function InsuranceGame({ onComplete, onFail }) {
     { label: "車検予約", type: "inspection", correct: false },
     { label: "店内清掃", type: "clean", correct: false }
   ];
+  const shuffleCards = (items) => {
+    const shuffled = [...items];
+    for (let index = shuffled.length - 1; index > 0; index -= 1) {
+      const randomIndex = Math.floor(Math.random() * (index + 1));
+      [shuffled[index], shuffled[randomIndex]] = [shuffled[randomIndex], shuffled[index]];
+    }
+    return shuffled;
+  };
+  const [cards] = useState(() => shuffleCards(insuranceCards));
   const [selected, setSelected] = useState([]);
   const [mistakes, setMistakes] = useState(0);
   const [note, setNote] = useState("車の保険に必要な安心カードを3つ選ぼう！");
@@ -1778,7 +1801,7 @@ function InsuranceGame({ onComplete, onFail }) {
   return (
     <div className="space-y-4">
       <div className="rounded-3xl bg-rose-100 p-4 text-center">
-        <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-3xl bg-white shadow-inner">
+        <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-3xl">
           <InsuranceImage className="h-16 w-16" />
         </div>
         <p className="text-lg font-black text-rose-700">自動車保険の安心カードを選ぼう</p>
@@ -1836,7 +1859,7 @@ function InsuranceMiniCardIcon({ type }) {
 
   return (
     <svg viewBox="0 0 64 64" className="h-14 w-14 drop-shadow-sm" aria-hidden="true">
-      <rect x="6" y="8" width="52" height="48" rx="14" fill="#ffffff" stroke="#fecdd3" strokeWidth="4" />
+      <rect x="6" y="8" width="52" height="48" rx="14" fill="none" stroke="#fecdd3" strokeWidth="4" />
       <path d={details.path} fill="#dbeafe" stroke="#334155" strokeWidth="3" strokeLinejoin="round" />
       <rect x="23" y="25" width="18" height="9" rx="2" fill="#ffffff" opacity=".95" />
       <circle cx="23" cy="43" r="4" fill="#334155" />
