@@ -288,9 +288,16 @@ function App() {
               activeUpgradeKey={upgradePop?.key}
             />
           </section>
-          <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_720px] xl:items-start xl:gap-5">
-            <CustomerPanel customer={customer} message={message} phase={phase} />
-            <div className="min-w-0">
+          <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_740px] xl:items-start xl:gap-5">
+            <div className="flex min-w-0 flex-col gap-4">
+              <CustomerPanel customer={customer} message={message} phase={phase} />
+              <UpgradePanel
+                points={points}
+                boughtUpgrades={boughtUpgrades}
+                onBuy={buyUpgrade}
+              />
+            </div>
+            <div className="flex min-w-0 flex-col gap-4">
               {phase === "select" && <ServiceSelector onChoose={chooseService} />}
               {phase === "mini" && (
                 <MiniGame service={activeService} onComplete={completeMiniGame} />
@@ -305,11 +312,6 @@ function App() {
               )}
             </div>
           </section>
-          <UpgradePanel
-            points={points}
-            boughtUpgrades={boughtUpgrades}
-            onBuy={buyUpgrade}
-          />
         </main>
         {upgradePop && <UpgradePurchaseToast upgrade={upgradePop} />}
         {gameClear && <GoodJobClearOverlay />}
@@ -905,10 +907,10 @@ function InsuranceImage({ className = "h-16 w-16", fallback = "🛡️" }) {
 function UpgradeVisual({ upgrade, size = "panel" }) {
   const classes = {
     panel: {
-      wrap: "h-14 w-14 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner xl:h-28 xl:w-28 xl:rounded-3xl xl:border-4",
-      image: "h-11 w-11 xl:h-24 xl:w-24",
-      wide: "h-10 w-13 xl:h-24 xl:w-28",
-      staff: "h-14 w-12 xl:h-28 xl:w-24"
+      wrap: "h-14 w-14 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner xl:h-24 xl:w-24 xl:rounded-3xl xl:border-4",
+      image: "h-11 w-11 xl:h-20 xl:w-20",
+      wide: "h-10 w-13 xl:h-20 xl:w-24",
+      staff: "h-14 w-12 xl:h-24 xl:w-20"
     },
     scene: {
       wrap: "h-12 w-12 rounded-xl sm:h-14 sm:w-14",
@@ -1894,14 +1896,14 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
   const availableUpgrades = upgrades.filter((upgrade) => !boughtUpgrades.includes(upgrade.key));
 
   return (
-    <div className="rounded-3xl border-4 border-white bg-white/95 p-3 shadow-xl xl:p-5">
-      <div className="mb-3 flex items-center justify-between gap-3 xl:mb-5">
-        <h2 className="text-2xl font-black text-blue-700 xl:text-5xl">スタンド成長</h2>
+    <div className="rounded-3xl border-4 border-white bg-white/95 p-3 shadow-xl xl:p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h2 className="text-2xl font-black text-blue-700 xl:text-4xl">スタンド成長</h2>
         <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700 xl:px-4 xl:py-2 xl:text-base">
           {boughtUpgrades.length}/{upgrades.length}
         </span>
       </div>
-      <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3 xl:gap-5">
+      <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-2 xl:gap-4">
         {availableUpgrades.length === 0 && (
           <div className="rounded-3xl bg-emerald-50 p-5 text-center font-black text-emerald-700">
             すべて購入済みです！
@@ -1913,23 +1915,23 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
               key={upgrade.key}
               onClick={() => onBuy(upgrade)}
               disabled={points < upgrade.cost}
-              className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left shadow-sm transition active:scale-[.99] xl:min-h-60 xl:flex-row xl:justify-start xl:gap-5 xl:rounded-3xl xl:border-4 xl:p-5 xl:text-left ${
+              className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left shadow-sm transition active:scale-[.99] xl:min-h-44 xl:flex-row xl:justify-start xl:gap-4 xl:rounded-3xl xl:border-4 xl:p-4 xl:text-left ${
                 points >= upgrade.cost
                     ? "border-orange-200 bg-orange-50 hover:bg-orange-100"
                     : "border-slate-200 bg-slate-50"
               }`}
             >
               <span className="relative shrink-0">
-                <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow xl:px-3 xl:py-1 xl:text-sm">
+                <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow xl:px-2 xl:py-0.5 xl:text-xs">
                   UP
                 </span>
                 <UpgradeVisual upgrade={upgrade} size="panel" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-black leading-tight text-slate-800 xl:text-3xl">{upgrade.name}</span>
-                <span className="mt-0.5 block text-xs font-bold leading-tight text-slate-500 xl:mt-2 xl:block xl:text-lg">{upgrade.effect}</span>
+                <span className="block text-sm font-black leading-tight text-slate-800 xl:text-2xl">{upgrade.name}</span>
+                <span className="mt-0.5 block text-xs font-bold leading-tight text-slate-500 xl:mt-1 xl:block xl:text-base">{upgrade.effect}</span>
               </span>
-              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600 xl:px-4 xl:py-2 xl:text-2xl">
+              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600 xl:px-4 xl:py-1.5 xl:text-xl">
                 {upgrade.cost}pt
               </span>
             </button>
