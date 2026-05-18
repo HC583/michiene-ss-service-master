@@ -279,8 +279,8 @@ function App() {
     <div className="cute-orange-bg min-h-screen text-slate-800">
       <div className="relative min-h-screen">
         <SnowBackground />
-        <main className="relative z-10 mx-auto flex w-full max-w-7xl flex-col gap-4 px-3 py-4 sm:px-5 lg:grid lg:grid-cols-[1.2fr_.8fr] lg:gap-5">
-          <section className="flex flex-col gap-4">
+        <main className="relative z-10 mx-auto grid w-full max-w-[1520px] grid-cols-1 gap-5 px-3 py-4 sm:px-5 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-start xl:gap-6">
+          <section className="flex min-w-0 flex-col gap-4">
             <TopBar points={points} totalPoints={totalPoints} streak={streak} />
             <StationScene
               boughtUpgrades={boughtUpgrades}
@@ -301,7 +301,7 @@ function App() {
               </button>
             )}
           </section>
-          <aside className="flex flex-col gap-4">
+          <aside className="min-w-0 xl:sticky xl:top-4">
             <UpgradePanel
               points={points}
               boughtUpgrades={boughtUpgrades}
@@ -374,12 +374,12 @@ function AccessGate({ onUnlock }) {
 
 function TitleScreen({ onStart }) {
   return (
-    <div className="cute-orange-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8">
+    <div className="cute-orange-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8 lg:py-10">
       <div className="absolute inset-0 bg-gradient-to-b from-orange-200/70 via-orange-50/70 to-amber-200/80" />
       <div className="absolute inset-x-0 bottom-0 h-48 bg-orange-200/80" />
-      <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8 text-center">
-        <div className="w-full rounded-[2rem] border-4 border-orange-100 bg-orange-50/85 p-5 shadow-2xl backdrop-blur sm:p-8">
-          <div className="mx-auto mb-5 flex h-40 w-full max-w-4xl items-end justify-center rounded-3xl bg-sky-100 shadow-inner sm:h-56">
+      <div className="relative z-10 flex w-full max-w-5xl flex-col items-center gap-8 text-center lg:max-w-[1320px]">
+        <div className="w-full rounded-[2rem] border-4 border-orange-100 bg-orange-50/85 p-5 shadow-2xl backdrop-blur sm:p-8 lg:p-10">
+          <div className="mx-auto mb-5 flex h-40 w-full max-w-4xl items-end justify-center rounded-3xl bg-sky-100 shadow-inner sm:h-56 lg:mb-8 lg:h-72 lg:max-w-6xl">
             <div className="relative h-full w-full overflow-hidden rounded-3xl bg-sky-100">
               <img
                 src={assetPath("/station-background-new.png?v=2")}
@@ -390,33 +390,33 @@ function TitleScreen({ onStart }) {
               />
             </div>
           </div>
-          <p className="mb-2 text-sm font-bold tracking-[.18em] text-orange-500 sm:text-base">
+          <p className="mb-2 text-sm font-bold tracking-[.18em] text-orange-500 sm:text-base lg:text-xl">
             HOKKAIDO SERVICE STATION GAME
           </p>
-          <div className="flex items-center justify-center gap-3 sm:gap-5">
-            <div className="flex h-24 w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-32 sm:w-24">
-              <StaffImage className="h-[5.5rem] w-16 object-contain sm:h-28 sm:w-20" />
+          <div className="flex items-center justify-center gap-3 sm:gap-5 lg:gap-8">
+            <div className="flex h-24 w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-32 sm:w-24 lg:h-44 lg:w-32">
+              <StaffImage className="h-[5.5rem] w-16 object-contain sm:h-28 sm:w-20 lg:h-40 lg:w-28" />
             </div>
-            <h1 className="text-left text-2xl font-black leading-tight text-blue-700 sm:text-4xl lg:text-5xl">
+            <h1 className="text-left text-2xl font-black leading-tight text-blue-700 sm:text-4xl lg:text-7xl">
               道エネSS
               <span className="block text-orange-500">サービスマスター</span>
             </h1>
           </div>
-          <p className="mx-auto mt-5 max-w-2xl text-lg font-bold text-slate-700 sm:text-2xl">
+          <p className="mx-auto mt-5 max-w-2xl text-lg font-bold text-slate-700 sm:text-2xl lg:mt-8 lg:max-w-4xl lg:text-4xl">
             <span className="block">北海道の暮らしを支える</span>
             <span className="block">サービスステーションを育てよう！</span>
           </p>
-          <div className="mx-auto mt-6 max-w-4xl rounded-[1.5rem] border-4 border-yellow-300 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-8 py-5 text-white shadow-xl shadow-orange-200 ring-4 ring-white sm:px-10">
-            <p className="flex animate-pulse items-center justify-center gap-3 text-2xl font-black leading-tight sm:gap-4 sm:text-4xl lg:text-5xl">
-              <span className="shrink-0 text-5xl leading-none sm:text-7xl lg:text-8xl" aria-hidden="true">🏅</span>
-              <span className="whitespace-nowrap text-left">
+          <div className="mx-auto mt-6 max-w-4xl rounded-[1.5rem] border-4 border-yellow-300 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-5 py-5 text-white shadow-xl shadow-orange-200 ring-4 ring-white sm:px-8 lg:mt-10 lg:max-w-5xl lg:px-12 lg:py-7">
+            <p className="flex animate-pulse flex-col items-center justify-center gap-1 text-center text-2xl font-black leading-tight sm:text-4xl lg:flex-row lg:gap-5 lg:text-6xl">
+              <span className="shrink-0 text-5xl leading-none sm:text-7xl lg:text-9xl" aria-hidden="true">🏅</span>
+              <span className="text-center lg:whitespace-nowrap lg:text-left">
                 スタンドを成長させよう！！
               </span>
             </p>
           </div>
           <button
             onClick={onStart}
-            className="mt-8 rounded-full bg-orange-500 px-10 py-5 text-xl font-black text-white shadow-xl shadow-orange-200 transition hover:bg-orange-600 active:scale-95 sm:text-2xl"
+            className="mt-8 rounded-full bg-orange-500 px-10 py-5 text-xl font-black text-white shadow-xl shadow-orange-200 transition hover:bg-orange-600 active:scale-95 sm:text-2xl lg:mt-10 lg:px-16 lg:py-6 lg:text-4xl"
           >
             ゲームスタート
           </button>
@@ -452,7 +452,7 @@ function SnowBackground() {
 
 function TopBar({ points, totalPoints, streak }) {
   return (
-    <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
+    <div className="grid grid-cols-3 gap-2 sm:gap-3">
       <StatCard label="ポイント" value={`${points} pt`} icon={<Star />} tone="orange" />
       <StatCard label="合計獲得" value={`${totalPoints} pt`} icon={<CheckCircle2 />} tone="green" />
       <StatCard label="連続正解" value={`${streak} 回`} icon={<Users />} tone="pink" />
@@ -468,12 +468,12 @@ function StatCard({ label, value, icon, tone }) {
     pink: "bg-rose-100 text-rose-700 border-rose-200"
   };
   return (
-    <div className={`rounded-2xl border-2 p-3 shadow-sm ${tones[tone]}`}>
+    <div className={`rounded-2xl border-2 p-2 shadow-sm sm:p-3 ${tones[tone]}`}>
       <div className="flex items-center gap-2 text-xs font-bold sm:text-sm">
         {React.cloneElement(icon, { size: 18 })}
         {label}
       </div>
-      <div className="mt-1 text-xl font-black sm:text-2xl">{value}</div>
+      <div className="mt-1 text-lg font-black sm:text-2xl">{value}</div>
     </div>
   );
 }
@@ -482,7 +482,7 @@ function StationScene({ boughtUpgrades, pointPop, activeUpgradeKey }) {
   const purchasedUpgrades = upgrades.filter((upgrade) => boughtUpgrades.includes(upgrade.key));
 
   return (
-    <div className="relative min-h-[230px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[270px]">
+    <div className="relative aspect-[16/5] min-h-[210px] overflow-hidden rounded-3xl border-4 border-white bg-sky-100 p-4 shadow-xl sm:min-h-[250px] xl:min-h-0">
       <img
         src={assetPath("/station-background-new.png?v=3")}
         alt=""
@@ -581,22 +581,22 @@ function SceneIcon({ label, active = false }) {
 
 function CustomerPanel({ customer, message, phase }) {
   return (
-    <div className="customer-card-bg relative overflow-hidden rounded-3xl border-4 border-orange-100 p-4 shadow-xl">
+    <div className="customer-card-bg relative overflow-hidden rounded-3xl border-4 border-orange-100 p-3 shadow-xl sm:p-4">
       <span className="absolute -right-6 top-6 h-20 w-20 rounded-full bg-orange-200/45" aria-hidden="true" />
       <span className="absolute bottom-4 right-12 h-6 w-6 rounded-full bg-sky-200/55" aria-hidden="true" />
-      <div key={customer.speech} className="relative z-10 mb-3 flex animate-welcome-pop items-center justify-center gap-2 sm:gap-3">
-        <div className="flex h-16 w-14 shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-white shadow-lg ring-4 ring-orange-200 sm:h-20 sm:w-16">
-          <StaffImage className="h-[3.75rem] w-11 object-contain sm:h-[5rem] sm:w-14" />
+      <div key={customer.speech} className="relative z-10 mb-3 flex animate-welcome-pop items-center justify-center gap-2 sm:gap-3 xl:mb-2">
+        <div className="flex h-14 w-12 shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-white shadow-lg ring-4 ring-orange-200 sm:h-20 sm:w-16 xl:h-16 xl:w-14">
+          <StaffImage className="h-[3.4rem] w-10 object-contain sm:h-[5rem] sm:w-14 xl:h-[3.9rem] xl:w-11" />
         </div>
-        <div className="relative whitespace-nowrap rounded-[1.25rem] bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-3 py-3 text-base font-black text-white shadow-xl ring-4 ring-white sm:rounded-[1.5rem] sm:px-5 sm:text-3xl">
+        <div className="relative whitespace-nowrap rounded-[1.25rem] bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-3 py-3 text-base font-black text-white shadow-xl ring-4 ring-white sm:rounded-[1.5rem] sm:px-5 sm:text-3xl xl:text-2xl">
           <span className="mr-1" aria-hidden="true">✨</span>
           いらっしゃいませ！
           <span className="ml-1" aria-hidden="true">✨</span>
         </div>
       </div>
-      <div className="customer-request-bg relative z-10 rounded-[1.5rem] p-4 shadow-inner ring-2 ring-orange-100">
+      <div className="customer-request-bg relative z-10 rounded-[1.5rem] p-3 shadow-inner ring-2 ring-orange-100 sm:p-4">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-md ring-4 ring-blue-100 sm:mx-0">
+        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-md ring-4 ring-blue-100 sm:mx-0 xl:h-16 xl:w-16 xl:text-3xl">
           {customer.visual === "insurance" && <InsuranceCustomerIcon className="h-16 w-16" />}
           {customer.visual === "staffBooking" && <InspectionCustomerIcon />}
           {!customer.visual && customer.icon}
@@ -605,11 +605,11 @@ function CustomerPanel({ customer, message, phase }) {
           <div className="mb-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700 shadow-sm ring-2 ring-white">
             お客さま
           </div>
-          <p className="whitespace-pre-line rounded-2xl bg-white px-3 py-3 text-center text-lg font-black leading-relaxed text-slate-800 shadow-sm ring-2 ring-blue-100 sm:text-xl">
+          <p className="whitespace-pre-line rounded-2xl bg-white px-3 py-3 text-center text-lg font-black leading-relaxed text-slate-800 shadow-sm ring-2 ring-blue-100 sm:text-xl xl:text-lg">
             「{customer.speech}」
           </p>
           <p
-            className={`mt-2 rounded-2xl px-4 py-2 text-base font-bold shadow-sm ring-2 ring-white ${
+            className={`mt-2 rounded-2xl px-4 py-2 text-base font-bold shadow-sm ring-2 ring-white xl:text-sm ${
               phase === "mini"
                 ? "bg-emerald-100 text-emerald-700"
               : phase === "done"
@@ -629,12 +629,12 @@ function CustomerPanel({ customer, message, phase }) {
 function ServiceSelector({ onChoose }) {
   return (
     <div className="rounded-[2rem] border-4 border-orange-300 bg-orange-50 p-3 shadow-xl shadow-orange-100 sm:p-4">
-      <div className="mb-3 flex items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-center shadow-sm">
+      <div className="mb-3 flex items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-center shadow-sm xl:py-2">
         <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 ring-2 ring-orange-200" aria-hidden="true">
           <MousePointerClick size={30} strokeWidth={3} />
         </span>
         <div>
-          <h2 className="text-2xl font-black leading-tight text-orange-600">
+          <h2 className="text-2xl font-black leading-tight text-orange-600 xl:text-3xl">
             サービスを選んでね
           </h2>
           <p className="text-sm font-bold text-slate-600 sm:text-base">
@@ -642,18 +642,18 @@ function ServiceSelector({ onChoose }) {
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:gap-4">
         {services.map(({ name, visual, hint, color }) => (
           <button
             key={name}
             onClick={() => onChoose(name)}
             aria-label={`${name}、${hint}`}
-            className={`group relative flex min-h-40 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97]`}
+            className={`group relative flex min-h-36 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97] sm:min-h-40 xl:min-h-44`}
           >
-            <span className={`flex items-center justify-center rounded-3xl bg-white p-2 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${visual === "tankerTruck" ? "h-28 w-36" : "h-28 w-28"}`}>
+            <span className={`flex items-center justify-center rounded-3xl bg-white p-2 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${visual === "tankerTruck" ? "h-24 w-32 sm:h-28 sm:w-36" : "h-24 w-24 sm:h-28 sm:w-28"}`}>
               <ServiceVisualIcon visual={visual} />
             </span>
-            <span className="text-2xl font-black leading-tight">{name}</span>
+            <span className="text-xl font-black leading-tight sm:text-2xl">{name}</span>
             <span className="rounded-full bg-white/25 px-3 py-1 text-sm font-bold leading-tight">
               {hint}
             </span>
@@ -897,10 +897,10 @@ function InsuranceImage({ className = "h-16 w-16", fallback = "🛡️" }) {
 function UpgradeVisual({ upgrade, size = "panel" }) {
   const classes = {
     panel: {
-      wrap: "h-16 w-16 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner",
-      image: "h-12 w-12",
-      wide: "h-11 w-14",
-      staff: "h-16 w-14"
+      wrap: "h-14 w-14 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner",
+      image: "h-11 w-11",
+      wide: "h-10 w-13",
+      staff: "h-14 w-12"
     },
     scene: {
       wrap: "h-12 w-12 rounded-xl sm:h-14 sm:w-14",
@@ -1848,9 +1848,14 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
   const availableUpgrades = upgrades.filter((upgrade) => !boughtUpgrades.includes(upgrade.key));
 
   return (
-    <div className="rounded-3xl border-4 border-white bg-white/95 p-4 shadow-xl">
-      <h2 className="mb-3 text-2xl font-black text-blue-700">スタンド成長</h2>
-      <div className="grid gap-3">
+    <div className="rounded-3xl border-4 border-white bg-white/95 p-3 shadow-xl xl:p-4">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <h2 className="text-2xl font-black text-blue-700">スタンド成長</h2>
+        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+          {boughtUpgrades.length}/{upgrades.length}
+        </span>
+      </div>
+      <div className="grid gap-2 xl:gap-3">
         {availableUpgrades.length === 0 && (
           <div className="rounded-3xl bg-emerald-50 p-5 text-center font-black text-emerald-700">
             すべて購入済みです！
@@ -1862,7 +1867,7 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
               key={upgrade.key}
               onClick={() => onBuy(upgrade)}
               disabled={points < upgrade.cost}
-              className={`flex items-center gap-3 rounded-2xl border-2 p-3 text-left shadow-sm transition active:scale-[.99] ${
+              className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left shadow-sm transition active:scale-[.99] xl:p-3 ${
                 points >= upgrade.cost
                     ? "border-orange-200 bg-orange-50 hover:bg-orange-100"
                     : "border-slate-200 bg-slate-50"
@@ -1875,10 +1880,10 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
                 <UpgradeVisual upgrade={upgrade} size="panel" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block font-black text-slate-800">{upgrade.name}</span>
-                <span className="block text-sm font-bold text-slate-500">{upgrade.effect}</span>
+                <span className="block text-sm font-black leading-tight text-slate-800 xl:text-base">{upgrade.name}</span>
+                <span className="mt-0.5 block text-xs font-bold leading-tight text-slate-500 xl:text-sm">{upgrade.effect}</span>
               </span>
-              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600">
+              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600 xl:text-base">
                 {upgrade.cost}pt
               </span>
             </button>
