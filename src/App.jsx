@@ -1577,15 +1577,15 @@ function MufflerPartIcon() {
 function InspectionGame({ onComplete, onFail }) {
   const correctItems = ["ブレーキ", "ライト", "タイヤ溝", "マフラー", "エンジン"];
   const checkItems = [
-    { label: "ブレーキ", icon: "🛑", correct: true },
-    { label: "ライト", icon: "💡", correct: true },
-    { label: "タイヤ溝", icon: "🛞", correct: true },
-    { label: "マフラー", icon: "muffler", correct: true },
-    { label: "エンジン", icon: "engine", correct: true },
-    { label: "洗車", icon: "🚿", correct: false },
-    { label: "景品交換", icon: "🎁", correct: false },
-    { label: "ドリンク補充", icon: "🥤", correct: false },
-    { label: "店内清掃", icon: "🧹", correct: false }
+    { label: "ブレーキ", icon: "🛑", correct: true, hint: "止まる力" },
+    { label: "ライト", icon: "💡", correct: true, hint: "夜道の安全" },
+    { label: "タイヤ溝", icon: "🛞", correct: true, hint: "すべり止め" },
+    { label: "マフラー", icon: "muffler", correct: true, hint: "排気まわり" },
+    { label: "エンジン", icon: "engine", correct: true, hint: "走る力" },
+    { label: "洗車", icon: "🚿", correct: false, hint: "きれいにする" },
+    { label: "景品交換", icon: "🎁", correct: false, hint: "プレゼント" },
+    { label: "ドリンク補充", icon: "🥤", correct: false, hint: "お店の準備" },
+    { label: "店内清掃", icon: "🧹", correct: false, hint: "お店そうじ" }
   ];
   const reservationDates = [
     { label: "5/18 13:00", open: false },
@@ -1595,6 +1595,7 @@ function InspectionGame({ onComplete, onFail }) {
   ];
   const [checkedItems, setCheckedItems] = useState([]);
   const [note, setNote] = useState("点検スタンプを5つ集めて、予約日を確定しよう！");
+  const isReadyToReserve = checkedItems.length === correctItems.length;
 
   const checkItem = (item) => {
     if (checkedItems.includes(item.label)) return;
@@ -1632,14 +1633,26 @@ function InspectionGame({ onComplete, onFail }) {
 
   return (
     <div className="space-y-4">
-      <div className="rounded-3xl bg-blue-100 p-4 text-center shadow-inner">
-        <div className="mx-auto mb-3 flex h-24 w-28 items-center justify-center rounded-3xl bg-white shadow-inner">
+      <div className="overflow-hidden rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 via-white to-orange-50 p-4 text-center shadow-inner">
+        <div className="mx-auto mb-3 flex h-24 w-28 items-center justify-center rounded-3xl bg-white shadow-inner ring-4 ring-blue-100">
           <InspectionImage className="h-20 w-24" />
         </div>
-        <p className="text-lg font-black text-blue-700">車検予約チャレンジ</p>
-        <p className="mt-2 whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">
-          点検スタンプを集めたら、{"\n"}1つの予約日を必ず確定しよう。
+        <p className="text-sm font-black tracking-[.16em] text-orange-500">INSPECTION NAVI</p>
+        <p className="text-2xl font-black text-blue-700">車検予約ナビチャレンジ</p>
+        <p className="mx-auto mt-2 max-w-2xl whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">
+          安全点検カードを集めて、{"\n"}空いている予約日を1つ確定しよう。
         </p>
+        <div className="mt-4 grid grid-cols-3 gap-2 text-xs font-black sm:grid-cols-3">
+          <span className="rounded-full bg-blue-600 px-3 py-2 text-white shadow-sm">1 点検カード</span>
+          <span className={`rounded-full px-3 py-2 shadow-sm ${isReadyToReserve ? "bg-orange-500 text-white" : "bg-white text-blue-400"}`}>2 予約日</span>
+          <span className={`rounded-full px-3 py-2 shadow-sm ${isReadyToReserve ? "bg-emerald-500 text-white" : "bg-white text-blue-400"}`}>3 確定</span>
+        </div>
+        <div className="mt-3 h-4 overflow-hidden rounded-full bg-white shadow-inner">
+          <div
+            className="h-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all"
+            style={{ width: `${(checkedItems.length / correctItems.length) * 100}%` }}
+          />
+        </div>
         <div className="mt-3 grid grid-cols-5 gap-2">
           {correctItems.map((item) => (
             <span
@@ -1662,7 +1675,7 @@ function InspectionGame({ onComplete, onFail }) {
             <button
               key={item.label}
               onClick={() => checkItem(item)}
-              className={`min-h-28 rounded-3xl border-4 p-3 text-center shadow-lg transition active:scale-[.97] ${
+              className={`min-h-32 rounded-3xl border-4 p-3 text-center shadow-lg transition active:scale-[.97] ${
                 checked
                   ? "border-emerald-300 bg-emerald-100 text-emerald-700"
                   : "border-white bg-white text-blue-700 hover:border-blue-300"
@@ -1672,33 +1685,39 @@ function InspectionGame({ onComplete, onFail }) {
                 {checked ? "✅" : <InspectionItemIcon icon={item.icon} />}
               </span>
               <span className="mt-2 block text-sm font-black sm:text-base">{item.label}</span>
+              <span className="mt-1 block rounded-full bg-blue-50 px-2 py-1 text-[11px] font-black text-blue-500">
+                {item.hint}
+              </span>
             </button>
           );
         })}
       </div>
       <div className="rounded-3xl border-4 border-blue-200 bg-white p-4 text-center shadow-lg">
         <p className="text-sm font-black tracking-[.14em] text-blue-500">RESERVATION DATE</p>
+        <p className="mt-1 text-base font-black text-slate-700">
+          空きありのカレンダーだけを選ぼう
+        </p>
         <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
           {reservationDates.map((date) => (
             <button
               key={date.label}
               onClick={() => chooseReservationDate(date)}
               className={`relative rounded-2xl border-4 px-3 py-4 text-lg font-black shadow transition active:scale-[.97] ${
-                checkedItems.length === correctItems.length && date.open
+                isReadyToReserve && date.open
                   ? "animate-pulse border-yellow-300 bg-yellow-100 text-orange-700 ring-4 ring-yellow-300 hover:border-orange-400 hover:bg-orange-100"
-                  : checkedItems.length === correctItems.length
+                  : isReadyToReserve
                     ? "border-slate-200 bg-slate-100 text-slate-400"
                     : "border-slate-200 bg-slate-100 text-slate-400"
               }`}
             >
-              {checkedItems.length === correctItems.length && date.open && (
+              {isReadyToReserve && date.open && (
                 <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-2 py-1 text-[10px] font-black text-white shadow">
                   空きあり
                 </span>
               )}
               <span className="mb-1 block text-3xl">📅</span>
               {date.label}
-              {checkedItems.length === correctItems.length && !date.open && (
+              {isReadyToReserve && !date.open && (
                 <span className="mt-1 block text-xs font-black text-slate-500">
                   予約済み
                 </span>
