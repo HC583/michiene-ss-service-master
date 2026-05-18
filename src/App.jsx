@@ -279,7 +279,7 @@ function App() {
     <div className="cute-orange-bg min-h-screen text-slate-800">
       <div className="relative min-h-screen">
         <SnowBackground />
-        <main className="relative z-10 mx-auto grid w-full max-w-[1840px] grid-cols-1 gap-5 px-3 py-4 sm:px-5 xl:grid-cols-[minmax(0,1fr)_680px] xl:items-start xl:gap-6">
+        <main className="relative z-10 mx-auto flex w-full max-w-[1840px] flex-col gap-4 px-3 py-4 sm:px-5 xl:gap-4">
           <section className="flex min-w-0 flex-col gap-4">
             <TopBar points={points} totalPoints={totalPoints} streak={streak} />
             <StationScene
@@ -287,27 +287,29 @@ function App() {
               pointPop={pointPop}
               activeUpgradeKey={upgradePop?.key}
             />
-            {phase === "select" && <ServiceSelector onChoose={chooseService} />}
-            {phase === "mini" && (
-              <MiniGame service={activeService} onComplete={completeMiniGame} />
-            )}
-            {phase === "done" && (
-              <button
-                onClick={nextCustomer}
-                className="w-full rounded-2xl bg-orange-500 px-6 py-4 text-lg font-bold text-white shadow-lg shadow-orange-200 transition hover:bg-orange-600 active:scale-[.98]"
-              >
-                次のお客さまへ
-              </button>
-            )}
           </section>
-          <aside className="flex min-w-0 flex-col gap-5 xl:sticky xl:top-4">
+          <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_720px] xl:items-start xl:gap-5">
             <CustomerPanel customer={customer} message={message} phase={phase} />
-            <UpgradePanel
-              points={points}
-              boughtUpgrades={boughtUpgrades}
-              onBuy={buyUpgrade}
-            />
-          </aside>
+            <div className="min-w-0">
+              {phase === "select" && <ServiceSelector onChoose={chooseService} />}
+              {phase === "mini" && (
+                <MiniGame service={activeService} onComplete={completeMiniGame} />
+              )}
+              {phase === "done" && (
+                <button
+                  onClick={nextCustomer}
+                  className="w-full rounded-3xl bg-orange-500 px-6 py-8 text-3xl font-black text-white shadow-lg shadow-orange-200 transition hover:bg-orange-600 active:scale-[.98]"
+                >
+                  次のお客さまへ
+                </button>
+              )}
+            </div>
+          </section>
+          <UpgradePanel
+            points={points}
+            boughtUpgrades={boughtUpgrades}
+            onBuy={buyUpgrade}
+          />
         </main>
         {upgradePop && <UpgradePurchaseToast upgrade={upgradePop} />}
         {gameClear && <GoodJobClearOverlay />}
@@ -594,18 +596,20 @@ function CustomerPanel({ customer, message, phase }) {
           <span className="ml-1" aria-hidden="true">✨</span>
         </div>
       </div>
-      <div className="customer-request-bg relative z-10 rounded-[1.5rem] p-3 shadow-inner ring-2 ring-orange-100 sm:p-4 xl:rounded-[2rem] xl:p-5">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center xl:items-start">
-        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-md ring-4 ring-blue-100 sm:mx-0 xl:h-24 xl:w-24 xl:text-5xl">
+      <div className="relative z-10 rounded-[1.5rem] border-4 border-white bg-gradient-to-br from-orange-100 via-yellow-50 to-white p-3 shadow-2xl ring-4 ring-orange-200/90 sm:p-4 xl:rounded-[2rem] xl:p-6">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center xl:items-start xl:gap-5">
+        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-lg ring-4 ring-blue-100 sm:mx-0 xl:h-28 xl:w-28 xl:text-6xl">
           {customer.visual === "insurance" && <InsuranceCustomerIcon className="h-16 w-16" />}
           {customer.visual === "staffBooking" && <InspectionCustomerIcon />}
           {!customer.visual && customer.icon}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="mb-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700 shadow-sm ring-2 ring-white xl:text-base">
-            お客さま
+          <div className="mb-4 inline-flex rounded-full bg-gradient-to-r from-orange-600 via-orange-500 to-yellow-400 px-5 py-2 text-base font-black tracking-[.08em] text-white shadow-lg ring-4 ring-white xl:text-2xl">
+            <span className="mr-2" aria-hidden="true">✨</span>
+            クイズ問題
+            <span className="ml-2" aria-hidden="true">✨</span>
           </div>
-          <p className="whitespace-pre-line rounded-2xl bg-white px-3 py-3 text-center text-lg font-black leading-relaxed text-slate-800 shadow-sm ring-2 ring-blue-100 sm:text-xl xl:px-5 xl:py-5 xl:text-3xl xl:leading-snug">
+          <p className="whitespace-pre-line rounded-[1.75rem] border-4 border-orange-300 bg-white px-5 py-7 text-center text-2xl font-black leading-relaxed text-slate-950 shadow-xl ring-4 ring-orange-100 sm:text-3xl xl:px-8 xl:py-10 xl:text-5xl xl:leading-tight">
             「{customer.speech}」
           </p>
           <p
@@ -628,37 +632,37 @@ function CustomerPanel({ customer, message, phase }) {
 
 function ServiceSelector({ onChoose }) {
   return (
-    <div className="rounded-[2rem] border-4 border-orange-300 bg-orange-50 p-3 shadow-xl shadow-orange-100 sm:p-4">
-      <div className="mb-3 flex items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-center shadow-sm xl:py-2">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 ring-2 ring-orange-200" aria-hidden="true">
-          <MousePointerClick size={30} strokeWidth={3} />
+    <div className="rounded-[2rem] border-4 border-orange-300 bg-orange-50 p-3 shadow-xl shadow-orange-100 sm:p-4 xl:p-5">
+      <div className="mb-3 flex items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-center shadow-sm xl:mb-5 xl:py-4">
+        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 ring-2 ring-orange-200 xl:h-16 xl:w-16" aria-hidden="true">
+          <MousePointerClick className="h-8 w-8 xl:h-10 xl:w-10" strokeWidth={3} />
         </span>
         <div>
-          <h2 className="text-2xl font-black leading-tight text-orange-600 xl:text-3xl">
+          <h2 className="text-2xl font-black leading-tight text-orange-600 xl:text-4xl">
             サービスを選んでね
           </h2>
-          <p className="text-sm font-bold text-slate-600 sm:text-base">
+          <p className="text-sm font-bold text-slate-600 sm:text-base xl:text-lg">
             お客さまのセリフに合うボタンを押そう
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-2 xl:gap-5">
         {services.map(({ name, visual, hint, color }) => (
           <button
             key={name}
             onClick={() => onChoose(name)}
             aria-label={`${name}、${hint}`}
-            className={`group relative flex min-h-36 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97] sm:min-h-40 xl:min-h-44`}
+            className={`group relative flex min-h-36 flex-col items-center justify-center gap-2 rounded-3xl border-4 border-white bg-gradient-to-br ${color} p-3 text-center text-white shadow-lg ring-2 ring-orange-100 transition hover:-translate-y-1 hover:ring-orange-300 hover:shadow-xl active:scale-[.97] sm:min-h-40 xl:min-h-56 xl:gap-3 xl:p-4`}
           >
             <span
               className={`flex items-center justify-center overflow-hidden rounded-3xl bg-white p-2 text-5xl shadow-inner ring-4 ring-white/40 transition group-hover:scale-105 ${
-                visual === "tankerTruck" ? "h-24 w-32 sm:h-28 sm:w-36" : "h-24 w-24 sm:h-28 sm:w-28"
+                visual === "tankerTruck" ? "h-24 w-32 sm:h-28 sm:w-36 xl:h-32 xl:w-44" : "h-24 w-24 sm:h-28 sm:w-28 xl:h-32 xl:w-32"
               }`}
             >
               <ServiceVisualIcon visual={visual} />
             </span>
-            <span className="text-xl font-black leading-tight sm:text-2xl">{name}</span>
-            <span className="rounded-full bg-white/25 px-3 py-1 text-sm font-bold leading-tight">
+            <span className="text-xl font-black leading-tight sm:text-2xl xl:text-3xl">{name}</span>
+            <span className="rounded-full bg-white/25 px-3 py-1 text-sm font-bold leading-tight xl:text-base">
               {hint}
             </span>
           </button>
@@ -669,13 +673,13 @@ function ServiceSelector({ onChoose }) {
 }
 
 function ServiceVisualIcon({ visual }) {
-  if (visual === "fuelPump") return <FuelPumpIcon />;
-  if (visual === "carWash") return <CarWashImage className="h-24 w-24" fallback="洗" />;
-  if (visual === "winterTire") return <TireImage className="h-24 w-24" fallback="🛞" />;
-  if (visual === "tankerTruck") return <TankerLorryImage className="h-24 w-32" fallback="🚚" />;
-  if (visual === "evCharger") return <EvChargeIcon className="h-24 w-24" fallback="🚙" />;
-  if (visual === "staffBooking") return <InspectionImage className="h-24 w-24" fallback="車検" />;
-  if (visual === "insurance") return <InsuranceImage className="h-24 w-24" fallback="🛡️" />;
+  if (visual === "fuelPump") return <span className="flex scale-110 items-center justify-center xl:scale-150"><FuelPumpIcon /></span>;
+  if (visual === "carWash") return <CarWashImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="洗" />;
+  if (visual === "winterTire") return <TireImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="🛞" />;
+  if (visual === "tankerTruck") return <TankerLorryImage className="h-24 w-32 xl:h-32 xl:w-44" fallback="🚚" />;
+  if (visual === "evCharger") return <EvChargeIcon className="h-24 w-24 xl:h-32 xl:w-32" fallback="🚙" />;
+  if (visual === "staffBooking") return <InspectionImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="車検" />;
+  if (visual === "insurance") return <InsuranceImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="🛡️" />;
   return <span aria-hidden="true">?</span>;
 }
 
@@ -901,10 +905,10 @@ function InsuranceImage({ className = "h-16 w-16", fallback = "🛡️" }) {
 function UpgradeVisual({ upgrade, size = "panel" }) {
   const classes = {
     panel: {
-      wrap: "h-14 w-14 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner xl:h-20 xl:w-20 xl:rounded-2xl xl:border-4",
-      image: "h-11 w-11 xl:h-16 xl:w-16",
-      wide: "h-10 w-13 xl:h-14 xl:w-20",
-      staff: "h-14 w-12 xl:h-20 xl:w-16"
+      wrap: "h-14 w-14 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner xl:h-28 xl:w-28 xl:rounded-3xl xl:border-4",
+      image: "h-11 w-11 xl:h-24 xl:w-24",
+      wide: "h-10 w-13 xl:h-24 xl:w-28",
+      staff: "h-14 w-12 xl:h-28 xl:w-24"
     },
     scene: {
       wrap: "h-12 w-12 rounded-xl sm:h-14 sm:w-14",
@@ -1891,13 +1895,13 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
 
   return (
     <div className="rounded-3xl border-4 border-white bg-white/95 p-3 shadow-xl xl:p-5">
-      <div className="mb-3 flex items-center justify-between gap-3 xl:mb-4">
-        <h2 className="text-2xl font-black text-blue-700 xl:text-4xl">スタンド成長</h2>
+      <div className="mb-3 flex items-center justify-between gap-3 xl:mb-5">
+        <h2 className="text-2xl font-black text-blue-700 xl:text-5xl">スタンド成長</h2>
         <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700 xl:px-4 xl:py-2 xl:text-base">
           {boughtUpgrades.length}/{upgrades.length}
         </span>
       </div>
-      <div className="grid gap-2 xl:gap-4">
+      <div className="grid gap-2 sm:grid-cols-2 xl:grid-cols-3 xl:gap-5">
         {availableUpgrades.length === 0 && (
           <div className="rounded-3xl bg-emerald-50 p-5 text-center font-black text-emerald-700">
             すべて購入済みです！
@@ -1909,23 +1913,23 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
               key={upgrade.key}
               onClick={() => onBuy(upgrade)}
               disabled={points < upgrade.cost}
-              className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left shadow-sm transition active:scale-[.99] xl:gap-4 xl:rounded-3xl xl:border-4 xl:p-4 ${
+              className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left shadow-sm transition active:scale-[.99] xl:min-h-60 xl:flex-row xl:justify-start xl:gap-5 xl:rounded-3xl xl:border-4 xl:p-5 xl:text-left ${
                 points >= upgrade.cost
                     ? "border-orange-200 bg-orange-50 hover:bg-orange-100"
                     : "border-slate-200 bg-slate-50"
               }`}
             >
               <span className="relative shrink-0">
-                <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow xl:px-3 xl:py-1 xl:text-xs">
+                <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow xl:px-3 xl:py-1 xl:text-sm">
                   UP
                 </span>
                 <UpgradeVisual upgrade={upgrade} size="panel" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-black leading-tight text-slate-800 xl:text-xl">{upgrade.name}</span>
-                <span className="mt-0.5 block text-xs font-bold leading-tight text-slate-500 xl:text-base">{upgrade.effect}</span>
+                <span className="block text-sm font-black leading-tight text-slate-800 xl:text-3xl">{upgrade.name}</span>
+                <span className="mt-0.5 block text-xs font-bold leading-tight text-slate-500 xl:mt-2 xl:block xl:text-lg">{upgrade.effect}</span>
               </span>
-              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600 xl:px-4 xl:py-2 xl:text-xl">
+              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600 xl:px-4 xl:py-2 xl:text-2xl">
                 {upgrade.cost}pt
               </span>
             </button>
