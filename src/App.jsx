@@ -635,15 +635,15 @@ function CustomerPanel({ customer, message, phase }) {
 function ServiceSelector({ onChoose }) {
   return (
     <div className="rounded-[2rem] border-4 border-orange-300 bg-orange-50 p-3 shadow-xl shadow-orange-100 sm:p-4 xl:p-5">
-      <div className="mb-3 flex items-center justify-center gap-3 rounded-2xl bg-white px-4 py-3 text-center shadow-sm xl:mb-5 xl:py-4">
-        <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-orange-100 text-orange-600 ring-2 ring-orange-200 xl:h-16 xl:w-16" aria-hidden="true">
-          <MousePointerClick className="h-8 w-8 xl:h-10 xl:w-10" strokeWidth={3} />
+      <div className="mb-3 flex items-center justify-center gap-4 rounded-3xl bg-white px-4 py-4 text-center shadow-md ring-4 ring-orange-100 xl:mb-5 xl:gap-5 xl:py-5">
+        <span className="flex h-16 w-16 shrink-0 items-center justify-center rounded-3xl bg-orange-100 text-orange-600 ring-4 ring-orange-200 xl:h-24 xl:w-24" aria-hidden="true">
+          <MousePointerClick className="h-10 w-10 xl:h-16 xl:w-16" strokeWidth={3.5} />
         </span>
         <div>
-          <h2 className="text-2xl font-black leading-tight text-orange-600 xl:text-4xl">
+          <h2 className="text-3xl font-black leading-tight text-orange-600 xl:text-6xl">
             サービスを選んでね
           </h2>
-          <p className="text-sm font-bold text-slate-600 sm:text-base xl:text-lg">
+          <p className="mt-1 text-base font-black text-slate-600 sm:text-lg xl:text-2xl">
             お客さまのセリフに合うボタンを押そう
           </p>
         </div>

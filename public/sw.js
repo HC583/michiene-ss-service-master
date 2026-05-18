@@ -2,6 +2,7 @@ const CACHE_NAME = "michiene-ss-service-master-v1";
 const APP_SHELL = [
   "/",
   "/index.html",
+  "/web-app.html",
   "/manifest.webmanifest",
   "/pwa-icon.svg",
   "/staff.png",
