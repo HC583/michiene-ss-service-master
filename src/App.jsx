@@ -406,9 +406,9 @@ function TitleScreen({ onStart }) {
             <span className="block">北海道の暮らしを支える</span>
             <span className="block">サービスステーションを育てよう！</span>
           </p>
-          <div className="mx-auto mt-6 max-w-3xl overflow-hidden rounded-[1.5rem] border-4 border-yellow-300 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-4 py-4 text-white shadow-xl shadow-orange-200 ring-4 ring-white">
-            <p className="flex animate-pulse items-center justify-center gap-1 text-2xl font-black leading-tight sm:gap-2 sm:text-5xl lg:text-6xl">
-              <span className="shrink-0 text-5xl leading-none sm:text-8xl" aria-hidden="true">🏅</span>
+          <div className="mx-auto mt-6 max-w-4xl rounded-[1.5rem] border-4 border-yellow-300 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-8 py-5 text-white shadow-xl shadow-orange-200 ring-4 ring-white sm:px-10">
+            <p className="flex animate-pulse items-center justify-center gap-3 text-2xl font-black leading-tight sm:gap-4 sm:text-4xl lg:text-5xl">
+              <span className="shrink-0 text-5xl leading-none sm:text-7xl lg:text-8xl" aria-hidden="true">🏅</span>
               <span className="whitespace-nowrap text-left">
                 スタンドを成長させよう！！
               </span>
