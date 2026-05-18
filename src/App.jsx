@@ -1202,15 +1202,19 @@ function WashGame({ onComplete }) {
         {[...Array(dirtLeft)].map((_, index) => (
           <span
             key={`dirt-${index}`}
-            className="absolute flex h-20 w-24 rotate-[-8deg] items-center justify-center rounded-[48%] bg-amber-800 text-4xl shadow-xl ring-4 ring-amber-200"
+            className="absolute flex h-20 w-24 rotate-[-8deg] items-center justify-center rounded-[48%] bg-gradient-to-br from-amber-700 via-amber-900 to-stone-800 shadow-xl ring-4 ring-amber-200"
             style={{
               left: `${20 + (index * 13) % 58}%`,
               bottom: `${90 + (index % 2) * 48}px`
             }}
+            aria-label="茶色い汚れ"
           >
-            <span className="absolute left-3 top-3 h-4 w-4 rounded-full bg-amber-950/45" />
-            <span className="absolute bottom-4 right-4 h-5 w-5 rounded-full bg-amber-950/40" />
-            <span className="relative z-10 text-3xl">どろ</span>
+            <span className="absolute left-3 top-3 h-5 w-5 rounded-full bg-stone-950/45" />
+            <span className="absolute bottom-4 right-4 h-6 w-6 rounded-full bg-stone-950/45" />
+            <span className="absolute right-7 top-5 h-3 w-4 rounded-full bg-yellow-900/60" />
+            <span className="absolute -left-2 top-7 h-5 w-5 rounded-full bg-amber-800" />
+            <span className="absolute -right-2 bottom-5 h-4 w-4 rounded-full bg-stone-800" />
+            <span className="absolute bottom-3 left-7 h-3 w-8 rounded-full bg-amber-950/55" />
           </span>
         ))}
 
@@ -2020,11 +2024,11 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
 
 function UpgradePurchaseToast({ upgrade }) {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-blue-950/45 p-5">
-      {[...Array(18)].map((_, index) => (
+    <div className="fixed inset-0 z-50 flex items-center justify-center overflow-hidden bg-blue-950/65 p-5">
+      {[...Array(30)].map((_, index) => (
         <span
           key={index}
-          className="absolute animate-upgrade-confetti text-3xl"
+          className="absolute animate-upgrade-confetti text-5xl"
           style={{
             left: `${(index * 29) % 100}%`,
             top: `${8 + (index * 17) % 76}%`,
@@ -2034,17 +2038,19 @@ function UpgradePurchaseToast({ upgrade }) {
           {index % 3 === 0 ? "✨" : index % 3 === 1 ? "⭐" : "🎉"}
         </span>
       ))}
-      <div className="relative w-full max-w-md animate-upgrade-burst overflow-hidden rounded-[2rem] border-4 border-yellow-300 bg-white p-6 text-center shadow-2xl">
-        <div className="absolute -left-10 -top-10 h-28 w-28 rounded-full bg-yellow-300/45 blur-xl" />
-        <div className="absolute -bottom-10 -right-10 h-32 w-32 rounded-full bg-orange-300/45 blur-xl" />
-        <div className="mx-auto mb-4 flex justify-center">
-          <div className="animate-upgrade-arrive rounded-[2rem] bg-gradient-to-br from-yellow-300 via-orange-300 to-sky-300 p-2 shadow-xl ring-8 ring-yellow-200/70">
+      <div className="relative w-full max-w-4xl animate-upgrade-burst overflow-hidden rounded-[3rem] border-8 border-yellow-300 bg-white p-8 text-center shadow-2xl xl:p-12">
+        <div className="absolute -left-16 -top-16 h-48 w-48 rounded-full bg-yellow-300/50 blur-2xl" />
+        <div className="absolute -bottom-20 -right-16 h-56 w-56 rounded-full bg-orange-300/50 blur-2xl" />
+        <div className="absolute left-8 top-8 text-6xl animate-bounce">✨</div>
+        <div className="absolute right-10 top-10 text-7xl animate-pulse">⭐</div>
+        <div className="mx-auto mb-7 flex justify-center">
+          <div className="animate-upgrade-arrive rounded-[3rem] bg-gradient-to-br from-yellow-300 via-orange-300 to-sky-300 p-5 shadow-2xl ring-[14px] ring-yellow-200/80">
             <UpgradeVisual upgrade={upgrade} size="pop" />
           </div>
         </div>
-        <p className="relative text-sm font-black tracking-[.18em] text-orange-500">STAND UPGRADE</p>
-        <p className="relative mt-1 text-3xl font-black text-blue-700">設備パワーアップ！</p>
-        <p className="relative mt-3 rounded-2xl bg-yellow-100 px-4 py-3 text-lg font-black text-orange-700">
+        <p className="relative text-2xl font-black tracking-[.18em] text-orange-500 xl:text-3xl">STAND UPGRADE</p>
+        <p className="relative mt-2 text-6xl font-black text-blue-700 xl:text-8xl">設備パワーアップ！</p>
+        <p className="relative mx-auto mt-6 max-w-3xl rounded-[2rem] bg-yellow-100 px-6 py-5 text-3xl font-black text-orange-700 shadow-inner xl:text-5xl">
           {upgrade.name}
         </p>
       </div>
