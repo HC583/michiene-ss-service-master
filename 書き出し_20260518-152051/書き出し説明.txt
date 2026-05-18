@@ -1,0 +1,24 @@
+道エネSSサービスマスター 書き出し
+
+書き出し日時: 2026-05-18 15:20
+
+WEBサイトアプリ:
+/Users/takahata/Documents/New project/書き出し_20260518-152051/WEBサイトアプリ
+
+携帯アプリ:
+/Users/takahata/Documents/New project/書き出し_20260518-152051/携帯アプリ
+
+編集を続ける元フォルダ:
+/Users/takahata/Documents/New project
+
+確認用アドレス:
+http://127.0.0.1:5173/
+
+使い方:
+WEBサイト用は WEBサイトアプリ の index.html が入口です。
+携帯用は 携帯アプリ の mobile-app.html が入口です。
+アプリとしてスマホに入れる場合は、VercelなどでHTTPS公開したURLからホーム画面に追加します。
+
+注意:
+この書き出しフォルダは配布用です。
+あとで内容を変更するときは、元フォルダ /Users/takahata/Documents/New project を編集してください。

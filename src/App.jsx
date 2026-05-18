@@ -279,7 +279,7 @@ function App() {
     <div className="cute-orange-bg min-h-screen text-slate-800">
       <div className="relative min-h-screen">
         <SnowBackground />
-        <main className="relative z-10 mx-auto grid w-full max-w-[1520px] grid-cols-1 gap-5 px-3 py-4 sm:px-5 xl:grid-cols-[minmax(0,1fr)_420px] xl:items-start xl:gap-6">
+        <main className="relative z-10 mx-auto grid w-full max-w-[1840px] grid-cols-1 gap-5 px-3 py-4 sm:px-5 xl:grid-cols-[minmax(0,1fr)_680px] xl:items-start xl:gap-6">
           <section className="flex min-w-0 flex-col gap-4">
             <TopBar points={points} totalPoints={totalPoints} streak={streak} />
             <StationScene
@@ -287,7 +287,6 @@ function App() {
               pointPop={pointPop}
               activeUpgradeKey={upgradePop?.key}
             />
-            <CustomerPanel customer={customer} message={message} phase={phase} />
             {phase === "select" && <ServiceSelector onChoose={chooseService} />}
             {phase === "mini" && (
               <MiniGame service={activeService} onComplete={completeMiniGame} />
@@ -301,7 +300,8 @@ function App() {
               </button>
             )}
           </section>
-          <aside className="min-w-0 xl:sticky xl:top-4">
+          <aside className="flex min-w-0 flex-col gap-5 xl:sticky xl:top-4">
+            <CustomerPanel customer={customer} message={message} phase={phase} />
             <UpgradePanel
               points={points}
               boughtUpgrades={boughtUpgrades}
@@ -581,35 +581,35 @@ function SceneIcon({ label, active = false }) {
 
 function CustomerPanel({ customer, message, phase }) {
   return (
-    <div className="customer-card-bg relative overflow-hidden rounded-3xl border-4 border-orange-100 p-3 shadow-xl sm:p-4">
+    <div className="customer-card-bg relative overflow-hidden rounded-3xl border-4 border-orange-100 p-3 shadow-xl sm:p-4 xl:p-5">
       <span className="absolute -right-6 top-6 h-20 w-20 rounded-full bg-orange-200/45" aria-hidden="true" />
       <span className="absolute bottom-4 right-12 h-6 w-6 rounded-full bg-sky-200/55" aria-hidden="true" />
-      <div key={customer.speech} className="relative z-10 mb-3 flex animate-welcome-pop items-center justify-center gap-2 sm:gap-3 xl:mb-2">
-        <div className="flex h-14 w-12 shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-white shadow-lg ring-4 ring-orange-200 sm:h-20 sm:w-16 xl:h-16 xl:w-14">
-          <StaffImage className="h-[3.4rem] w-10 object-contain sm:h-[5rem] sm:w-14 xl:h-[3.9rem] xl:w-11" />
+      <div key={customer.speech} className="relative z-10 mb-3 flex animate-welcome-pop items-center justify-center gap-2 sm:gap-3 xl:mb-4 xl:gap-4">
+        <div className="flex h-14 w-12 shrink-0 items-end justify-center overflow-hidden rounded-2xl bg-white shadow-lg ring-4 ring-orange-200 sm:h-20 sm:w-16 xl:h-28 xl:w-24 xl:rounded-3xl xl:ring-[6px]">
+          <StaffImage className="h-[3.4rem] w-10 object-contain sm:h-[5rem] sm:w-14 xl:h-[7rem] xl:w-20" />
         </div>
-        <div className="relative whitespace-nowrap rounded-[1.25rem] bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-3 py-3 text-base font-black text-white shadow-xl ring-4 ring-white sm:rounded-[1.5rem] sm:px-5 sm:text-3xl xl:text-2xl">
+        <div className="relative whitespace-nowrap rounded-[1.25rem] bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-3 py-3 text-base font-black text-white shadow-xl ring-4 ring-white sm:rounded-[1.5rem] sm:px-5 sm:text-3xl xl:rounded-[2rem] xl:px-7 xl:py-5 xl:text-5xl">
           <span className="mr-1" aria-hidden="true">✨</span>
           いらっしゃいませ！
           <span className="ml-1" aria-hidden="true">✨</span>
         </div>
       </div>
-      <div className="customer-request-bg relative z-10 rounded-[1.5rem] p-3 shadow-inner ring-2 ring-orange-100 sm:p-4">
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center">
-        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-md ring-4 ring-blue-100 sm:mx-0 xl:h-16 xl:w-16 xl:text-3xl">
+      <div className="customer-request-bg relative z-10 rounded-[1.5rem] p-3 shadow-inner ring-2 ring-orange-100 sm:p-4 xl:rounded-[2rem] xl:p-5">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center xl:items-start">
+        <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-md ring-4 ring-blue-100 sm:mx-0 xl:h-24 xl:w-24 xl:text-5xl">
           {customer.visual === "insurance" && <InsuranceCustomerIcon className="h-16 w-16" />}
           {customer.visual === "staffBooking" && <InspectionCustomerIcon />}
           {!customer.visual && customer.icon}
         </div>
         <div className="min-w-0 flex-1">
-          <div className="mb-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700 shadow-sm ring-2 ring-white">
+          <div className="mb-2 inline-flex rounded-full bg-blue-100 px-3 py-1 text-sm font-bold text-blue-700 shadow-sm ring-2 ring-white xl:text-base">
             お客さま
           </div>
-          <p className="whitespace-pre-line rounded-2xl bg-white px-3 py-3 text-center text-lg font-black leading-relaxed text-slate-800 shadow-sm ring-2 ring-blue-100 sm:text-xl xl:text-lg">
+          <p className="whitespace-pre-line rounded-2xl bg-white px-3 py-3 text-center text-lg font-black leading-relaxed text-slate-800 shadow-sm ring-2 ring-blue-100 sm:text-xl xl:px-5 xl:py-5 xl:text-3xl xl:leading-snug">
             「{customer.speech}」
           </p>
           <p
-            className={`mt-2 rounded-2xl px-4 py-2 text-base font-bold shadow-sm ring-2 ring-white xl:text-sm ${
+            className={`mt-2 rounded-2xl px-4 py-2 text-base font-bold shadow-sm ring-2 ring-white xl:text-lg ${
               phase === "mini"
                 ? "bg-emerald-100 text-emerald-700"
               : phase === "done"
@@ -901,10 +901,10 @@ function InsuranceImage({ className = "h-16 w-16", fallback = "🛡️" }) {
 function UpgradeVisual({ upgrade, size = "panel" }) {
   const classes = {
     panel: {
-      wrap: "h-14 w-14 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner",
-      image: "h-11 w-11",
-      wide: "h-10 w-13",
-      staff: "h-14 w-12"
+      wrap: "h-14 w-14 rounded-xl border-2 border-yellow-300 bg-yellow-50 shadow-inner xl:h-20 xl:w-20 xl:rounded-2xl xl:border-4",
+      image: "h-11 w-11 xl:h-16 xl:w-16",
+      wide: "h-10 w-13 xl:h-14 xl:w-20",
+      staff: "h-14 w-12 xl:h-20 xl:w-16"
     },
     scene: {
       wrap: "h-12 w-12 rounded-xl sm:h-14 sm:w-14",
@@ -1579,10 +1579,10 @@ function MufflerPartIcon() {
 }
 
 function InspectionGame({ onComplete, onFail }) {
-  const correctItems = ["ブレーキ", "ライト", "タイヤ溝", "マフラー", "エンジン"];
+  const correctItems = ["ブレーキ", "車のライト", "タイヤ溝", "マフラー", "エンジン"];
   const checkItems = [
     { label: "ブレーキ", icon: "🛑", correct: true, hint: "止まる力" },
-    { label: "ライト", icon: "💡", correct: true, hint: "夜道の安全" },
+    { label: "車のライト", icon: "💡", correct: true, hint: "夜道の安全" },
     { label: "タイヤ溝", icon: "🛞", correct: true, hint: "すべり止め" },
     { label: "マフラー", icon: "muffler", correct: true, hint: "排気まわり" },
     { label: "エンジン", icon: "engine", correct: true, hint: "走る力" },
@@ -1890,14 +1890,14 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
   const availableUpgrades = upgrades.filter((upgrade) => !boughtUpgrades.includes(upgrade.key));
 
   return (
-    <div className="rounded-3xl border-4 border-white bg-white/95 p-3 shadow-xl xl:p-4">
-      <div className="mb-3 flex items-center justify-between gap-3">
-        <h2 className="text-2xl font-black text-blue-700">スタンド成長</h2>
-        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700">
+    <div className="rounded-3xl border-4 border-white bg-white/95 p-3 shadow-xl xl:p-5">
+      <div className="mb-3 flex items-center justify-between gap-3 xl:mb-4">
+        <h2 className="text-2xl font-black text-blue-700 xl:text-4xl">スタンド成長</h2>
+        <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-black text-blue-700 xl:px-4 xl:py-2 xl:text-base">
           {boughtUpgrades.length}/{upgrades.length}
         </span>
       </div>
-      <div className="grid gap-2 xl:gap-3">
+      <div className="grid gap-2 xl:gap-4">
         {availableUpgrades.length === 0 && (
           <div className="rounded-3xl bg-emerald-50 p-5 text-center font-black text-emerald-700">
             すべて購入済みです！
@@ -1909,23 +1909,23 @@ function UpgradePanel({ points, boughtUpgrades, onBuy }) {
               key={upgrade.key}
               onClick={() => onBuy(upgrade)}
               disabled={points < upgrade.cost}
-              className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left shadow-sm transition active:scale-[.99] xl:p-3 ${
+              className={`flex items-center gap-3 rounded-2xl border-2 p-2.5 text-left shadow-sm transition active:scale-[.99] xl:gap-4 xl:rounded-3xl xl:border-4 xl:p-4 ${
                 points >= upgrade.cost
                     ? "border-orange-200 bg-orange-50 hover:bg-orange-100"
                     : "border-slate-200 bg-slate-50"
               }`}
             >
               <span className="relative shrink-0">
-                <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow">
+                <span className="absolute -right-2 -top-2 z-10 rounded-full bg-orange-500 px-2 py-0.5 text-[10px] font-black text-white shadow xl:px-3 xl:py-1 xl:text-xs">
                   UP
                 </span>
                 <UpgradeVisual upgrade={upgrade} size="panel" />
               </span>
               <span className="min-w-0 flex-1">
-                <span className="block text-sm font-black leading-tight text-slate-800 xl:text-base">{upgrade.name}</span>
-                <span className="mt-0.5 block text-xs font-bold leading-tight text-slate-500 xl:text-sm">{upgrade.effect}</span>
+                <span className="block text-sm font-black leading-tight text-slate-800 xl:text-xl">{upgrade.name}</span>
+                <span className="mt-0.5 block text-xs font-bold leading-tight text-slate-500 xl:text-base">{upgrade.effect}</span>
               </span>
-              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600 xl:text-base">
+              <span className="shrink-0 rounded-full bg-white px-3 py-1 text-sm font-black text-orange-600 xl:px-4 xl:py-2 xl:text-xl">
                 {upgrade.cost}pt
               </span>
             </button>

@@ -1,7 +1,8 @@
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 
 const text = "http://192.168.1.7:5173/";
 const out = "/Users/takahata/Documents/New project/スマホ用QRコード.svg";
+const staffImage = readFileSync("/Users/takahata/Documents/New project/public/staff.png").toString("base64");
 const version = 2;
 const size = 21 + (version - 1) * 4;
 const dataCodewords = 34;
@@ -144,7 +145,7 @@ for (let i = 0; i < 15; i++) {
 const cell = 14;
 const quiet = 4;
 const qrSize = (size + quiet * 2) * cell;
-const labelHeight = 120;
+const labelHeight = 170;
 const width = qrSize;
 const height = qrSize + labelHeight;
 let rects = "";
@@ -159,9 +160,10 @@ for (let y = 0; y < size; y++) {
 const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <rect width="100%" height="100%" fill="#ffffff"/>
-  <text x="${width / 2}" y="42" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="28" font-weight="900" fill="#1d4ed8">道エネSSサービスマスター</text>
-  <text x="${width / 2}" y="78" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="22" font-weight="800" fill="#f97316">スマホで読み取って開く</text>
-  <text x="${width / 2}" y="106" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="22" font-weight="900" fill="#111827">合言葉: 583</text>
+  <rect x="${width / 2 - 42}" y="12" width="84" height="84" rx="18" fill="#fff7ed" stroke="#fed7aa" stroke-width="5"/>
+  <image href="data:image/png;base64,${staffImage}" x="${width / 2 - 33}" y="18" width="66" height="76" preserveAspectRatio="xMidYMid meet"/>
+  <text x="${width / 2}" y="122" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="26" font-weight="900" fill="#1d4ed8">道エネサービスマスター</text>
+  <text x="${width / 2}" y="148" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="18" font-weight="900" fill="#111827">合言葉: 583</text>
   <g fill="#000000" shape-rendering="crispEdges">${rects}</g>
 </svg>
 `;
