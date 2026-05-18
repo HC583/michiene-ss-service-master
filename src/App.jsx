@@ -1202,24 +1202,30 @@ function WashGame({ onComplete }) {
         {[...Array(dirtLeft)].map((_, index) => (
           <span
             key={`dirt-${index}`}
-            className="absolute flex h-20 w-20 items-center justify-center rounded-full bg-blue-500 text-6xl shadow-xl ring-4 ring-white"
+            className="absolute flex h-20 w-24 rotate-[-8deg] items-center justify-center rounded-[48%] bg-amber-800 text-4xl shadow-xl ring-4 ring-amber-200"
             style={{
               left: `${20 + (index * 13) % 58}%`,
               bottom: `${90 + (index % 2) * 48}px`
             }}
           >
-            ✨
+            <span className="absolute left-3 top-3 h-4 w-4 rounded-full bg-amber-950/45" />
+            <span className="absolute bottom-4 right-4 h-5 w-5 rounded-full bg-amber-950/40" />
+            <span className="relative z-10 text-3xl">どろ</span>
           </span>
         ))}
 
         {currentSpot && (
           <button
             onClick={washSpot}
-            className="absolute flex h-28 w-28 animate-bounce items-center justify-center rounded-[2rem] border-4 border-white bg-sky-300 text-7xl shadow-xl active:scale-90"
+            className="absolute flex h-36 w-36 animate-bounce items-center justify-center rounded-[2.25rem] border-4 border-white bg-sky-400 text-5xl font-black text-white shadow-2xl ring-4 ring-sky-100 active:scale-90"
             style={currentSpot}
             aria-label="あわをタッチ"
           >
-            🫧
+            <span className="absolute left-4 top-3 text-4xl">✨</span>
+            <span className="absolute right-4 top-4 text-5xl">⭐</span>
+            <span className="absolute bottom-4 left-5 text-4xl">✨</span>
+            <span className="absolute bottom-5 right-5 text-4xl">⭐</span>
+            <span className="relative z-10 text-6xl">🫧</span>
           </button>
         )}
 
