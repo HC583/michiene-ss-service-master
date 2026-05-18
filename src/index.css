@@ -132,3 +132,106 @@ button {
 .animate-upgrade-confetti {
   animation: upgrade-confetti 1.7s ease-out both;
 }
+
+@media (min-width: 1024px) {
+  .mini-game-large .mini-game-body {
+    font-size: 1.25rem;
+  }
+
+  .mini-game-large .mini-game-body .text-\[10px\],
+  .mini-game-large .mini-game-body .text-\[11px\],
+  .mini-game-large .mini-game-body .text-xs {
+    font-size: 0.95rem;
+    line-height: 1.2;
+  }
+
+  .mini-game-large .mini-game-body .text-sm,
+  .mini-game-large .mini-game-body .text-base {
+    font-size: 1.25rem;
+    line-height: 1.45;
+  }
+
+  .mini-game-large .mini-game-body .text-lg,
+  .mini-game-large .mini-game-body .text-xl {
+    font-size: 1.55rem;
+    line-height: 1.35;
+  }
+
+  .mini-game-large .mini-game-body .text-2xl,
+  .mini-game-large .mini-game-body .text-3xl {
+    font-size: 2.2rem;
+    line-height: 1.2;
+  }
+
+  .mini-game-large .mini-game-body .text-4xl,
+  .mini-game-large .mini-game-body .text-5xl,
+  .mini-game-large .mini-game-body .text-6xl {
+    font-size: 3.5rem;
+    line-height: 1.05;
+  }
+
+  .mini-game-large .mini-game-body button {
+    font-size: 1.45rem;
+    line-height: 1.25;
+  }
+
+  .mini-game-large .mini-game-body .max-w-sm,
+  .mini-game-large .mini-game-body .max-w-md {
+    max-width: min(100%, 860px);
+  }
+
+  .mini-game-large .mini-game-body .h-48 {
+    height: 20rem;
+  }
+
+  .mini-game-large .mini-game-body .h-72 {
+    height: 32rem;
+  }
+
+  .mini-game-large .mini-game-body .h-96 {
+    height: 36rem;
+  }
+
+  .mini-game-large .mini-game-body .h-20.w-20 {
+    width: 7rem;
+    height: 7rem;
+  }
+
+  .mini-game-large .mini-game-body .h-14.w-14,
+  .mini-game-large .mini-game-body .h-16.w-16 {
+    width: 5.5rem;
+    height: 5.5rem;
+  }
+
+  .mini-game-large .mini-game-body .h-16.w-32 {
+    width: 14rem;
+    height: 7rem;
+  }
+
+  .mini-game-large .mini-game-body .min-h-20 {
+    min-height: 7.5rem;
+  }
+
+  .mini-game-large .mini-game-body .min-h-28,
+  .mini-game-large .mini-game-body .min-h-32 {
+    min-height: 10rem;
+  }
+
+  .mini-game-large .mini-game-body .py-4 {
+    padding-top: 1.35rem;
+    padding-bottom: 1.35rem;
+  }
+
+  .mini-game-large .mini-game-body svg {
+    transform: scale(1.18);
+  }
+
+  .mini-game-large .mini-game-body img {
+    transform: scale(1.12);
+  }
+
+  .mini-game-large .mini-game-body .rounded-3xl,
+  .mini-game-large .mini-game-body .rounded-\[2rem\] {
+    border-width: 5px;
+  }
+}

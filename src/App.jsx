@@ -23,7 +23,7 @@ const customers = [
     icon: "🚗"
   },
   {
-    speech: "車でお出かけしたら車が汚れちゃった",
+    speech: "車でお出かけしたら\n車が汚れちゃった",
     correctService: "洗車",
     icon: "🚙"
   },
@@ -38,7 +38,7 @@ const customers = [
     icon: "🏠"
   },
   {
-    speech: "電気自動車のバッテリーが少ない！",
+    speech: "電気自動車の\nバッテリーが少ない！",
     correctService: "EV充電",
     icon: "🚘"
   },
@@ -179,6 +179,7 @@ function App() {
   const [pointPop, setPointPop] = useState("");
   const [upgradePop, setUpgradePop] = useState(null);
   const [gameClear, setGameClear] = useState(false);
+  const [miniClearMessage, setMiniClearMessage] = useState("");
 
   const unlockApp = () => {
     localStorage.setItem("michieneAccess", "ok");
@@ -205,6 +206,7 @@ function App() {
     setPointPop("");
     setUpgradePop(null);
     setGameClear(false);
+    setMiniClearMessage("");
   };
 
   const chooseService = (service) => {
@@ -212,6 +214,7 @@ function App() {
     if (service === customer.correctService) {
       setActiveService(service);
       setPhase("mini");
+      setMiniClearMessage("");
       setMessage("正解！ミニゲームにチャレンジ！");
       return;
     }
@@ -229,7 +232,8 @@ function App() {
     setPoints((value) => value + earned);
     setTotalPoints((value) => value + earned);
     setStreak(nextStreak);
-    setPhase("done");
+    setPhase("mini-clear");
+    setMiniClearMessage(successMessage);
     setPointPop(`+${earned}`);
     setMessage(
       `${successMessage} ${basePoint}ポイント獲得！` +
@@ -246,6 +250,7 @@ function App() {
     setCustomer(randomCustomer());
     setPhase("select");
     setActiveService(null);
+    setMiniClearMessage("");
     setMessage("次のお客さまです。セリフをよく読んでね。");
   };
 
@@ -280,38 +285,49 @@ function App() {
       <div className="relative min-h-screen">
         <SnowBackground />
         <main className="relative z-10 mx-auto flex w-full max-w-[1840px] flex-col gap-4 px-3 py-4 sm:px-5 xl:gap-4">
-          <section className="flex min-w-0 flex-col gap-4">
-            <TopBar points={points} totalPoints={totalPoints} streak={streak} />
-            <StationScene
-              boughtUpgrades={boughtUpgrades}
-              pointPop={pointPop}
-              activeUpgradeKey={upgradePop?.key}
-            />
-          </section>
-          <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_740px] xl:items-start xl:gap-5">
-            <div className="flex min-w-0 flex-col gap-4">
-              <CustomerPanel customer={customer} message={message} phase={phase} />
-              <UpgradePanel
-                points={points}
+          {phase !== "mini" && phase !== "mini-clear" && (
+            <section className="flex min-w-0 flex-col gap-4">
+              <TopBar points={points} totalPoints={totalPoints} streak={streak} />
+              <StationScene
                 boughtUpgrades={boughtUpgrades}
-                onBuy={buyUpgrade}
+                pointPop={pointPop}
+                activeUpgradeKey={upgradePop?.key}
               />
-            </div>
-            <div className="flex min-w-0 flex-col gap-4">
-              {phase === "select" && <ServiceSelector onChoose={chooseService} />}
-              {phase === "mini" && (
-                <MiniGame service={activeService} onComplete={completeMiniGame} />
-              )}
-              {phase === "done" && (
-                <button
-                  onClick={nextCustomer}
-                  className="w-full rounded-3xl bg-orange-500 px-6 py-8 text-3xl font-black text-white shadow-lg shadow-orange-200 transition hover:bg-orange-600 active:scale-[.98]"
-                >
-                  次のお客さまへ
-                </button>
-              )}
-            </div>
-          </section>
+            </section>
+          )}
+          {phase === "mini" || phase === "mini-clear" ? (
+            <section className="min-w-0">
+              <MiniGame
+                service={activeService}
+                onComplete={completeMiniGame}
+                size="large"
+                completedMessage={miniClearMessage}
+                onNextCustomer={nextCustomer}
+              />
+            </section>
+          ) : (
+            <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_740px] xl:items-start xl:gap-5">
+              <div className="flex min-w-0 flex-col gap-4">
+                <CustomerPanel customer={customer} message={message} phase={phase} />
+                <UpgradePanel
+                  points={points}
+                  boughtUpgrades={boughtUpgrades}
+                  onBuy={buyUpgrade}
+                />
+              </div>
+              <div className="flex min-w-0 flex-col gap-4">
+                {phase === "select" && <ServiceSelector onChoose={chooseService} />}
+                {phase === "done" && (
+                  <button
+                    onClick={nextCustomer}
+                    className="w-full rounded-3xl bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-6 py-10 text-4xl font-black text-white shadow-xl shadow-orange-200 ring-4 ring-white transition hover:scale-[1.01] active:scale-[.98] xl:py-16 xl:text-6xl"
+                  >
+                    次のお客さまへ
+                  </button>
+                )}
+              </div>
+            </section>
+          )}
         </main>
         {upgradePop && <UpgradePurchaseToast upgrade={upgradePop} />}
         {gameClear && <GoodJobClearOverlay />}
@@ -985,7 +1001,7 @@ function StaffImage({ className = "h-16 w-16" }) {
   );
 }
 
-function MiniGame({ service, onComplete }) {
+function MiniGame({ service, onComplete, size = "normal", completedMessage = "", onNextCustomer }) {
   const [retryKey, setRetryKey] = useState(0);
   const [failMessage, setFailMessage] = useState("");
   const [clearMessage, setClearMessage] = useState("");
@@ -1003,63 +1019,88 @@ function MiniGame({ service, onComplete }) {
   const retryGame = () => {
     setRetryKey((value) => value + 1);
     setFailMessage("");
+    setClearMessage("");
   };
   const clearGame = (successMessage) => {
-    if (clearMessage) return;
+    if (clearMessage || completedMessage) return;
     setFailMessage("");
     setClearMessage(successMessage);
-    window.setTimeout(() => onComplete(successMessage), 3200);
+    onComplete(successMessage);
   };
 
+  const isLarge = size === "large";
+  const successText = completedMessage || clearMessage;
+
   return (
-    <div className="relative rounded-3xl border-4 border-white bg-white/95 p-4 shadow-xl">
-      <h2 className="mb-4 text-2xl font-black text-blue-700">{service}ミニゲーム</h2>
-      <Game key={retryKey} onComplete={clearGame} onFail={setFailMessage} />
-      {clearMessage && (
+    <div
+      className={`relative rounded-3xl border-4 border-white bg-white/95 shadow-xl ${
+        isLarge ? "min-h-[820px] p-5 xl:min-h-[calc(100vh-2rem)] xl:p-8" : "p-4"
+      } ${isLarge ? "mini-game-large" : ""}`}
+    >
+      <div className={`mb-5 flex flex-col items-center justify-center gap-2 text-center ${isLarge ? "xl:mb-7" : ""}`}>
+        <p className="rounded-full bg-blue-100 px-5 py-2 text-base font-black tracking-[.12em] text-blue-700">
+          MINI GAME
+        </p>
+        <h2 className={`font-black leading-tight text-blue-700 ${isLarge ? "text-4xl xl:text-7xl" : "text-2xl"}`}>
+          {service}ミニゲーム
+        </h2>
+      </div>
+      <div className={isLarge ? "mini-game-body" : ""}>
+        <Game key={retryKey} onComplete={clearGame} onFail={setFailMessage} />
+      </div>
+      {successText && (
         <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden rounded-3xl bg-blue-950/70 p-5">
           <div className="absolute left-6 top-6 text-4xl animate-bounce">✨</div>
           <div className="absolute right-8 top-10 text-5xl animate-pulse">⭐</div>
           <div className="absolute bottom-8 left-10 text-5xl animate-bounce">🎉</div>
           <div className="absolute bottom-12 right-10 text-4xl animate-pulse">✨</div>
-          <div className="w-full max-w-lg animate-pop rounded-[2rem] border-4 border-yellow-300 bg-white p-6 text-center shadow-2xl">
-            <p className="text-sm font-black tracking-widest text-orange-500">MISSION</p>
-            <p className="mt-1 whitespace-nowrap text-3xl font-black leading-tight text-blue-700 sm:text-5xl">
+          <div className="w-full max-w-3xl animate-pop rounded-[2rem] border-4 border-yellow-300 bg-white p-6 text-center shadow-2xl xl:p-10">
+            <p className="text-lg font-black tracking-widest text-orange-500 xl:text-2xl">MISSION</p>
+            <p className="mt-1 whitespace-nowrap text-4xl font-black leading-tight text-blue-700 sm:text-6xl xl:text-7xl">
               ミッションクリア！
             </p>
-            <p className="mt-4 rounded-2xl bg-yellow-100 px-4 py-3 text-lg font-black text-orange-700">
-              {clearMessage}
+            <p className="mt-5 rounded-3xl bg-yellow-100 px-4 py-4 text-2xl font-black text-orange-700 xl:text-4xl">
+              {successText}
             </p>
+            {onNextCustomer && (
+              <button
+                onClick={onNextCustomer}
+                className="mt-7 w-full rounded-3xl bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-6 py-6 text-3xl font-black text-white shadow-xl ring-4 ring-white transition hover:scale-[1.01] active:scale-[.98] xl:py-8 xl:text-5xl"
+              >
+                次のお客さまへ
+              </button>
+            )}
           </div>
         </div>
       )}
       {failMessage && (
         <div className="absolute inset-0 z-20 flex items-center justify-center rounded-3xl bg-white/95 p-5">
-          <div className="w-full max-w-sm rounded-3xl border-4 border-red-200 bg-red-50 p-5 text-center shadow-xl">
-            <div className="mb-3 flex items-center justify-center gap-3">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full bg-white shadow-inner">
-                <StaffImage className="h-24 w-20" />
+          <div className="w-full max-w-3xl rounded-[2rem] border-4 border-red-200 bg-red-50 p-6 text-center shadow-2xl xl:p-10">
+            <div className="mb-5 flex flex-col items-center justify-center gap-4 sm:flex-row">
+              <div className="flex h-28 w-28 items-center justify-center overflow-hidden rounded-full bg-white shadow-inner ring-4 ring-red-100 xl:h-36 xl:w-36">
+                <StaffImage className="h-32 w-24 xl:h-40 xl:w-28" />
               </div>
-              <div className="relative rounded-2xl bg-white px-4 py-3 text-left text-base font-black text-orange-600 shadow">
-                <span className="absolute -left-2 top-6 h-4 w-4 rotate-45 bg-white" />
+              <div className="relative rounded-3xl bg-white px-6 py-4 text-center text-2xl font-black text-orange-600 shadow xl:px-8 xl:py-5 xl:text-4xl">
+                <span className="absolute -left-2 top-1/2 hidden h-5 w-5 -translate-y-1/2 rotate-45 bg-white sm:block" />
                 所長さん「もう一度やってみよう！」
               </div>
             </div>
-            <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-full bg-red-500 text-6xl font-black text-white shadow-lg">
+            <div className="mx-auto mb-4 flex h-28 w-28 items-center justify-center rounded-full bg-red-500 text-8xl font-black text-white shadow-lg xl:h-36 xl:w-36 xl:text-9xl">
               ×
             </div>
-            <p className="text-xl font-black text-red-700">もう一度やりなおそう！</p>
+            <p className="text-4xl font-black text-red-700 xl:text-6xl">もう一度やりなおそう！</p>
             <p
-              className={`mt-2 min-h-7 font-black ${
+              className={`mt-4 min-h-12 font-black ${
                 isBookedFailure
-                  ? "rounded-2xl bg-white px-4 py-3 text-3xl text-red-600 shadow-sm"
-                  : "text-base text-slate-700"
+                  ? "rounded-3xl bg-white px-5 py-4 text-4xl text-red-600 shadow-sm xl:text-5xl"
+                  : "text-2xl text-slate-700 xl:text-3xl"
               }`}
             >
               {failMessage}
             </p>
             <button
               onClick={retryGame}
-              className="mt-4 w-full rounded-2xl bg-orange-500 py-4 text-xl font-black text-white shadow-lg active:scale-95"
+              className="mt-6 w-full rounded-3xl bg-orange-500 py-6 text-3xl font-black text-white shadow-lg active:scale-95 xl:py-8 xl:text-5xl"
             >
               もう一度やる
             </button>
@@ -1083,22 +1124,39 @@ function FuelGame({ onComplete, onFail }) {
     }
   };
   return (
-    <div className="space-y-4">
-      <div className="relative h-16 overflow-hidden rounded-full bg-slate-200 p-2">
-        <div className="absolute left-[42%] top-2 flex h-12 w-[22%] items-center justify-center rounded-full bg-emerald-400">
-          <span className="whitespace-nowrap rounded-full bg-white/90 px-2 py-1 text-xs font-black text-emerald-700 shadow-sm">
-            給油中
-          </span>
+    <div className="space-y-5">
+      <div className="rounded-[2rem] border-4 border-orange-200 bg-gradient-to-b from-orange-50 via-white to-sky-50 p-6 text-center shadow-inner">
+        <div className="mb-6 flex items-center justify-center gap-8">
+          <div className="flex h-36 w-32 items-center justify-center rounded-[2rem] bg-white shadow-xl ring-4 ring-orange-100">
+            <span className="scale-[1.65]">
+              <FuelPumpIcon />
+            </span>
+          </div>
+          <div className="rounded-full bg-orange-500 px-8 py-4 text-4xl font-black text-white shadow-xl">
+            満タンにしよう！
+          </div>
         </div>
-        <div
-          id="fuel-marker"
-          className="absolute top-1 h-14 w-4 animate-gauge rounded-full bg-orange-500 shadow-lg"
-        />
+        <div className="relative mx-auto h-36 max-w-6xl overflow-hidden rounded-full bg-slate-200 p-4 shadow-inner">
+          <div className="absolute left-[42%] top-4 flex h-28 w-[22%] items-center justify-center rounded-full bg-emerald-400 shadow-xl ring-4 ring-emerald-200">
+            <span className="whitespace-nowrap rounded-full bg-white/95 px-6 py-3 text-3xl font-black text-emerald-700 shadow-sm">
+              給油中
+            </span>
+          </div>
+          <div
+            id="fuel-marker"
+            className="absolute top-3 h-[7.5rem] w-8 animate-gauge rounded-full bg-orange-500 shadow-2xl ring-4 ring-white"
+          />
+        </div>
+        <div className="mx-auto mt-5 flex max-w-5xl items-center justify-between px-8 text-2xl font-black text-slate-500">
+          <span>早すぎ</span>
+          <span className="text-emerald-700">ここでストップ！</span>
+          <span>遅すぎ</span>
+        </div>
       </div>
-      <button onClick={stopGauge} className="w-full rounded-2xl bg-orange-500 py-4 text-xl font-black text-white">
+      <button onClick={stopGauge} className="w-full rounded-3xl bg-orange-500 py-8 text-5xl font-black text-white shadow-xl">
         ストップ
       </button>
-      {result && <p className="text-center font-bold text-blue-700">{result}</p>}
+      {result && <p className="rounded-3xl bg-blue-50 px-4 py-4 text-center text-3xl font-black text-blue-700">{result}</p>}
     </div>
   );
 }
@@ -1130,24 +1188,24 @@ function WashGame({ onComplete }) {
   };
 
   return (
-    <div className="space-y-4">
-      <p className="rounded-2xl bg-sky-100 px-4 py-3 text-center text-base font-black text-sky-800">
+    <div className="space-y-5">
+      <p className="rounded-3xl bg-sky-100 px-6 py-5 text-center text-2xl font-black text-sky-800 xl:text-4xl">
         大きな「あわ」をタッチして、車をピカピカにしよう！
       </p>
 
-      <div className="relative mx-auto h-72 max-w-md overflow-hidden rounded-3xl border-4 border-sky-200 bg-gradient-to-b from-sky-100 to-white p-4 shadow-inner">
-        <div className="absolute inset-x-0 bottom-0 h-20 bg-sky-200/70" />
-        <div className="absolute bottom-8 left-1/2 flex h-36 w-52 -translate-x-1/2 items-center justify-center rounded-3xl bg-white shadow-inner">
-          <CarWashImage className="h-32 w-44" />
+      <div className="relative mx-auto h-[38rem] max-w-6xl overflow-hidden rounded-[2rem] border-4 border-sky-200 bg-gradient-to-b from-sky-100 to-white p-6 shadow-inner">
+        <div className="absolute inset-x-0 bottom-0 h-40 bg-sky-200/70" />
+        <div className="absolute bottom-16 left-1/2 flex h-72 w-[30rem] -translate-x-1/2 items-center justify-center rounded-[2.25rem] bg-white shadow-inner ring-4 ring-white">
+          <CarWashImage className="h-64 w-[26rem]" />
         </div>
 
         {[...Array(dirtLeft)].map((_, index) => (
           <span
             key={`dirt-${index}`}
-            className="absolute flex h-9 w-9 items-center justify-center rounded-full bg-amber-700 text-lg shadow-lg"
+            className="absolute flex h-20 w-20 items-center justify-center rounded-full bg-blue-500 text-6xl shadow-xl ring-4 ring-white"
             style={{
               left: `${20 + (index * 13) % 58}%`,
-              bottom: `${42 + (index % 2) * 22}px`
+              bottom: `${90 + (index % 2) * 48}px`
             }}
           >
             ✨
@@ -1157,7 +1215,7 @@ function WashGame({ onComplete }) {
         {currentSpot && (
           <button
             onClick={washSpot}
-            className="absolute flex h-20 w-20 animate-bounce items-center justify-center rounded-3xl border-4 border-white bg-sky-300 text-5xl shadow-xl active:scale-90"
+            className="absolute flex h-28 w-28 animate-bounce items-center justify-center rounded-[2rem] border-4 border-white bg-sky-300 text-7xl shadow-xl active:scale-90"
             style={currentSpot}
             aria-label="あわをタッチ"
           >
@@ -1168,22 +1226,22 @@ function WashGame({ onComplete }) {
         {bursts.map((burst) => (
           <div
             key={burst.id}
-            className="pointer-events-none absolute z-20 h-24 w-24 -translate-x-2 -translate-y-2 animate-pop"
+            className="pointer-events-none absolute z-20 h-36 w-36 -translate-x-2 -translate-y-2 animate-pop"
             style={{ left: burst.left, top: burst.top }}
             aria-hidden="true"
           >
             <div className="absolute inset-0 rounded-full bg-yellow-200/80 blur-sm" />
-            <div className="absolute left-1/2 top-1/2 h-20 w-20 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-yellow-300 bg-white/80 shadow-xl" />
-            <span className="absolute -left-4 top-5 text-3xl animate-bounce">✨</span>
-            <span className="absolute right-0 top-0 text-4xl animate-pulse">💦</span>
-            <span className="absolute bottom-0 right-2 text-3xl animate-bounce">⭐</span>
-            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-orange-500 px-3 py-1 text-sm font-black text-white shadow-lg">
+            <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-yellow-300 bg-white/80 shadow-xl" />
+            <span className="absolute -left-4 top-5 text-5xl animate-bounce">✨</span>
+            <span className="absolute right-0 top-0 text-6xl animate-pulse">💦</span>
+            <span className="absolute bottom-0 right-2 text-5xl animate-bounce">⭐</span>
+            <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-orange-500 px-4 py-2 text-xl font-black text-white shadow-lg">
               ピカッ!
             </span>
           </div>
         ))}
 
-        <div className="absolute left-4 top-4 rounded-full bg-orange-400 px-3 py-1 text-sm font-black text-white shadow">
+        <div className="absolute left-6 top-6 rounded-full bg-orange-400 px-5 py-3 text-2xl font-black text-white shadow">
           あと {dirtLeft} こ
         </div>
       </div>
@@ -1191,25 +1249,25 @@ function WashGame({ onComplete }) {
       <button
         onClick={washSpot}
         disabled={!currentSpot}
-        className="w-full rounded-2xl bg-sky-500 py-4 text-xl font-black text-white shadow-lg active:scale-95 disabled:bg-slate-300"
+        className="w-full rounded-3xl bg-sky-500 py-7 text-4xl font-black text-white shadow-xl active:scale-95 disabled:bg-slate-300"
       >
         あわをタッチ！
       </button>
 
-      <div className="space-y-2 rounded-2xl bg-white p-3 shadow-inner">
-        <div className="flex items-center justify-between text-sm font-black text-sky-800">
+      <div className="space-y-3 rounded-3xl bg-white p-5 shadow-inner">
+        <div className="flex items-center justify-between text-2xl font-black text-sky-800">
           <span>洗車パワー</span>
           <span>{washed}/{foamSpots.length}</span>
         </div>
-        <div className="h-5 overflow-hidden rounded-full bg-sky-100">
+        <div className="h-8 overflow-hidden rounded-full bg-sky-100">
           <div
             className="h-full rounded-full bg-gradient-to-r from-sky-400 to-blue-500 transition-all"
             style={{ width: `${(washed / foamSpots.length) * 100}%` }}
           />
         </div>
-        <div className="grid grid-cols-5 gap-1">
+        <div className="grid grid-cols-5 gap-2">
           {foamSpots.map((_, index) => (
-            <div key={index} className={`h-2 rounded-full ${index < washed ? "bg-emerald-400" : "bg-slate-200"}`} />
+            <div key={index} className={`h-4 rounded-full ${index < washed ? "bg-emerald-400" : "bg-slate-200"}`} />
           ))}
         </div>
       </div>
@@ -1270,14 +1328,14 @@ function TireGame({ onComplete, onFail }) {
   };
 
   return (
-    <div className="space-y-4">
-      <p className="rounded-2xl bg-blue-100 px-4 py-3 text-center text-base font-black text-blue-800">
+    <div className="space-y-5">
+      <p className="rounded-3xl bg-blue-100 px-6 py-5 text-center text-2xl font-black text-blue-800 xl:text-4xl">
         {note}
       </p>
 
-      <div className="relative mx-auto max-w-md overflow-hidden rounded-3xl border-4 border-blue-200 bg-gradient-to-b from-sky-100 to-white p-5 shadow-inner">
-        <div className="absolute left-4 top-4 text-3xl animate-bounce">❄️</div>
-        <div className="absolute right-5 top-6 text-2xl animate-pulse">✨</div>
+      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border-4 border-blue-200 bg-gradient-to-b from-sky-100 to-white p-6 shadow-inner">
+        <div className="absolute left-6 top-6 text-5xl animate-bounce">❄️</div>
+        <div className="absolute right-8 top-8 text-5xl animate-pulse">✨</div>
         <OverheadTireCar
           positions={tirePositions}
           activeIndex={currentWheel}
@@ -1286,7 +1344,7 @@ function TireGame({ onComplete, onFail }) {
         />
       </div>
 
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
         {tirePositions.map((position, index) => {
           const done = index < currentWheel;
           const active = index === currentWheel;
@@ -1295,7 +1353,7 @@ function TireGame({ onComplete, onFail }) {
               key={position.label}
               onClick={() => pickWheel(index)}
               disabled={stage !== "pick" && active}
-              className={`min-h-20 rounded-3xl border-4 p-3 text-lg font-black shadow-lg transition active:scale-95 ${
+              className={`min-h-32 rounded-3xl border-4 p-4 text-2xl font-black shadow-lg transition active:scale-95 xl:min-h-40 xl:text-3xl ${
                 done
                   ? "border-emerald-300 bg-emerald-100 text-emerald-700"
                   : active
@@ -1303,7 +1361,7 @@ function TireGame({ onComplete, onFail }) {
                     : "border-slate-200 bg-white text-slate-500"
               }`}
             >
-              <span className="block text-2xl">{done ? "✅" : active ? "🛞" : "○"}</span>
+              <span className="block text-5xl">{done ? "✅" : active ? "🛞" : "○"}</span>
               {position.label}
             </button>
           );
@@ -1311,21 +1369,21 @@ function TireGame({ onComplete, onFail }) {
       </div>
 
       {stage === "tighten" && (
-        <div className="rounded-3xl bg-slate-100 p-4 text-center shadow-inner">
-          <div className="mb-3 flex items-center justify-center gap-3 text-lg font-black text-orange-700">
-            <Wrench className="h-8 w-8 animate-spin" />
+        <div className="rounded-3xl bg-slate-100 p-6 text-center shadow-inner">
+          <div className="mb-4 flex items-center justify-center gap-4 text-3xl font-black text-orange-700">
+            <Wrench className="h-12 w-12 animate-spin" />
             ナット締め中！
           </div>
-          <div className="flex justify-center gap-3">
+          <div className="flex justify-center gap-5">
             {[0, 1, 2].map((index) => (
               <NutIcon
                 key={index}
                 tightened={index < tighteningStep}
-                className={`h-12 w-12 transition ${index === tighteningStep ? "scale-110 animate-pulse" : ""}`}
+                className={`h-20 w-20 transition ${index === tighteningStep ? "scale-110 animate-pulse" : ""}`}
               />
             ))}
           </div>
-          <p className="mt-3 text-sm font-bold text-slate-600">
+          <p className="mt-4 text-2xl font-bold text-slate-600">
             {activeTirePosition.label}をカチッと固定しています
           </p>
         </div>
@@ -1336,21 +1394,23 @@ function TireGame({ onComplete, onFail }) {
 
 function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
   return (
-    <div className="relative mx-auto h-96 max-w-sm overflow-hidden rounded-[2rem] bg-white/55 shadow-inner">
-      <img
-        src={assetPath("/car-top-view.png")}
-        alt=""
-        aria-hidden="true"
-        className="absolute left-1/2 top-1/2 h-[22rem] -translate-x-1/2 -translate-y-1/2 object-contain"
-        draggable="false"
-      />
+    <div className="relative mx-auto h-[42rem] max-w-4xl overflow-hidden rounded-[2rem] bg-white/60 shadow-inner">
+      <div className="absolute inset-0 flex items-center justify-center">
+        <img
+          src={assetPath("/car-top-view.png")}
+          alt=""
+          aria-hidden="true"
+          className="h-[36rem] w-full object-contain object-center"
+          draggable="false"
+        />
+      </div>
       {positions.map((position, index) => {
         const done = index < activeIndex;
         const active = index === activeIndex;
         return (
           <div
             key={position.label}
-            className={`absolute flex h-16 w-16 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-2xl border-4 shadow-xl transition ${
+            className={`absolute flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-3xl border-4 shadow-xl transition ${
               done
                 ? "border-emerald-300 bg-emerald-100"
                 : active
@@ -1359,13 +1419,13 @@ function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
             }`}
             style={{ left: position.x, top: position.y }}
           >
-            <TireImage className={`${active ? "h-16 w-16 animate-pulse" : "h-14 w-14"}`} />
+            <TireImage className={`${active ? "h-24 w-24 animate-pulse" : "h-20 w-20"}`} />
             {active && stage === "tighten" && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-2xl bg-white/75">
-                <NutIcon tightened={tighteningStep > 0} className="h-10 w-10 animate-spin" />
+              <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/75">
+                <NutIcon tightened={tighteningStep > 0} className="h-16 w-16 animate-spin" />
               </div>
             )}
-            <span className="absolute -bottom-6 rounded-full bg-blue-700 px-2 py-0.5 text-xs font-black text-white">
+            <span className="absolute -bottom-10 rounded-full bg-blue-700 px-4 py-1.5 text-lg font-black text-white">
               {position.short}
             </span>
           </div>
@@ -1383,6 +1443,9 @@ function KeroseneGame({ onComplete, onFail }) {
   const [crashed, setCrashed] = useState(false);
   const [note, setNote] = useState("雪だるまをよけて、おうちまで灯油を届けよう！");
   const obstacleLanes = obstacles[steps % obstacles.length];
+  const laneTop = (roadLane) => 78 + roadLane * 150;
+  const objectTop = (roadLane) => 50 + roadLane * 150;
+  const truckTop = (roadLane) => 38 + roadLane * 150;
 
   const chooseLane = (nextLane) => {
     if (crashed) return;
@@ -1403,73 +1466,73 @@ function KeroseneGame({ onComplete, onFail }) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-3xl bg-amber-100 p-4">
-        <div className="mb-3 rounded-2xl bg-white p-3 text-center shadow-sm">
-          <p className="text-sm font-black text-amber-700">灯油ローリー雪道チャレンジ</p>
-          <div className="mt-1 flex items-center justify-center gap-3">
-            <span className="text-4xl">☃️</span>
-            <span className="text-lg font-black text-slate-800">雪だるまのない道を選ぼう</span>
+    <div className="space-y-5">
+      <div className="rounded-3xl bg-amber-100 p-5">
+        <div className="mb-4 rounded-3xl bg-white p-5 text-center shadow-sm">
+          <p className="text-2xl font-black text-amber-700 xl:text-4xl">灯油ローリー雪道チャレンジ</p>
+          <div className="mt-3 flex items-center justify-center gap-4">
+            <span className="text-6xl xl:text-7xl">☃️</span>
+            <span className="text-2xl font-black text-slate-800 xl:text-4xl">雪だるまのない道を選ぼう</span>
           </div>
         </div>
-        <div className="relative h-48 overflow-hidden rounded-3xl bg-gradient-to-b from-sky-100 to-white p-4 shadow-inner">
+        <div className="relative h-[34rem] overflow-hidden rounded-[2rem] border-4 border-sky-100 bg-gradient-to-b from-sky-100 to-white p-5 shadow-inner">
           {[0, 1, 2].map((roadLane) => (
             <div
               key={roadLane}
-              className="absolute left-4 right-16 h-9 rounded-full bg-slate-500 shadow-inner"
-              style={{ top: `${22 + roadLane * 46}px` }}
+              className="absolute left-6 right-28 h-20 rounded-full bg-slate-500 shadow-inner"
+              style={{ top: `${laneTop(roadLane)}px` }}
             >
-              <div className="mx-auto mt-4 h-1 w-4/5 rounded-full bg-yellow-200" />
+              <div className="mx-auto mt-9 h-2 w-4/5 rounded-full bg-yellow-200" />
             </div>
           ))}
           {obstacleLanes.map((obstacleLane, index) => (
             <div
               key={obstacleLane}
-              className={`absolute flex h-10 w-10 items-center justify-center rounded-full bg-white text-3xl shadow ${
+              className={`absolute flex h-20 w-20 items-center justify-center rounded-full bg-white text-6xl shadow-xl ${
                 crashed ? "ring-4 ring-red-300 animate-bounce" : ""
               }`}
               style={{
                 left: obstacleLanes.length > 1 ? `${55 + index * 8}%` : "58%",
-                top: `${20 + obstacleLane * 46}px`
+                top: `${objectTop(obstacleLane)}px`
               }}
             >
               ☃️
             </div>
           ))}
           <div
-            className={`absolute flex h-16 w-32 items-center justify-center rounded-2xl bg-white/80 transition-all duration-500 ${
+            className={`absolute flex h-28 w-56 items-center justify-center rounded-3xl bg-white/85 shadow-xl transition-all duration-500 ${
               crashed ? "ring-4 ring-red-400 animate-pulse" : ""
             }`}
             style={{
               left: `${4 + Math.min(steps * 10, 42)}%`,
-              top: `${8 + lane * 46}px`
+              top: `${truckTop(lane)}px`
             }}
           >
-            <TankerLorryImage className="h-16 w-32" />
+            <TankerLorryImage className="h-28 w-56" />
           </div>
           {crashed && (
             <div
-              className="absolute left-[50%] z-20 animate-pop text-5xl"
-              style={{ top: `${8 + lane * 46}px` }}
+              className="absolute left-[50%] z-20 animate-pop text-8xl"
+              style={{ top: `${truckTop(lane)}px` }}
             >
               💥
             </div>
           )}
-          <div className="absolute right-2 top-16 text-5xl">🏠</div>
-          <div className="absolute right-10 top-7 text-2xl">♨️</div>
+          <div className="absolute right-4 top-[14.25rem] text-8xl">🏠</div>
+          <div className="absolute right-16 top-[10.5rem] text-5xl">♨️</div>
         </div>
-        <div className="mt-3 h-4 overflow-hidden rounded-full bg-white shadow-inner">
+        <div className="mt-4 h-6 overflow-hidden rounded-full bg-white shadow-inner">
           <div className="h-full bg-orange-500 transition-all" style={{ width: `${Math.min(steps * 20, 100)}%` }} />
         </div>
-        <p className="mt-3 min-h-7 text-center text-base font-black text-amber-700">{note}</p>
+        <p className="mt-4 min-h-10 text-center text-2xl font-black text-amber-700 xl:text-4xl">{note}</p>
       </div>
-      <div className="grid grid-cols-3 gap-3">
+      <div className="grid grid-cols-3 gap-4">
         {laneNames.map((label, index) => (
           <button
             key={label}
             onClick={() => chooseLane(index)}
             disabled={crashed}
-            className={`rounded-2xl py-4 text-base font-black text-white shadow-lg transition hover:brightness-105 active:scale-[.97] sm:text-xl ${
+            className={`rounded-3xl py-7 text-3xl font-black text-white shadow-xl transition hover:brightness-105 active:scale-[.97] xl:text-4xl ${
               index === 1 ? "bg-orange-500" : "bg-blue-600"
             } disabled:bg-slate-300`}
           >
@@ -1515,40 +1578,43 @@ function EvGame({ onComplete, onFail }) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-3xl bg-emerald-100 p-5 text-center">
-        <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-3xl bg-white shadow-inner">
-          <span className="text-5xl" aria-hidden="true">
-            🚙
-          </span>
+    <div className="space-y-5">
+      <div className="rounded-[2rem] border-4 border-emerald-200 bg-gradient-to-b from-emerald-100 via-white to-sky-50 p-6 text-center shadow-inner">
+        <div className="mb-6 flex items-center justify-center gap-8">
+          <div className="flex h-36 w-36 items-center justify-center rounded-[2rem] bg-white shadow-xl ring-4 ring-emerald-100">
+            <EvChargeIcon className="h-28 w-28" />
+          </div>
+          <div className="rounded-full bg-emerald-500 px-8 py-4 text-4xl font-black text-white shadow-xl">
+            バッテリーを満タンに！
+          </div>
         </div>
-        <div className="mb-4 h-8 overflow-hidden rounded-full bg-white shadow-inner">
+        <div className="mx-auto mb-5 h-14 max-w-6xl overflow-hidden rounded-full bg-white shadow-inner">
           <div className="h-full bg-emerald-500 transition-all" style={{ width: `${charge}%` }} />
         </div>
-        <p className="text-3xl font-black text-emerald-700">{charge}%</p>
-        <div className="mt-4 rounded-2xl bg-white p-3 shadow-sm">
-          <div className="relative h-12 overflow-hidden rounded-full bg-slate-200">
-            <div className="absolute left-[43%] top-1 flex h-10 w-[20%] items-center justify-center rounded-full bg-emerald-400 shadow-inner">
-              <span className="whitespace-nowrap rounded-full bg-white/90 px-2 py-1 text-xs font-black text-emerald-700 shadow-sm">
+        <p className="text-6xl font-black text-emerald-700">{charge}%</p>
+        <div className="mt-6 rounded-[2rem] bg-white p-5 shadow-xl">
+          <div className="relative h-36 overflow-hidden rounded-full bg-slate-200 shadow-inner">
+            <div className="absolute left-[43%] top-4 flex h-28 w-[20%] items-center justify-center rounded-full bg-emerald-400 shadow-xl ring-4 ring-emerald-200">
+              <span className="whitespace-nowrap rounded-full bg-white/95 px-6 py-3 text-3xl font-black text-emerald-700 shadow-sm">
                 充電中
               </span>
             </div>
-            <div className="absolute left-[32%] top-2 h-8 w-[42%] rounded-full border-2 border-dashed border-emerald-500" />
+            <div className="absolute left-[32%] top-5 h-[6.5rem] w-[42%] rounded-full border-4 border-dashed border-emerald-500" />
             <div
               id="ev-charge-marker"
-              className="absolute top-1 flex h-10 w-12 animate-gauge items-center justify-center rounded-full border-4 border-white bg-white text-2xl shadow-lg"
+              className="absolute top-3 flex h-[7.5rem] w-36 animate-gauge items-center justify-center rounded-full border-4 border-white bg-white text-7xl shadow-2xl"
             >
               🚙
             </div>
           </div>
-          <div className="mt-2 flex items-center justify-center gap-2 text-sm font-black text-emerald-700">
-            <span className="h-3 w-8 rounded-full bg-emerald-400" />
+          <div className="mt-4 flex items-center justify-center gap-4 text-3xl font-black text-emerald-700">
+            <span className="h-5 w-16 rounded-full bg-emerald-400" />
             ベスト充電ゾーン
           </div>
         </div>
-        <p className="mt-3 min-h-7 text-base font-black text-emerald-700">{note}</p>
+        <p className="mt-5 min-h-10 text-3xl font-black text-emerald-700 xl:text-4xl">{note}</p>
       </div>
-      <button onClick={chargeUp} className="w-full rounded-2xl bg-emerald-500 py-4 text-xl font-black text-white">
+      <button onClick={chargeUp} className="w-full rounded-3xl bg-emerald-500 py-8 text-5xl font-black text-white shadow-xl">
         タイミング充電！
       </button>
     </div>
@@ -1563,7 +1629,7 @@ function InspectionItemIcon({ icon }) {
 
 function EnginePartIcon() {
   return (
-    <svg viewBox="0 0 96 72" className="h-12 w-14 drop-shadow-sm" aria-hidden="true">
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
       <rect x="24" y="24" width="38" height="30" rx="6" fill="#60a5fa" stroke="#1e3a8a" strokeWidth="5" />
       <rect x="34" y="14" width="18" height="12" rx="3" fill="#bfdbfe" stroke="#1e3a8a" strokeWidth="4" />
       <path d="M17 31h9v16h-9c-4 0-7-3-7-7v-2c0-4 3-7 7-7Z" fill="#93c5fd" stroke="#1e3a8a" strokeWidth="4" />
@@ -1577,7 +1643,7 @@ function EnginePartIcon() {
 
 function MufflerPartIcon() {
   return (
-    <svg viewBox="0 0 96 72" className="h-12 w-14 drop-shadow-sm" aria-hidden="true">
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
       <path d="M10 42h22" stroke="#475569" strokeWidth="9" strokeLinecap="round" />
       <rect x="29" y="29" width="38" height="24" rx="12" fill="#cbd5e1" stroke="#334155" strokeWidth="5" />
       <path d="M66 41h12c5 0 8-3 8-8v-4" fill="none" stroke="#475569" strokeWidth="8" strokeLinecap="round" />
@@ -1656,32 +1722,32 @@ function InspectionGame({ onComplete, onFail }) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="overflow-hidden rounded-3xl border-4 border-blue-200 bg-gradient-to-br from-blue-50 via-white to-orange-50 p-4 text-center shadow-inner">
-        <div className="mx-auto mb-3 flex h-24 w-28 items-center justify-center rounded-3xl bg-white shadow-inner ring-4 ring-blue-100">
-          <InspectionImage className="h-20 w-24" />
+    <div className="space-y-5">
+      <div className="overflow-hidden rounded-[2rem] border-4 border-blue-200 bg-gradient-to-br from-blue-50 via-white to-orange-50 p-6 text-center shadow-inner">
+        <div className="mx-auto mb-4 flex h-36 w-44 items-center justify-center rounded-[2rem] bg-white shadow-inner ring-4 ring-blue-100">
+          <InspectionImage className="h-32 w-40" />
         </div>
-        <p className="text-sm font-black tracking-[.16em] text-orange-500">INSPECTION NAVI</p>
-        <p className="text-2xl font-black text-blue-700">車検予約ナビチャレンジ</p>
-        <p className="mx-auto mt-2 max-w-2xl whitespace-pre-line rounded-2xl bg-white px-4 py-3 text-center text-sm font-bold text-slate-700 shadow-sm">
+        <p className="text-xl font-black tracking-[.16em] text-orange-500">INSPECTION NAVI</p>
+        <p className="text-4xl font-black text-blue-700 xl:text-6xl">車検予約ナビチャレンジ</p>
+        <p className="mx-auto mt-4 max-w-5xl whitespace-pre-line rounded-3xl bg-white px-6 py-5 text-center text-2xl font-bold text-slate-700 shadow-sm xl:text-4xl">
           安全点検カードを集めて、{"\n"}空いている予約日を1つ確定しよう。
         </p>
-        <div className="mt-4 grid grid-cols-3 gap-2 text-xs font-black sm:grid-cols-3">
-          <span className="rounded-full bg-blue-600 px-3 py-2 text-white shadow-sm">1 点検カード</span>
-          <span className={`rounded-full px-3 py-2 shadow-sm ${isReadyToReserve ? "bg-orange-500 text-white" : "bg-white text-blue-400"}`}>2 予約日</span>
-          <span className={`rounded-full px-3 py-2 shadow-sm ${isReadyToReserve ? "bg-emerald-500 text-white" : "bg-white text-blue-400"}`}>3 確定</span>
+        <div className="mt-5 grid grid-cols-3 gap-3 text-xl font-black sm:grid-cols-3 xl:text-2xl">
+          <span className="rounded-full bg-blue-600 px-4 py-3 text-white shadow-sm">1 点検カード</span>
+          <span className={`rounded-full px-4 py-3 shadow-sm ${isReadyToReserve ? "bg-orange-500 text-white" : "bg-white text-blue-400"}`}>2 予約日</span>
+          <span className={`rounded-full px-4 py-3 shadow-sm ${isReadyToReserve ? "bg-emerald-500 text-white" : "bg-white text-blue-400"}`}>3 確定</span>
         </div>
-        <div className="mt-3 h-4 overflow-hidden rounded-full bg-white shadow-inner">
+        <div className="mt-5 h-8 overflow-hidden rounded-full bg-white shadow-inner">
           <div
             className="h-full rounded-full bg-gradient-to-r from-blue-500 to-emerald-400 transition-all"
             style={{ width: `${(checkedItems.length / correctItems.length) * 100}%` }}
           />
         </div>
-        <div className="mt-3 grid grid-cols-5 gap-2">
+        <div className="mt-4 grid grid-cols-5 gap-3">
           {correctItems.map((item) => (
             <span
               key={item}
-              className={`rounded-full px-2 py-2 text-xs font-black shadow-sm ${
+              className={`rounded-full px-3 py-3 text-base font-black shadow-sm xl:text-xl ${
                 checkedItems.includes(item)
                   ? "bg-emerald-400 text-white"
                   : "bg-white text-blue-300"
@@ -1692,41 +1758,41 @@ function InspectionGame({ onComplete, onFail }) {
           ))}
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {randomCheckItems.map((item) => {
           const checked = checkedItems.includes(item.label);
           return (
             <button
               key={item.label}
               onClick={() => checkItem(item)}
-              className={`min-h-32 rounded-3xl border-4 p-3 text-center shadow-lg transition active:scale-[.97] ${
+              className={`min-h-44 rounded-3xl border-4 p-4 text-center shadow-lg transition active:scale-[.97] xl:min-h-52 ${
                 checked
                   ? "border-emerald-300 bg-emerald-100 text-emerald-700"
                   : "border-white bg-white text-blue-700 hover:border-blue-300"
               }`}
             >
-              <span className="flex h-12 items-center justify-center text-4xl">
+              <span className="flex h-20 items-center justify-center text-6xl">
                 {checked ? "✅" : <InspectionItemIcon icon={item.icon} />}
               </span>
-              <span className="mt-2 block text-sm font-black sm:text-base">{item.label}</span>
-              <span className="mt-1 block rounded-full bg-blue-50 px-2 py-1 text-[11px] font-black text-blue-500">
+              <span className="mt-3 block text-xl font-black xl:text-2xl">{item.label}</span>
+              <span className="mt-2 block rounded-full bg-blue-50 px-3 py-2 text-base font-black text-blue-500">
                 {item.hint}
               </span>
             </button>
           );
         })}
       </div>
-      <div className="rounded-3xl border-4 border-blue-200 bg-white p-4 text-center shadow-lg">
-        <p className="text-sm font-black tracking-[.14em] text-blue-500">RESERVATION DATE</p>
-        <p className="mt-1 text-base font-black text-slate-700">
+      <div className="rounded-[2rem] border-4 border-blue-200 bg-white p-6 text-center shadow-lg">
+        <p className="text-xl font-black tracking-[.14em] text-blue-500">RESERVATION DATE</p>
+        <p className="mt-2 text-3xl font-black text-slate-700">
           空きありのカレンダーだけを選ぼう
         </p>
-        <div className="mt-3 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div className="mt-5 grid grid-cols-2 gap-4 sm:grid-cols-4">
           {randomReservationDates.map((date) => (
             <button
               key={date.label}
               onClick={() => chooseReservationDate(date)}
-              className={`relative rounded-2xl border-4 px-3 py-4 text-lg font-black shadow transition active:scale-[.97] ${
+              className={`relative rounded-3xl border-4 px-4 py-6 text-2xl font-black shadow transition active:scale-[.97] ${
                 isReadyToReserve && date.open
                   ? "animate-pulse border-yellow-300 bg-yellow-100 text-orange-700 ring-4 ring-yellow-300 hover:border-orange-400 hover:bg-orange-100"
                   : isReadyToReserve
@@ -1735,30 +1801,30 @@ function InspectionGame({ onComplete, onFail }) {
               }`}
             >
               {isReadyToReserve && date.open && (
-                <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-2 py-1 text-[10px] font-black text-white shadow">
+                <span className="absolute -right-2 -top-2 rounded-full bg-orange-500 px-3 py-1 text-sm font-black text-white shadow">
                   空きあり
                 </span>
               )}
-              <span className="mb-1 block text-3xl">📅</span>
+              <span className="mb-2 block text-6xl">📅</span>
               {date.label}
               {isReadyToReserve && !date.open && (
-                <span className="mt-1 block text-xs font-black text-slate-500">
+                <span className="mt-2 block text-lg font-black text-slate-500">
                   予約済み
                 </span>
               )}
             </button>
           ))}
         </div>
-        <div className="mt-3 grid grid-cols-1 gap-3">
+        <div className="mt-4 grid grid-cols-1 gap-3">
           <button
             onClick={skipReservation}
-            className="rounded-2xl border-4 border-slate-200 bg-slate-100 px-3 py-4 text-lg font-black text-slate-500 shadow transition active:scale-[.97]"
+            className="rounded-3xl border-4 border-slate-200 bg-slate-100 px-4 py-5 text-2xl font-black text-slate-500 shadow transition active:scale-[.97]"
           >
             予約しない
           </button>
         </div>
       </div>
-      <p className="text-center font-bold text-blue-700">{note}</p>
+      <p className="rounded-3xl bg-blue-50 px-5 py-4 text-center text-2xl font-black text-blue-700 shadow-inner">{note}</p>
     </div>
   );
 }
@@ -1809,17 +1875,17 @@ function InsuranceGame({ onComplete, onFail }) {
   };
 
   return (
-    <div className="space-y-4">
-      <div className="rounded-3xl bg-rose-100 p-4 text-center">
-        <div className="mx-auto mb-3 flex h-20 w-20 items-center justify-center rounded-3xl">
-          <InsuranceImage className="h-16 w-16" />
+    <div className="space-y-5">
+      <div className="rounded-[2rem] bg-rose-100 p-6 text-center shadow-inner">
+        <div className="mx-auto mb-4 flex h-36 w-36 items-center justify-center rounded-[2rem]">
+          <InsuranceImage className="h-32 w-32" />
         </div>
-        <p className="text-lg font-black text-rose-700">自動車保険の安心カードを選ぼう</p>
-        <p className="mt-2 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
+        <p className="text-4xl font-black text-rose-700 xl:text-6xl">自動車保険の安心カードを選ぼう</p>
+        <p className="mx-auto mt-4 max-w-5xl rounded-3xl bg-white px-6 py-5 text-2xl font-bold text-slate-700 shadow-sm xl:text-4xl">
           事故、雪道、急なトラブルに備えたいお客さまです。
         </p>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
         {cards.map((card) => {
           const picked = selected.includes(card.label);
           return (
@@ -1827,26 +1893,26 @@ function InsuranceGame({ onComplete, onFail }) {
               key={card.label}
               onClick={() => chooseCard(card)}
               disabled={picked}
-              className={`min-h-28 rounded-3xl border-4 p-3 text-center shadow-lg transition active:scale-[.97] ${
+              className={`min-h-44 rounded-3xl border-4 p-4 text-center shadow-lg transition active:scale-[.97] xl:min-h-52 ${
                 picked
                   ? "border-emerald-300 bg-emerald-100 text-emerald-700"
                   : "border-white bg-white text-slate-800 hover:border-rose-300 hover:bg-rose-50"
               }`}
             >
-              <span className="relative mx-auto flex h-14 w-14 items-center justify-center">
+              <span className="relative mx-auto flex h-24 w-24 items-center justify-center">
                 <InsuranceMiniCardIcon type={card.type} />
                 {picked && (
-                  <span className="absolute -right-2 -top-2 rounded-full bg-emerald-500 px-2 py-0.5 text-[10px] font-black text-white shadow">
+                  <span className="absolute -right-3 -top-3 rounded-full bg-emerald-500 px-3 py-1 text-sm font-black text-white shadow">
                     OK
                   </span>
                 )}
               </span>
-              <span className="mt-2 block text-base font-black">{card.label}</span>
+              <span className="mt-4 block text-xl font-black xl:text-2xl">{card.label}</span>
             </button>
           );
         })}
       </div>
-      <p className="min-h-7 rounded-2xl bg-white px-4 py-3 text-center font-black text-rose-700 shadow-sm">
+      <p className="min-h-14 rounded-3xl bg-white px-5 py-4 text-center text-2xl font-black text-rose-700 shadow-sm xl:text-3xl">
         {note}
       </p>
     </div>
@@ -1868,7 +1934,7 @@ function InsuranceMiniCardIcon({ type }) {
   }[type];
 
   return (
-    <svg viewBox="0 0 64 64" className="h-14 w-14 drop-shadow-sm" aria-hidden="true">
+    <svg viewBox="0 0 64 64" className="h-24 w-24 drop-shadow-sm" aria-hidden="true">
       <rect x="6" y="8" width="52" height="48" rx="14" fill="none" stroke="#fecdd3" strokeWidth="4" />
       <path d={details.path} fill="#dbeafe" stroke="#334155" strokeWidth="3" strokeLinejoin="round" />
       <rect x="23" y="25" width="18" height="9" rx="2" fill="#ffffff" opacity=".95" />
