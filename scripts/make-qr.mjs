@@ -1,12 +1,12 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
-const text = "http://192.168.1.7:5173/";
-const out = "/Users/takahata/Documents/New project/スマホ用QRコード.svg";
+const text = "http://192.168.1.7:5173/web-app.html";
+const out = "/Users/takahata/Documents/New project/道エネWEBアプリ_QRコード.svg";
 const staffImage = readFileSync("/Users/takahata/Documents/New project/public/staff.png").toString("base64");
-const version = 2;
+const version = 3;
 const size = 21 + (version - 1) * 4;
-const dataCodewords = 34;
-const ecCodewords = 10;
+const dataCodewords = 55;
+const ecCodewords = 15;
 const modules = Array.from({ length: size }, () => Array(size).fill(false));
 const reserved = Array.from({ length: size }, () => Array(size).fill(false));
 
@@ -40,7 +40,7 @@ function drawAlignment(cx, cy) {
 drawFinder(0, 0);
 drawFinder(size - 7, 0);
 drawFinder(0, size - 7);
-drawAlignment(18, 18);
+drawAlignment(22, 22);
 
 for (let i = 8; i < size - 8; i++) {
   setModule(i, 6, i % 2 === 0);
@@ -145,7 +145,7 @@ for (let i = 0; i < 15; i++) {
 const cell = 14;
 const quiet = 4;
 const qrSize = (size + quiet * 2) * cell;
-const labelHeight = 170;
+const labelHeight = 190;
 const width = qrSize;
 const height = qrSize + labelHeight;
 let rects = "";
@@ -160,10 +160,10 @@ for (let y = 0; y < size; y++) {
 const svg = `<?xml version="1.0" encoding="UTF-8"?>
 <svg xmlns="http://www.w3.org/2000/svg" width="${width}" height="${height}" viewBox="0 0 ${width} ${height}">
   <rect width="100%" height="100%" fill="#ffffff"/>
-  <rect x="${width / 2 - 42}" y="12" width="84" height="84" rx="18" fill="#fff7ed" stroke="#fed7aa" stroke-width="5"/>
-  <image href="data:image/png;base64,${staffImage}" x="${width / 2 - 33}" y="18" width="66" height="76" preserveAspectRatio="xMidYMid meet"/>
-  <text x="${width / 2}" y="122" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="26" font-weight="900" fill="#1d4ed8">道エネサービスマスター</text>
-  <text x="${width / 2}" y="148" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="18" font-weight="900" fill="#111827">合言葉: 583</text>
+  <rect x="${width / 2 - 46}" y="12" width="92" height="92" rx="20" fill="#fff7ed" stroke="#fed7aa" stroke-width="5"/>
+  <image href="data:image/png;base64,${staffImage}" x="${width / 2 - 36}" y="18" width="72" height="82" preserveAspectRatio="xMidYMid meet"/>
+  <text x="${width / 2}" y="128" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="28" font-weight="900" fill="#1d4ed8">道エネ</text>
+  <text x="${width / 2}" y="160" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="20" font-weight="900" fill="#ea580c">サービスステーション育成ゲーム</text>
   <g fill="#000000" shape-rendering="crispEdges">${rects}</g>
 </svg>
 `;
