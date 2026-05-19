@@ -37,7 +37,7 @@ image.lockFocus()
 NSColor.white.setFill()
 NSRect(x: 0, y: 0, width: canvasWidth, height: canvasHeight).fill()
 
-let title = "道エネSSサービスマスター"
+let title = "道エネサービスマスター"
 let subtitle = "スマホで読み取って開く"
 let code = "合言葉: 583"
 

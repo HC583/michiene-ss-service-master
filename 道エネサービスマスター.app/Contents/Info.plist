@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
   <key>CFBundleName</key>
-  <string>道エネSSサービスマスター</string>
+  <string>道エネサービスマスター</string>
   <key>CFBundleDisplayName</key>
-  <string>道エネSSサービスマスター</string>
+  <string>道エネサービスマスター</string>
   <key>CFBundleIdentifier</key>
   <string>local.michiene.ss.service.master</string>
   <key>CFBundleVersion</key>
