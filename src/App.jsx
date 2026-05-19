@@ -370,7 +370,7 @@ function AccessGate({ onUnlock }) {
             inputMode="numeric"
             aria-label="番号"
             className="rounded-2xl border-4 border-orange-200 bg-orange-50 px-4 py-4 text-center text-3xl font-black text-blue-700 outline-none transition focus:border-orange-400"
-            placeholder="583"
+            placeholder=""
           />
           {error && (
             <p className="rounded-2xl bg-rose-100 px-4 py-2 text-base font-black text-rose-700">
