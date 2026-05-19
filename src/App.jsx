@@ -1347,78 +1347,94 @@ function TireGame({ onComplete, onFail }) {
 
   return (
     <div className="space-y-5">
-      <p className="rounded-3xl bg-blue-100 px-6 py-5 text-center text-2xl font-black text-blue-800 xl:text-4xl">
+      <p className="rounded-3xl bg-blue-100 px-6 py-4 text-center text-2xl font-black text-blue-800 xl:text-4xl">
         {note}
       </p>
 
-      <div className="relative mx-auto max-w-5xl overflow-hidden rounded-[2rem] border-4 border-blue-200 bg-gradient-to-b from-sky-100 to-white p-6 shadow-inner">
-        <div className="absolute left-6 top-6 text-5xl animate-bounce">❄️</div>
-        <div className="absolute right-8 top-8 text-5xl animate-pulse">✨</div>
-        <OverheadTireCar
-          positions={tirePositions}
-          activeIndex={currentWheel}
-          stage={stage}
-          tighteningStep={tighteningStep}
-        />
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        {tirePositions.map((position, index) => {
-          const done = index < currentWheel;
-          const active = index === currentWheel;
-          return (
-            <button
-              key={position.label}
-              onClick={() => pickWheel(index)}
-              disabled={stage !== "pick" && active}
-              className={`min-h-32 rounded-3xl border-4 p-4 text-2xl font-black shadow-lg transition active:scale-95 xl:min-h-40 xl:text-3xl ${
-                done
-                  ? "border-emerald-300 bg-emerald-100 text-emerald-700"
-                  : active
-                    ? "border-orange-300 bg-orange-100 text-orange-700 ring-4 ring-orange-200"
-                    : "border-slate-200 bg-white text-slate-500"
-              }`}
-            >
-              <span className="block text-5xl">{done ? "✅" : active ? "🛞" : "○"}</span>
-              {position.label}
-            </button>
-          );
-        })}
-      </div>
-
-      {stage === "tighten" && (
-        <div className="rounded-3xl bg-slate-100 p-6 text-center shadow-inner">
-          <div className="mb-4 flex items-center justify-center gap-4 text-3xl font-black text-orange-700">
-            <Wrench className="h-12 w-12 animate-spin" />
-            ナット締め中！
-          </div>
-          <div className="flex justify-center gap-5">
-            {[0, 1, 2].map((index) => (
-              <NutIcon
-                key={index}
-                tightened={index < tighteningStep}
-                className={`h-20 w-20 transition ${index === tighteningStep ? "scale-110 animate-pulse" : ""}`}
-              />
-            ))}
-          </div>
-          <p className="mt-4 text-2xl font-bold text-slate-600">
-            {activeTirePosition.label}をカチッと固定しています
-          </p>
+      <div className="mx-auto grid max-w-7xl gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(22rem,.75fr)] xl:items-stretch">
+        <div className="relative overflow-hidden rounded-[2rem] border-4 border-blue-200 bg-gradient-to-b from-sky-100 to-white p-5 shadow-inner">
+          <div className="absolute left-6 top-6 text-4xl animate-bounce">❄️</div>
+          <div className="absolute right-8 top-8 text-4xl animate-pulse">✨</div>
+          <OverheadTireCar
+            positions={tirePositions}
+            activeIndex={currentWheel}
+            stage={stage}
+            tighteningStep={tighteningStep}
+          />
         </div>
-      )}
+
+        <div className="flex flex-col gap-4 rounded-[2rem] border-4 border-orange-100 bg-white p-5 shadow-xl">
+          <div className="rounded-3xl bg-orange-50 p-5 text-center shadow-inner">
+            <p className="text-lg font-black tracking-[.16em] text-orange-500">TIRE CHANGE</p>
+            <p className="mt-1 text-3xl font-black text-blue-700 xl:text-4xl">
+              {activeTirePosition.label}
+            </p>
+            <p className="mt-2 text-xl font-bold text-slate-600">
+              {stage === "tighten" ? "ナットをしめて固定中" : "光っている場所を選ぼう"}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            {tirePositions.map((position, index) => {
+              const done = index < currentWheel;
+              const active = index === currentWheel;
+              return (
+                <button
+                  key={position.label}
+                  onClick={() => pickWheel(index)}
+                  disabled={stage !== "pick" && active}
+                  className={`min-h-28 rounded-3xl border-4 p-3 text-xl font-black shadow-lg transition active:scale-95 xl:min-h-32 xl:text-2xl ${
+                    done
+                      ? "border-emerald-300 bg-emerald-100 text-emerald-700"
+                      : active
+                        ? "border-orange-300 bg-orange-100 text-orange-700 ring-4 ring-orange-200"
+                        : "border-slate-200 bg-white text-slate-500"
+                  }`}
+                >
+                  <span className="block text-4xl">{done ? "✅" : active ? "🛞" : "○"}</span>
+                  {position.label}
+                </button>
+              );
+            })}
+          </div>
+
+          <div className={`rounded-3xl p-5 text-center shadow-inner ${stage === "tighten" ? "bg-orange-100" : "bg-slate-100"}`}>
+            <div className="mb-4 flex items-center justify-center gap-3 text-2xl font-black text-orange-700 xl:text-3xl">
+              <Wrench className={`h-10 w-10 ${stage === "tighten" ? "animate-spin" : ""}`} />
+              {stage === "tighten" ? "ナット締め中！" : "ナット締め待ち"}
+            </div>
+            <div className="flex justify-center gap-4">
+              {[0, 1, 2].map((index) => (
+                <NutIcon
+                  key={index}
+                  tightened={stage === "tighten" && index < tighteningStep}
+                  className={`h-16 w-16 transition xl:h-20 xl:w-20 ${
+                    stage === "tighten" && index === tighteningStep ? "scale-110 animate-pulse" : ""
+                  }`}
+                />
+              ))}
+            </div>
+            <p className="mt-4 text-lg font-bold text-slate-600 xl:text-xl">
+              {stage === "tighten"
+                ? `${activeTirePosition.label}をカチッと固定しています`
+                : "タイヤを選ぶとここでナットをしめます"}
+            </p>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
 
 function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
   return (
-    <div className="relative mx-auto h-[42rem] max-w-4xl overflow-hidden rounded-[2rem] bg-white/60 shadow-inner">
+    <div className="relative mx-auto h-[32rem] max-w-4xl overflow-hidden rounded-[2rem] bg-white/60 shadow-inner xl:h-[36rem]">
       <div className="absolute inset-0 flex items-center justify-center">
         <img
           src={assetPath("/car-top-view.png")}
           alt=""
           aria-hidden="true"
-          className="h-[36rem] w-full object-contain object-center"
+          className="h-[28rem] w-full object-contain object-center xl:h-[32rem]"
           draggable="false"
         />
       </div>
