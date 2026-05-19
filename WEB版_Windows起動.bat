@@ -14,5 +14,6 @@ if errorlevel 1 (
   exit /b 1
 )
 
+start "道エネWEB版サーバー" cmd /k npm run dev -- --host 127.0.0.1 --port 5173
+timeout /t 3 /nobreak >nul
 start "" "http://127.0.0.1:5173/web-app.html"
-npm run dev -- --host 127.0.0.1 --port 5173
