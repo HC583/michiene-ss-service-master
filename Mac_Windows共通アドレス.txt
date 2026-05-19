@@ -1,0 +1,19 @@
+道エネ WEBアプリ Mac・Windows共通アドレス
+
+同じWi-FiにつないだMac、Windows、スマホで下のアドレスを開いてください。
+
+http://192.168.1.7:5173/web-app.html
+
+大事:
+このアドレスを使うには、このMacでサーバーを起動しておく必要があります。
+
+Macで起動する方法:
+/Users/takahata/Documents/New project/start-lan.command
+
+Windowsや他のMacから開く方法:
+ブラウザに下のアドレスを入れます。
+http://192.168.1.7:5173/web-app.html
+
+注意:
+同じWi-Fiの中で使うアドレスです。
+外出先や別のWi-Fiから開く場合は、VercelなどのHTTPS公開URLが必要です。
