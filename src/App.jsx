@@ -414,9 +414,9 @@ function TitleScreen({ onStart }) {
             <div className="flex h-24 w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-32 sm:w-24 lg:h-44 lg:w-32">
               <StaffImage className="h-[5.5rem] w-16 object-contain sm:h-28 sm:w-20 lg:h-40 lg:w-28" />
             </div>
-            <h1 className="text-left text-2xl font-black leading-tight text-blue-700 sm:text-4xl lg:text-7xl">
-              道エネSS
-              <span className="block text-orange-500">サービスマスター</span>
+            <h1 className="text-left text-[1.35rem] font-black leading-tight text-blue-700 sm:text-[2.35rem] lg:text-[4.25rem] xl:text-[4.8rem]">
+              道エネ
+              <span className="block whitespace-nowrap text-orange-500">サービスマスターを目指そう！</span>
             </h1>
           </div>
           <p className="mx-auto mt-5 max-w-2xl text-lg font-bold text-slate-700 sm:text-2xl lg:mt-8 lg:max-w-4xl lg:text-4xl">
