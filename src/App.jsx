@@ -1648,6 +1648,10 @@ function InspectionItemIcon({ icon }) {
   if (icon === "muffler") return <MufflerPartIcon />;
   if (icon === "exhaustGas") return <ExhaustGasInspectionIcon />;
   if (icon === "speedometer") return <SpeedometerInspectionIcon />;
+  if (icon === "exterior") return <ExteriorInspectionIcon />;
+  if (icon === "underbody") return <UnderbodyInspectionIcon />;
+  if (icon === "sideSlip") return <SideSlipInspectionIcon />;
+  if (icon === "identity") return <IdentityInspectionIcon />;
   return <span>{icon}</span>;
 }
 
@@ -1707,13 +1711,80 @@ function SpeedometerInspectionIcon() {
   );
 }
 
+function ExteriorInspectionIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <path d="M16 43h64l-7-16c-2-5-7-8-12-8H35c-5 0-10 3-12 8Z" fill="#bfdbfe" stroke="#1d4ed8" strokeWidth="5" strokeLinejoin="round" />
+      <path d="M32 24h32l4 11H28Z" fill="#ffffff" stroke="#1d4ed8" strokeWidth="4" strokeLinejoin="round" />
+      <circle cx="30" cy="49" r="8" fill="#334155" />
+      <circle cx="66" cy="49" r="8" fill="#334155" />
+      <path d="M20 16l5 5 10-12M66 14h16M70 24h12" fill="none" stroke="#22c55e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function UnderbodyInspectionIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <rect x="18" y="15" width="60" height="28" rx="8" fill="#cbd5e1" stroke="#334155" strokeWidth="5" />
+      <circle cx="31" cy="49" r="8" fill="#1f2937" />
+      <circle cx="65" cy="49" r="8" fill="#1f2937" />
+      <path d="M28 43h40M38 30h20M48 18v24" stroke="#64748b" strokeWidth="5" strokeLinecap="round" />
+      <path d="M21 61h54" stroke="#f97316" strokeWidth="6" strokeLinecap="round" />
+      <path d="M39 61l-7 7M57 61l7 7" stroke="#f97316" strokeWidth="5" strokeLinecap="round" />
+      <path d="M76 13l4 4 8-10" fill="none" stroke="#22c55e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SideSlipInspectionIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <rect x="12" y="48" width="72" height="12" rx="6" fill="#dbeafe" stroke="#1d4ed8" strokeWidth="4" />
+      <path d="M18 29h48l9 15H12Z" fill="#93c5fd" stroke="#1d4ed8" strokeWidth="5" strokeLinejoin="round" />
+      <circle cx="28" cy="47" r="7" fill="#1f2937" />
+      <circle cx="63" cy="47" r="7" fill="#1f2937" />
+      <path d="M19 15c14 0 16 10 28 10s14-10 30-10" fill="none" stroke="#f97316" strokeWidth="6" strokeLinecap="round" />
+      <path d="M69 8l8 7-8 7" fill="none" stroke="#f97316" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function IdentityInspectionIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <rect x="12" y="12" width="38" height="48" rx="8" fill="#ffffff" stroke="#1d4ed8" strokeWidth="5" />
+      <path d="M20 27h22M20 39h16M20 50h20" stroke="#93c5fd" strokeWidth="5" strokeLinecap="round" />
+      <rect x="48" y="24" width="34" height="24" rx="6" fill="#fef3c7" stroke="#f97316" strokeWidth="5" />
+      <path d="M54 36h22" stroke="#f97316" strokeWidth="5" strokeLinecap="round" />
+      <path d="M58 57l6 6 15-17" fill="none" stroke="#22c55e" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round" />
+      <circle cx="31" cy="20" r="4" fill="#1d4ed8" />
+    </svg>
+  );
+}
+
 function InspectionGame({ onComplete, onFail }) {
-  const correctItems = ["ブレーキ", "車のライト", "排気ガス検査", "スピードメーター検査", "マフラー", "エンジン"];
+  const correctItems = [
+    "ブレーキ",
+    "車のライト",
+    "排気ガス検査",
+    "スピードメーター検査",
+    "外観検査",
+    "下回り検査",
+    "サイドスリップ検査",
+    "同一性の確認",
+    "マフラー",
+    "エンジン"
+  ];
   const checkItems = [
     { label: "ブレーキ", icon: "🛑", correct: true, hint: "止まる力" },
     { label: "車のライト", icon: "💡", correct: true, hint: "夜道の安全" },
     { label: "排気ガス検査", icon: "exhaustGas", correct: true, hint: "排気を測る" },
     { label: "スピードメーター検査", icon: "speedometer", correct: true, hint: "速度表示" },
+    { label: "外観検査", icon: "exterior", correct: true, hint: "車体チェック" },
+    { label: "下回り検査", icon: "underbody", correct: true, hint: "車の下側" },
+    { label: "サイドスリップ検査", icon: "sideSlip", correct: true, hint: "まっすぐ走る" },
+    { label: "同一性の確認", icon: "identity", correct: true, hint: "車台番号" },
     { label: "マフラー", icon: "muffler", correct: true, hint: "排気まわり" },
     { label: "エンジン", icon: "engine", correct: true, hint: "走る力" },
     { label: "洗車", icon: "🚿", correct: false, hint: "きれいにする" },
@@ -1797,11 +1868,11 @@ function InspectionGame({ onComplete, onFail }) {
             style={{ width: `${(checkedItems.length / correctItems.length) * 100}%` }}
           />
         </div>
-        <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-6">
+        <div className="mt-4 grid grid-cols-2 gap-2 sm:grid-cols-5 xl:grid-cols-10">
           {correctItems.map((item) => (
             <span
               key={item}
-              className={`rounded-full px-3 py-3 text-base font-black shadow-sm xl:text-xl ${
+              className={`rounded-full px-2 py-3 text-sm font-black leading-tight shadow-sm xl:text-base ${
                 checkedItems.includes(item)
                   ? "bg-emerald-400 text-white"
                   : "bg-white text-blue-300"
