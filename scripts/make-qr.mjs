@@ -145,7 +145,7 @@ for (let i = 0; i < 15; i++) {
 const cell = 14;
 const quiet = 4;
 const qrSize = (size + quiet * 2) * cell;
-const labelHeight = 190;
+const labelHeight = 240;
 const width = qrSize;
 const height = qrSize + labelHeight;
 let rects = "";
@@ -164,6 +164,8 @@ const svg = `<?xml version="1.0" encoding="UTF-8"?>
   <image href="data:image/png;base64,${staffImage}" x="${width / 2 - 36}" y="18" width="72" height="82" preserveAspectRatio="xMidYMid meet"/>
   <text x="${width / 2}" y="128" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="28" font-weight="900" fill="#1d4ed8">道エネ</text>
   <text x="${width / 2}" y="160" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="20" font-weight="900" fill="#ea580c">サービスステーション育成ゲーム</text>
+  <text x="${width / 2}" y="192" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="18" font-weight="900" fill="#111827">Mac・Windows共通アドレス</text>
+  <text x="${width / 2}" y="220" text-anchor="middle" font-family="-apple-system, BlinkMacSystemFont, 'Hiragino Sans', sans-serif" font-size="16" font-weight="800" fill="#2563eb">${text}</text>
   <g fill="#000000" shape-rendering="crispEdges">${rects}</g>
 </svg>
 `;
