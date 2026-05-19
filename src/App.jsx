@@ -1434,7 +1434,7 @@ function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
           src={assetPath("/car-top-view.png")}
           alt=""
           aria-hidden="true"
-          className="h-[28rem] w-full object-contain object-center xl:h-[32rem]"
+          className="h-[29.5rem] w-full translate-y-5 object-contain object-center xl:h-[33.5rem] xl:translate-y-6"
           draggable="false"
         />
       </div>
