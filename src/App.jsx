@@ -354,9 +354,6 @@ function AccessGate({ onUnlock }) {
     <div className="cute-orange-bg relative flex min-h-screen items-center justify-center overflow-hidden px-4 py-8 text-slate-800">
       <div className="absolute inset-0 bg-gradient-to-b from-sky-100 via-orange-50 to-orange-200" />
       <div className="relative z-10 w-full max-w-md rounded-[2rem] border-4 border-white bg-white/90 p-6 text-center shadow-2xl">
-        <div className="mx-auto mb-4 flex h-24 w-24 items-end justify-center overflow-hidden rounded-3xl bg-orange-100 ring-4 ring-orange-200">
-          <StaffImage className="h-24 w-20 object-contain" />
-        </div>
         <p className="text-sm font-black tracking-[.12em] text-orange-500">
           PRIVATE GAME
         </p>
