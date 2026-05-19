@@ -1677,11 +1677,11 @@ function MufflerPartIcon() {
 }
 
 function InspectionGame({ onComplete, onFail }) {
-  const correctItems = ["ブレーキ", "車のライト", "タイヤ溝", "マフラー", "エンジン"];
+  const correctItems = ["ブレーキ", "車のライト", "マフラー点検", "マフラー", "エンジン"];
   const checkItems = [
     { label: "ブレーキ", icon: "🛑", correct: true, hint: "止まる力" },
     { label: "車のライト", icon: "💡", correct: true, hint: "夜道の安全" },
-    { label: "タイヤ溝", icon: "🛞", correct: true, hint: "すべり止め" },
+    { label: "マフラー点検", icon: "muffler", correct: true, hint: "下まわり" },
     { label: "マフラー", icon: "muffler", correct: true, hint: "排気まわり" },
     { label: "エンジン", icon: "engine", correct: true, hint: "走る力" },
     { label: "洗車", icon: "🚿", correct: false, hint: "きれいにする" },
