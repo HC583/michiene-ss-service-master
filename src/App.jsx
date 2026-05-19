@@ -1646,6 +1646,8 @@ function EvGame({ onComplete, onFail }) {
 function InspectionItemIcon({ icon }) {
   if (icon === "engine") return <EnginePartIcon />;
   if (icon === "muffler") return <MufflerPartIcon />;
+  if (icon === "exhaustGas") return <ExhaustGasInspectionIcon />;
+  if (icon === "speedometer") return <SpeedometerInspectionIcon />;
   return <span>{icon}</span>;
 }
 
@@ -1676,12 +1678,42 @@ function MufflerPartIcon() {
   );
 }
 
+function ExhaustGasInspectionIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <rect x="8" y="14" width="30" height="44" rx="8" fill="#e0f2fe" stroke="#0369a1" strokeWidth="5" />
+      <path d="M16 27h14M16 39h10" stroke="#38bdf8" strokeWidth="5" strokeLinecap="round" />
+      <circle cx="24" cy="49" r="5" fill="#22c55e" stroke="#0369a1" strokeWidth="3" />
+      <path d="M38 42h20" stroke="#475569" strokeWidth="8" strokeLinecap="round" />
+      <rect x="56" y="34" width="22" height="16" rx="8" fill="#cbd5e1" stroke="#334155" strokeWidth="5" />
+      <path d="M76 42h11" stroke="#475569" strokeWidth="7" strokeLinecap="round" />
+      <path d="M86 31c-5-5-1-12 5-12M78 25c-6-6-2-14 6-16M70 30c-5-5-2-11 4-14" fill="none" stroke="#93c5fd" strokeWidth="4" strokeLinecap="round" />
+      <path d="M18 18l5 5 9-10" fill="none" stroke="#22c55e" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SpeedometerInspectionIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <path d="M18 53a30 30 0 1 1 60 0" fill="#dbeafe" stroke="#1d4ed8" strokeWidth="6" strokeLinecap="round" />
+      <path d="M25 53h46" stroke="#1e3a8a" strokeWidth="6" strokeLinecap="round" />
+      <path d="M48 50l16-20" stroke="#f97316" strokeWidth="6" strokeLinecap="round" />
+      <circle cx="48" cy="50" r="7" fill="#ffffff" stroke="#1e3a8a" strokeWidth="5" />
+      <path d="M31 43l-5-4M39 31l-3-6M57 31l3-6M65 43l5-4" stroke="#1e3a8a" strokeWidth="4" strokeLinecap="round" />
+      <rect x="33" y="56" width="30" height="10" rx="5" fill="#22c55e" stroke="#166534" strokeWidth="3" />
+      <path d="M42 61l4 3 8-8" fill="none" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function InspectionGame({ onComplete, onFail }) {
-  const correctItems = ["ブレーキ", "車のライト", "マフラー点検", "マフラー", "エンジン"];
+  const correctItems = ["ブレーキ", "車のライト", "排気ガス検査", "スピードメーター検査", "マフラー", "エンジン"];
   const checkItems = [
     { label: "ブレーキ", icon: "🛑", correct: true, hint: "止まる力" },
     { label: "車のライト", icon: "💡", correct: true, hint: "夜道の安全" },
-    { label: "マフラー点検", icon: "muffler", correct: true, hint: "下まわり" },
+    { label: "排気ガス検査", icon: "exhaustGas", correct: true, hint: "排気を測る" },
+    { label: "スピードメーター検査", icon: "speedometer", correct: true, hint: "速度表示" },
     { label: "マフラー", icon: "muffler", correct: true, hint: "排気まわり" },
     { label: "エンジン", icon: "engine", correct: true, hint: "走る力" },
     { label: "洗車", icon: "🚿", correct: false, hint: "きれいにする" },
@@ -1706,7 +1738,7 @@ function InspectionGame({ onComplete, onFail }) {
   const [randomCheckItems] = useState(() => shuffleItems(checkItems));
   const [randomReservationDates] = useState(() => shuffleItems(reservationDates));
   const [checkedItems, setCheckedItems] = useState([]);
-  const [note, setNote] = useState("点検スタンプを5つ集めて、予約日を確定しよう！");
+  const [note, setNote] = useState(`点検スタンプを${correctItems.length}つ集めて、予約日を確定しよう！`);
   const isReadyToReserve = checkedItems.length === correctItems.length;
 
   const checkItem = (item) => {
@@ -1727,7 +1759,7 @@ function InspectionGame({ onComplete, onFail }) {
 
   const chooseReservationDate = (date) => {
     if (checkedItems.length < correctItems.length) {
-      setNote("先に点検スタンプを5つ集めてね。");
+      setNote(`先に点検スタンプを${correctItems.length}つ集めてね。`);
       return;
     }
     if (!date.open) {
@@ -1765,7 +1797,7 @@ function InspectionGame({ onComplete, onFail }) {
             style={{ width: `${(checkedItems.length / correctItems.length) * 100}%` }}
           />
         </div>
-        <div className="mt-4 grid grid-cols-5 gap-3">
+        <div className="mt-4 grid grid-cols-3 gap-3 sm:grid-cols-6">
           {correctItems.map((item) => (
             <span
               key={item}
