@@ -519,18 +519,19 @@ function StationScene({ boughtUpgrades, pointPop, activeUpgradeKey }) {
       <div className="absolute left-4 top-4 z-10 rounded-full bg-white/85 px-4 py-2 text-sm font-black text-blue-700 shadow">
         道エネ SS
       </div>
-      <div className="absolute left-[43%] top-3 z-10 w-[52%] sm:left-[46%] sm:w-[48%]">
-        <div className="mb-2 flex items-center justify-start gap-2">
-          <span className="rounded-full bg-blue-700/90 px-3 py-1 text-[10px] font-black text-white shadow sm:text-xs">
+      <div className="absolute right-5 top-4 z-10 w-[54%] sm:right-7 sm:w-[52%]">
+        <div className="mb-3 flex items-center justify-center gap-2">
+          <span className="rounded-full bg-blue-700/95 px-5 py-2 text-base font-black text-white shadow-xl ring-4 ring-white/80 xl:text-2xl">
             設備 {purchasedUpgrades.length}/{upgrades.length}
           </span>
         </div>
-        <div className="grid min-h-[7rem] grid-cols-3 justify-items-start gap-2">
+        <div className="grid min-h-[10rem] grid-cols-3 justify-items-center gap-3 xl:min-h-[12rem] xl:gap-5">
           {purchasedUpgrades.length > 0 &&
             purchasedUpgrades.map((upgrade) => (
               <SceneIcon
                 key={upgrade.key}
                 active={upgrade.key === activeUpgradeKey}
+                name={upgrade.name}
                 label={<UpgradeVisual upgrade={upgrade} size="scene" />}
               />
             ))}
@@ -583,17 +584,21 @@ function CityWindows() {
   );
 }
 
-function SceneIcon({ label, active = false }) {
+function SceneIcon({ label, name, active = false }) {
   return (
     <div
-      className={`relative flex h-14 w-14 items-center justify-center rounded-2xl border-2 border-yellow-300 bg-white/92 text-3xl shadow-xl ring-2 ring-white/70 sm:h-16 sm:w-16 ${
-        active ? "animate-upgrade-arrive" : "animate-pop"
+      className={`relative flex h-24 w-28 flex-col items-center justify-center rounded-3xl border-4 border-yellow-300 bg-white/95 px-2 py-2 text-center shadow-2xl ring-4 ring-white/80 xl:h-32 xl:w-40 ${
+        active ? "animate-upgrade-arrive scale-110 border-orange-400 bg-yellow-50 ring-8 ring-yellow-200/90" : "animate-pop"
       }`}
     >
-      {active && <span className="absolute -inset-3 rounded-full bg-yellow-300/35 animate-ping" aria-hidden="true" />}
-      {active && <span className="absolute -right-1 -top-2 text-xl animate-bounce">✨</span>}
-      <span className="relative z-10 flex h-full w-full items-center justify-center">
+      {active && <span className="absolute -inset-5 rounded-[2rem] bg-yellow-300/40 animate-ping" aria-hidden="true" />}
+      {active && <span className="absolute -right-3 -top-4 text-4xl animate-bounce">✨</span>}
+      {active && <span className="absolute -left-3 -bottom-4 text-3xl animate-pulse">⭐</span>}
+      <span className="relative z-10 flex items-center justify-center">
         {label}
+      </span>
+      <span className="relative z-10 mt-1 line-clamp-2 text-[10px] font-black leading-tight text-blue-700 xl:mt-2 xl:text-base">
+        {name}
       </span>
     </div>
   );
@@ -933,10 +938,10 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
       staff: "h-14 w-12 xl:h-24 xl:w-20"
     },
     scene: {
-      wrap: "h-12 w-12 rounded-xl sm:h-14 sm:w-14",
-      image: "h-10 w-10 sm:h-12 sm:w-12",
-      wide: "h-10 w-14 sm:h-12 sm:w-16",
-      staff: "h-12 w-10 sm:h-14 sm:w-12"
+      wrap: "h-14 w-14 rounded-2xl xl:h-20 xl:w-20 xl:rounded-3xl",
+      image: "h-12 w-12 xl:h-16 xl:w-16",
+      wide: "h-12 w-18 xl:h-16 xl:w-24",
+      staff: "h-14 w-12 xl:h-20 xl:w-16"
     },
     sceneWide: {
       wrap: "h-16 w-28 rounded-2xl",
