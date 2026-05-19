@@ -1505,10 +1505,14 @@ function KeroseneGame({ onComplete, onFail }) {
           {[0, 1, 2].map((roadLane) => (
             <div
               key={roadLane}
-              className="absolute left-6 right-28 h-20 rounded-full bg-slate-500 shadow-inner"
+              className={`absolute left-6 right-28 h-20 rounded-full shadow-inner ${
+                !crashed && !obstacleLanes.includes(roadLane)
+                  ? "animate-pulse bg-emerald-500 ring-8 ring-emerald-200"
+                  : "bg-slate-500"
+              }`}
               style={{ top: `${laneTop(roadLane)}px` }}
             >
-              <div className="mx-auto mt-9 h-2 w-4/5 rounded-full bg-yellow-200" />
+              <div className={`mx-auto mt-9 h-2 w-4/5 rounded-full ${!crashed && !obstacleLanes.includes(roadLane) ? "bg-white" : "bg-yellow-200"}`} />
             </div>
           ))}
           {obstacleLanes.map((obstacleLane, index) => (
@@ -1522,11 +1526,7 @@ function KeroseneGame({ onComplete, onFail }) {
                 top: `${objectTop(obstacleLane) - 8}px`
               }}
             >
-              <span className="absolute inset-[-10px] rounded-full border-4 border-dashed border-red-300 bg-red-100/40" aria-hidden="true" />
               <span className="relative z-10">☃️</span>
-              <span className="absolute -bottom-8 rounded-full bg-red-500 px-3 py-1 text-base font-black text-white shadow">
-                ぶつかる
-              </span>
             </div>
           ))}
           <div
