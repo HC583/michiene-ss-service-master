@@ -1456,18 +1456,23 @@ function KeroseneGame({ onComplete, onFail }) {
   const [steps, setSteps] = useState(0);
   const [lane, setLane] = useState(1);
   const [crashed, setCrashed] = useState(false);
+  const [crashLeft, setCrashLeft] = useState(null);
   const [note, setNote] = useState("雪だるまをよけて、おうちまで灯油を届けよう！");
   const obstacleLanes = obstacles[steps % obstacles.length];
   const laneTop = (roadLane) => 78 + roadLane * 150;
   const objectTop = (roadLane) => 50 + roadLane * 150;
   const truckTop = (roadLane) => 38 + roadLane * 150;
+  const obstacleLeft = (index) => (obstacleLanes.length > 1 ? 55 + index * 8 : 58);
+  const truckLeft = crashed && crashLeft !== null ? crashLeft : 4 + Math.min(steps * 10, 42);
 
   const chooseLane = (nextLane) => {
     if (crashed) return;
     setLane(nextLane);
-    if (obstacleLanes.includes(nextLane)) {
+    const obstacleIndex = obstacleLanes.indexOf(nextLane);
+    if (obstacleIndex !== -1) {
       setCrashed(true);
-      setNote("ドン！雪だるまにぶつかった！");
+      setCrashLeft(Math.max(6, obstacleLeft(obstacleIndex) - 8));
+      setNote("雪だるまに当たった！もう一度道を選ぼう");
       window.setTimeout(() => {
         onFail("雪だるまにぶつかりました。雪だるまのない道を選んでもう一度やろう！");
       }, 450);
@@ -1503,15 +1508,19 @@ function KeroseneGame({ onComplete, onFail }) {
           {obstacleLanes.map((obstacleLane, index) => (
             <div
               key={obstacleLane}
-              className={`absolute flex h-20 w-20 items-center justify-center rounded-full bg-white text-6xl shadow-xl ${
-                crashed ? "ring-4 ring-red-300 animate-bounce" : ""
+              className={`absolute flex h-24 w-24 items-center justify-center rounded-full bg-white text-7xl shadow-xl ring-4 ${
+                crashed ? "animate-bounce ring-red-300" : "ring-red-100"
               }`}
               style={{
-                left: obstacleLanes.length > 1 ? `${55 + index * 8}%` : "58%",
-                top: `${objectTop(obstacleLane)}px`
+                left: `${obstacleLeft(index)}%`,
+                top: `${objectTop(obstacleLane) - 8}px`
               }}
             >
-              ☃️
+              <span className="absolute inset-[-10px] rounded-full border-4 border-dashed border-red-300 bg-red-100/40" aria-hidden="true" />
+              <span className="relative z-10">☃️</span>
+              <span className="absolute -bottom-8 rounded-full bg-red-500 px-3 py-1 text-base font-black text-white shadow">
+                ぶつかる
+              </span>
             </div>
           ))}
           <div
@@ -1519,20 +1528,12 @@ function KeroseneGame({ onComplete, onFail }) {
               crashed ? "ring-4 ring-red-400 animate-pulse" : ""
             }`}
             style={{
-              left: `${4 + Math.min(steps * 10, 42)}%`,
+              left: `${truckLeft}%`,
               top: `${truckTop(lane)}px`
             }}
           >
             <TankerLorryImage className="h-28 w-56" />
           </div>
-          {crashed && (
-            <div
-              className="absolute left-[50%] z-20 animate-pop text-8xl"
-              style={{ top: `${truckTop(lane)}px` }}
-            >
-              💥
-            </div>
-          )}
           <div className="absolute right-4 top-[14.25rem] text-8xl">🏠</div>
           <div className="absolute right-16 top-[10.5rem] text-5xl">♨️</div>
         </div>
