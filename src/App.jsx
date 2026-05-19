@@ -1444,22 +1444,26 @@ function OverheadTireCar({ positions, activeIndex, stage, tighteningStep }) {
         return (
           <div
             key={position.label}
-            className={`absolute flex h-24 w-24 -translate-x-1/2 -translate-y-1/2 items-center justify-center rounded-3xl border-4 shadow-xl transition ${
-              done
-                ? "border-emerald-300 bg-emerald-100"
-                : active
-                  ? "border-yellow-300 bg-orange-100 ring-8 ring-yellow-200"
-                  : "border-slate-300 bg-white"
-            }`}
+            className="absolute flex w-32 -translate-x-1/2 -translate-y-1/2 flex-col items-center"
             style={{ left: position.x, top: position.y }}
           >
-            <TireImage className={`${active ? "h-24 w-24 animate-pulse" : "h-20 w-20"}`} />
-            {active && stage === "tighten" && (
-              <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/75">
-                <NutIcon tightened={tighteningStep > 0} className="h-16 w-16 animate-spin" />
-              </div>
-            )}
-            <span className="absolute -bottom-10 rounded-full bg-blue-700 px-4 py-1.5 text-lg font-black text-white">
+            <div
+              className={`relative flex h-24 w-24 items-center justify-center rounded-3xl border-4 shadow-xl transition ${
+                done
+                  ? "border-emerald-300 bg-emerald-100"
+                  : active
+                    ? "border-yellow-300 bg-orange-100 ring-8 ring-yellow-200"
+                    : "border-slate-300 bg-white"
+              }`}
+            >
+              <TireImage className={`${active ? "h-24 w-24 animate-pulse" : "h-20 w-20"}`} />
+              {active && stage === "tighten" && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-3xl bg-white/75">
+                  <NutIcon tightened={tighteningStep > 0} className="h-16 w-16 animate-spin" />
+                </div>
+              )}
+            </div>
+            <span className="mt-3 rounded-full bg-blue-700 px-4 py-1.5 text-lg font-black leading-none text-white shadow-lg">
               {position.short}
             </span>
           </div>
