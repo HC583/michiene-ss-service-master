@@ -414,8 +414,11 @@ function TitleScreen({ onStart }) {
             <div className="flex h-24 w-[4.5rem] shrink-0 items-center justify-center overflow-hidden rounded-2xl bg-white shadow-inner sm:h-32 sm:w-24 lg:h-44 lg:w-32">
               <StaffImage className="h-[5.5rem] w-16 object-contain sm:h-28 sm:w-20 lg:h-40 lg:w-28" />
             </div>
-            <h1 className="text-left text-[1.35rem] font-black leading-tight text-blue-700 sm:text-[2.35rem] lg:text-[4.25rem] xl:text-[4.8rem]">
-              道エネ
+            <h1 className="text-left text-[1.35rem] font-black leading-tight sm:text-[2.35rem] lg:text-[4.25rem] xl:text-[4.8rem]">
+              <span className="relative mb-5 inline-flex rounded-full border-4 border-orange-300 bg-white px-3 py-2 text-lg font-black leading-none text-orange-500 sm:mb-6 sm:px-5 sm:py-3 sm:text-3xl lg:mb-8 lg:px-6 lg:py-3 lg:text-5xl">
+                いらっしゃいませ！
+                <span className="absolute -bottom-3 left-8 h-4 w-4 rotate-45 border-b-4 border-r-4 border-orange-300 bg-white sm:left-10 sm:h-5 sm:w-5" aria-hidden="true" />
+              </span>
               <span className="block whitespace-nowrap text-orange-500">サービスマスターを目指そう！</span>
             </h1>
           </div>
