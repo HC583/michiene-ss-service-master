@@ -636,6 +636,7 @@ function CustomerPanel({ customer, message, phase }) {
             className={`whitespace-pre-line rounded-[1.75rem] border-4 border-orange-300 bg-white px-5 py-7 text-center text-2xl font-black leading-relaxed text-slate-950 shadow-xl ring-4 ring-orange-100 sm:text-3xl xl:px-8 xl:py-10 xl:leading-tight ${
               customer.visual === "insurance" ? "xl:text-4xl" : "xl:text-5xl"
             }`}
+            style={customer.visual === "staffBooking" ? { whiteSpace: "nowrap" } : undefined}
           >
             「{customer.speech}」
           </p>
