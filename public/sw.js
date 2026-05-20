@@ -1,20 +1,21 @@
 const CACHE_NAME = "michiene-ss-service-master-v1";
+const BASE_URL = new URL(self.registration.scope).pathname;
 const APP_SHELL = [
-  "/",
-  "/index.html",
-  "/web-app.html",
-  "/manifest.webmanifest",
-  "/pwa-icon.svg",
-  "/staff.png",
-  "/station-background-new.png",
-  "/car-top-view.png",
-  "/insurance.png",
-  "/EV.png",
-  "/tire.png",
-  "/tanker-lorry.png",
-  "/car-wash.png",
-  "/inspection.png"
-];
+  "",
+  "index.html",
+  "web-app.html",
+  "manifest.webmanifest",
+  "pwa-icon.svg",
+  "staff.png",
+  "station-background-new.png",
+  "car-top-view.png",
+  "insurance.png",
+  "EV.png",
+  "tire.png",
+  "tanker-lorry.png",
+  "car-wash.png",
+  "inspection.png"
+].map((path) => `${BASE_URL}${path}`);
 
 self.addEventListener("install", (event) => {
   event.waitUntil(

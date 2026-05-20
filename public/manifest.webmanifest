@@ -2,15 +2,15 @@
   "name": "道エネサービスマスター",
   "short_name": "道エネSS",
   "description": "北海道の暮らしを支えるサービスステーションを育てるミニゲーム",
-  "start_url": "/",
-  "scope": "/",
+  "start_url": ".",
+  "scope": ".",
   "display": "standalone",
   "orientation": "portrait",
   "background_color": "#e0f2fe",
   "theme_color": "#f97316",
   "icons": [
     {
-      "src": "/pwa-icon.svg",
+      "src": "pwa-icon.svg",
       "sizes": "any",
       "type": "image/svg+xml",
       "purpose": "any maskable"
