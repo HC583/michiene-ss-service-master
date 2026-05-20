@@ -1,0 +1,27 @@
+最初に読んでください
+
+このフォルダは、他のパソコンで道エネWEBアプリを開くためのセットです。
+
+まず大事:
+AirDropで「道エネWEB版.app」を送ると、
+Macで「開発元を検証できないため」と出て開けないことがあります。
+
+解決:
+.app は送らず、このフォルダのショートカットを送ってください。
+
+Mac用:
+Mac用_道エネWEBアプリを開く.webloc
+
+Windows用:
+Windows用_道エネWEBアプリを開く.url
+
+共通アドレス:
+http://192.168.1.7:5173/web-app.html
+
+大事:
+このアドレスを使うには、元のMacでサーバーを起動しておく必要があります。
+/Users/takahata/Documents/New project/start-lan.command
+
+注意:
+同じWi-Fiの中で使う方法です。
+別の場所や別のWi-Fiから開く場合は、VercelなどでHTTPS公開URLを作る必要があります。
