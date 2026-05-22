@@ -2289,8 +2289,10 @@ function UpgradePurchaseToast({ upgrade }) {
           </div>
         </div>
         <p className="relative text-2xl font-black tracking-[.18em] text-orange-500 xl:text-3xl">STAND UPGRADE</p>
-        <p className="relative mt-2 text-6xl font-black text-blue-700 xl:text-8xl">設備パワーアップ！</p>
-        <p className="relative mx-auto mt-6 max-w-3xl rounded-[2rem] bg-yellow-100 px-6 py-5 text-3xl font-black text-orange-700 shadow-inner xl:text-5xl">
+        <p className="relative mt-2 whitespace-nowrap text-[clamp(2.6rem,8vw,6rem)] font-black leading-none text-blue-700">
+          設備パワーアップ！
+        </p>
+        <p className="relative mx-auto mt-6 max-w-3xl whitespace-nowrap rounded-[2rem] bg-yellow-100 px-6 py-5 text-[clamp(1.45rem,4.6vw,3rem)] font-black leading-tight text-orange-700 shadow-inner">
           {upgrade.name}
         </p>
       </div>
@@ -2333,7 +2335,7 @@ function GoodJobClearOverlay() {
         <p className="relative mt-3 text-7xl font-black leading-tight text-blue-700 xl:text-9xl">
           金メダル獲得！
         </p>
-        <p className="relative mt-7 rounded-[2rem] bg-yellow-100 px-8 py-6 text-4xl font-black text-orange-700 shadow-inner xl:text-6xl">
+        <p className="relative mt-7 whitespace-nowrap rounded-[2rem] bg-yellow-100 px-8 py-6 text-[clamp(2rem,5.6vw,4rem)] font-black leading-tight text-orange-700 shadow-inner">
           スタンド成長コンプリート！
         </p>
         <p className="relative mt-6 text-2xl font-bold text-slate-600 xl:text-3xl">
