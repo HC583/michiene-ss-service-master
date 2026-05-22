@@ -1,0 +1,13 @@
+MICH IENE WEB APP - Mac / Windows URL
+
+Open this URL on Mac, Windows, iPhone, Android, or another computer:
+
+https://hc583.github.io/michiene-ss-service-master/
+
+Mac:
+Double-click Mac_Michiene_Web_App.webloc
+
+Windows:
+Double-click Windows_Michiene_Web_App.url
+
+If Japanese file names look broken on another computer, use these English file names.
