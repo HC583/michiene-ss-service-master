@@ -306,7 +306,7 @@ function App() {
               />
             </section>
           ) : (
-            <section className="grid min-w-0 grid-cols-1 gap-4 xl:grid-cols-[minmax(0,1fr)_740px] xl:items-start xl:gap-5">
+            <section className="grid min-w-0 grid-cols-1 gap-4 2xl:grid-cols-[minmax(0,1fr)_720px] 2xl:items-start 2xl:gap-5">
               <div className="flex min-w-0 flex-col gap-4">
                 <CustomerPanel customer={customer} message={message} phase={phase} />
                 <UpgradePanel
@@ -680,7 +680,7 @@ function ServiceSelector({ onChoose }) {
           </p>
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-2 xl:gap-5">
+      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 2xl:grid-cols-2 2xl:gap-5">
         {services.map(({ name, visual, hint, color }) => (
           <button
             key={name}

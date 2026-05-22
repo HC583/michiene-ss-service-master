@@ -16,10 +16,77 @@ body {
   margin: 0;
   font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, sans-serif;
   background: #fff3df;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
+img,
+svg {
+  max-width: 100%;
 }
 
 button {
   -webkit-tap-highlight-color: transparent;
+}
+
+@media (min-width: 1024px) and (max-width: 1439px) {
+  .mini-game-large .mini-game-body {
+    font-size: 1rem;
+  }
+
+  .mini-game-large .mini-game-body .text-sm,
+  .mini-game-large .mini-game-body .text-base,
+  .mini-game-large .mini-game-body .text-lg,
+  .mini-game-large .mini-game-body .text-xl {
+    font-size: 1.05rem;
+    line-height: 1.35;
+  }
+
+  .mini-game-large .mini-game-body .text-2xl,
+  .mini-game-large .mini-game-body .text-3xl {
+    font-size: 1.55rem;
+    line-height: 1.2;
+  }
+
+  .mini-game-large .mini-game-body .text-4xl,
+  .mini-game-large .mini-game-body .text-5xl,
+  .mini-game-large .mini-game-body .text-6xl {
+    font-size: 2.35rem;
+    line-height: 1.08;
+  }
+
+  .mini-game-large .mini-game-body button {
+    font-size: 1.15rem;
+    line-height: 1.25;
+  }
+
+  .mini-game-large .mini-game-body .h-\[38rem\],
+  .mini-game-large .mini-game-body .h-\[34rem\],
+  .mini-game-large .mini-game-body .h-\[32rem\] {
+    height: 30rem;
+  }
+
+  .mini-game-large .mini-game-body .h-72 {
+    height: 24rem;
+  }
+
+  .mini-game-large .mini-game-body .h-64 {
+    height: 18rem;
+  }
+
+  .mini-game-large .mini-game-body .w-\[30rem\] {
+    width: min(100%, 24rem);
+  }
+
+  .mini-game-large .mini-game-body .w-\[26rem\] {
+    width: min(100%, 21rem);
+  }
+
+  .mini-game-large .mini-game-body svg,
+  .mini-game-large .mini-game-body img {
+    transform: none;
+  }
 }
 
 .cute-orange-bg {
