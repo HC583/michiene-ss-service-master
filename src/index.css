@@ -16,10 +16,18 @@ body {
   margin: 0;
   font-family: "Hiragino Sans", "Yu Gothic", "Meiryo", system-ui, sans-serif;
   background: #fff3df;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
 }
 
 button {
   -webkit-tap-highlight-color: transparent;
+}
+
+body,
+button {
+  text-shadow: none;
+  -webkit-text-stroke: 0 transparent;
 }
 
 .cute-orange-bg {

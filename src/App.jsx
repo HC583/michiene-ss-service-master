@@ -428,7 +428,7 @@ function TitleScreen({ onStart }) {
           </p>
           <div className="mx-auto mt-6 max-w-4xl rounded-[1.5rem] border-4 border-yellow-300 bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-5 py-5 text-white shadow-xl shadow-orange-200 ring-4 ring-white sm:px-8 lg:mt-10 lg:max-w-5xl lg:px-12 lg:py-7">
             <p className="flex animate-pulse flex-col items-center justify-center gap-1 text-center text-2xl font-black leading-tight sm:text-4xl lg:flex-row lg:gap-5 lg:text-6xl">
-              <span className="shrink-0 text-5xl leading-none sm:text-7xl lg:text-9xl" aria-hidden="true">🏅</span>
+              <MedalDecor className="h-16 w-16 shrink-0 sm:h-24 sm:w-24 lg:h-32 lg:w-32" />
               <span className="text-center lg:whitespace-nowrap lg:text-left">
                 スタンドを成長させよう！！
               </span>
@@ -592,8 +592,8 @@ function SceneIcon({ label, name, active = false }) {
       }`}
     >
       {active && <span className="absolute -inset-5 rounded-[2rem] bg-yellow-300/40 animate-ping" aria-hidden="true" />}
-      {active && <span className="absolute -right-3 -top-4 text-4xl animate-bounce">✨</span>}
-      {active && <span className="absolute -left-3 -bottom-4 text-3xl animate-pulse">⭐</span>}
+      {active && <SparkleDecor className="absolute -right-3 -top-4 h-10 w-10 animate-bounce" />}
+      {active && <StarDecor className="absolute -left-3 -bottom-4 h-8 w-8 animate-pulse" />}
       <span className="relative z-10 flex items-center justify-center">
         {label}
       </span>
@@ -614,9 +614,9 @@ function CustomerPanel({ customer, message, phase }) {
           <StaffImage className="h-[3.4rem] w-10 object-contain sm:h-[5rem] sm:w-14 xl:h-[7rem] xl:w-20" />
         </div>
         <div className="relative whitespace-nowrap rounded-[1.25rem] bg-gradient-to-r from-orange-500 via-yellow-400 to-orange-500 px-3 py-3 text-base font-black text-white shadow-xl ring-4 ring-white sm:rounded-[1.5rem] sm:px-5 sm:text-3xl xl:rounded-[2rem] xl:px-7 xl:py-5 xl:text-5xl">
-          <span className="mr-1" aria-hidden="true">✨</span>
+          <SparkleDecor className="mr-1 inline-block h-5 w-5 align-[-0.1em] sm:h-8 sm:w-8 xl:h-12 xl:w-12" />
           いらっしゃいませ！
-          <span className="ml-1" aria-hidden="true">✨</span>
+          <SparkleDecor className="ml-1 inline-block h-5 w-5 align-[-0.1em] sm:h-8 sm:w-8 xl:h-12 xl:w-12" />
         </div>
       </div>
       <div className="relative z-10 rounded-[1.5rem] border-4 border-white bg-gradient-to-br from-orange-100 via-yellow-50 to-white p-3 shadow-2xl ring-4 ring-orange-200/90 sm:p-4 xl:rounded-[2rem] xl:p-6">
@@ -624,13 +624,13 @@ function CustomerPanel({ customer, message, phase }) {
         <div className="mx-auto flex h-20 w-20 shrink-0 animate-floaty items-center justify-center rounded-full bg-white text-4xl shadow-lg ring-4 ring-blue-100 sm:mx-0 xl:h-28 xl:w-28 xl:text-6xl">
           {customer.visual === "insurance" && <InsuranceCustomerIcon className="h-16 w-16" />}
           {customer.visual === "staffBooking" && <InspectionCustomerIcon />}
-          {!customer.visual && customer.icon}
+          {!customer.visual && <CustomerCueIcon service={customer.correctService} />}
         </div>
         <div className="min-w-0 flex-1">
           <div className="mb-4 inline-flex rounded-full bg-gradient-to-r from-orange-600 via-orange-500 to-yellow-400 px-5 py-2 text-base font-black tracking-[.08em] text-white shadow-lg ring-4 ring-white xl:text-2xl">
-            <span className="mr-2" aria-hidden="true">✨</span>
+            <SparkleDecor className="mr-2 h-6 w-6 xl:h-8 xl:w-8" />
             クイズ問題
-            <span className="ml-2" aria-hidden="true">✨</span>
+            <SparkleDecor className="ml-2 h-6 w-6 xl:h-8 xl:w-8" />
           </div>
           <p
             className={`whitespace-pre-line rounded-[1.75rem] border-4 border-orange-300 bg-white px-5 py-7 text-center text-2xl font-black leading-relaxed text-slate-950 shadow-xl ring-4 ring-orange-100 sm:text-3xl xl:px-8 xl:py-10 xl:leading-tight ${
@@ -1013,6 +1013,104 @@ function StaffImage({ className = "h-16 w-16" }) {
   );
 }
 
+function CustomerCueIcon({ service }) {
+  if (service === "給油") return <span className="scale-90"><FuelPumpIcon /></span>;
+  if (service === "洗車") return <CarWashImage className="h-16 w-16 xl:h-20 xl:w-20" fallback="洗" />;
+  if (service === "タイヤ交換") return <TireImage className="h-16 w-16 xl:h-20 xl:w-20" fallback="タイヤ" />;
+  if (service === "灯油配達") return <TankerLorryImage className="h-14 w-20 xl:h-16 xl:w-24" />;
+  if (service === "EV充電") return <EvChargeIcon className="h-16 w-16 xl:h-20 xl:w-20" />;
+  return null;
+}
+
+function SparkleDecor({ className = "h-8 w-8" }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true" focusable="false">
+      <path d="M30 4 36 24l20 6-20 6-6 20-6-20-20-6 20-6 6-20Z" fill="#facc15" stroke="#f59e0b" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M50 6 53 16l10 3-10 3-3 10-3-10-10-3 10-3 3-10Z" fill="#fff7ad" stroke="#f59e0b" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M14 42 17 50l8 3-8 3-3 8-3-8-8-3 8-3 3-8Z" fill="#fff7ad" stroke="#f59e0b" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function StarDecor({ className = "h-8 w-8" }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true" focusable="false">
+      <path d="m32 5 7.7 16.3 17.7 2.7-12.8 12.7 3 17.8L32 46.1 16.4 54.5l3-17.8L6.6 24l17.7-2.7L32 5Z" fill="#facc15" stroke="#f59e0b" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M28 17 24 28 14 31" fill="none" stroke="#fff7ad" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function ConfettiDecor({ className = "h-8 w-8" }) {
+  return (
+    <svg viewBox="0 0 64 64" className={className} aria-hidden="true" focusable="false">
+      <path d="M14 54 29 17l18 18-33 19Z" fill="#fb923c" stroke="#c2410c" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M27 20c9 4 14 9 17 16" fill="none" stroke="#fff7ad" strokeWidth="4" strokeLinecap="round" />
+      <circle cx="45" cy="14" r="4" fill="#60a5fa" />
+      <circle cx="54" cy="28" r="3" fill="#facc15" />
+      <circle cx="36" cy="9" r="3" fill="#34d399" />
+      <path d="M50 6c8 6-5 10 3 16M29 6c-4 7 8 7 3 14" fill="none" stroke="#2563eb" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function MedalDecor({ className = "h-16 w-16" }) {
+  return (
+    <svg viewBox="0 0 96 96" className={className} aria-hidden="true" focusable="false">
+      <path d="M25 4h16l10 31H35L25 4Z" fill="#60a5fa" stroke="#1d4ed8" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M55 4h16L61 35H45L55 4Z" fill="#f97316" stroke="#c2410c" strokeWidth="4" strokeLinejoin="round" />
+      <circle cx="48" cy="58" r="28" fill="#facc15" stroke="#c2410c" strokeWidth="5" />
+      <circle cx="48" cy="58" r="21" fill="#fcd34d" stroke="#f59e0b" strokeWidth="3" />
+      <path d="m48 41 5 11 12 2-9 8 3 12-11-6-11 6 3-12-9-8 12-2 5-11Z" fill="#fff7ad" stroke="#f59e0b" strokeWidth="3" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function SnowmanDecor({ className = "h-16 w-16" }) {
+  return (
+    <svg viewBox="0 0 96 96" className={className} aria-hidden="true" focusable="false">
+      <circle cx="48" cy="61" r="27" fill="#fff" stroke="#bfdbfe" strokeWidth="5" />
+      <circle cx="48" cy="31" r="19" fill="#fff" stroke="#bfdbfe" strokeWidth="5" />
+      <path d="M31 16h34v9H31z" fill="#1f2937" />
+      <path d="M39 5h18v13H39z" fill="#1f2937" />
+      <circle cx="41" cy="28" r="3" fill="#1f2937" />
+      <circle cx="55" cy="28" r="3" fill="#1f2937" />
+      <path d="M47 35h16l-15 5Z" fill="#fb923c" />
+      <path d="M39 43c5 4 13 4 18 0" fill="none" stroke="#334155" strokeWidth="3" strokeLinecap="round" />
+      <circle cx="48" cy="56" r="3" fill="#334155" />
+      <circle cx="48" cy="68" r="3" fill="#334155" />
+      <path d="M26 48 11 39M70 48l15-9" stroke="#64748b" strokeWidth="4" strokeLinecap="round" />
+      <path d="M17 38 11 29M79 38l6-9" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
+      <path d="M29 20c-9 0-17 4-22 11M67 20c9 0 17 4 22 11" fill="none" stroke="#38bdf8" strokeWidth="4" strokeLinecap="round" strokeDasharray="2 8" />
+    </svg>
+  );
+}
+
+function HouseHeatIcon({ className = "h-24 w-24" }) {
+  return (
+    <svg viewBox="0 0 96 96" className={className} aria-hidden="true" focusable="false">
+      <path d="M14 45 48 17l34 28" fill="none" stroke="#ef4444" strokeWidth="7" strokeLinecap="round" strokeLinejoin="round" />
+      <path d="M23 43h50v37H23z" fill="#fef3c7" stroke="#c08457" strokeWidth="5" strokeLinejoin="round" />
+      <path d="M40 58h16v22H40z" fill="#8b5a2b" />
+      <path d="M29 51h10v10H29zm28 0h10v10H57z" fill="#7dd3fc" stroke="#38bdf8" strokeWidth="2" />
+      <path d="M28 30v-9h10v5" fill="none" stroke="#64748b" strokeWidth="5" strokeLinecap="round" />
+      <path d="M39 12c-5-5 6-9 1-14M51 12c-5-5 6-9 1-14M63 12c-5-5 6-9 1-14" transform="translate(0 12)" fill="none" stroke="#ef4444" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function FoamBubbleIcon({ className = "h-16 w-16" }) {
+  return (
+    <svg viewBox="0 0 96 96" className={className} aria-hidden="true" focusable="false">
+      <rect x="8" y="8" width="80" height="80" rx="20" fill="#7dd3fc" stroke="#ffffff" strokeWidth="6" />
+      <circle cx="38" cy="43" r="11" fill="#dff8ff" stroke="#7dd3fc" strokeWidth="3" />
+      <circle cx="52" cy="36" r="8" fill="#ffffff" stroke="#7dd3fc" strokeWidth="3" />
+      <circle cx="56" cy="55" r="10" fill="#dff8ff" stroke="#7dd3fc" strokeWidth="3" />
+      <path d="M25 27 28 36l9 3-9 3-3 9-3-9-9-3 9-3 3-9Zm47 10 2 7 7 2-7 2-2 7-2-7-7-2 7-2 2-7Z" fill="#facc15" stroke="#f59e0b" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 function MiniGame({ service, onComplete, size = "normal", completedMessage = "", onNextCustomer }) {
   const [retryKey, setRetryKey] = useState(0);
   const [failMessage, setFailMessage] = useState("");
@@ -1062,10 +1160,10 @@ function MiniGame({ service, onComplete, size = "normal", completedMessage = "",
       </div>
       {successText && (
         <div className="absolute inset-0 z-30 flex items-center justify-center overflow-hidden rounded-3xl bg-blue-950/70 p-5">
-          <div className="absolute left-6 top-6 text-4xl animate-bounce">✨</div>
-          <div className="absolute right-8 top-10 text-5xl animate-pulse">⭐</div>
-          <div className="absolute bottom-8 left-10 text-5xl animate-bounce">🎉</div>
-          <div className="absolute bottom-12 right-10 text-4xl animate-pulse">✨</div>
+          <SparkleDecor className="absolute left-6 top-6 h-10 w-10 animate-bounce" />
+          <StarDecor className="absolute right-8 top-10 h-12 w-12 animate-pulse" />
+          <ConfettiDecor className="absolute bottom-8 left-10 h-12 w-12 animate-bounce" />
+          <SparkleDecor className="absolute bottom-12 right-10 h-10 w-10 animate-pulse" />
           <div className="w-full max-w-3xl animate-pop rounded-[2rem] border-4 border-yellow-300 bg-white p-6 text-center shadow-2xl xl:p-10">
             <p className="text-lg font-black tracking-widest text-orange-500 xl:text-2xl">MISSION</p>
             <p className="mt-1 whitespace-nowrap text-4xl font-black leading-tight text-blue-700 sm:text-6xl xl:text-7xl">
@@ -1236,11 +1334,11 @@ function WashGame({ onComplete }) {
             style={currentSpot}
             aria-label="あわをタッチ"
           >
-            <span className="absolute left-4 top-3 text-4xl">✨</span>
-            <span className="absolute right-4 top-4 text-5xl">⭐</span>
-            <span className="absolute bottom-4 left-5 text-4xl">✨</span>
-            <span className="absolute bottom-5 right-5 text-4xl">⭐</span>
-            <span className="relative z-10 text-6xl">🫧</span>
+            <SparkleDecor className="absolute left-4 top-3 h-9 w-9" />
+            <StarDecor className="absolute right-4 top-4 h-10 w-10" />
+            <SparkleDecor className="absolute bottom-4 left-5 h-9 w-9" />
+            <StarDecor className="absolute bottom-5 right-5 h-10 w-10" />
+            <FoamBubbleIcon className="relative z-10 h-20 w-20" />
           </button>
         )}
 
@@ -1253,9 +1351,9 @@ function WashGame({ onComplete }) {
           >
             <div className="absolute inset-0 rounded-full bg-yellow-200/80 blur-sm" />
             <div className="absolute left-1/2 top-1/2 h-28 w-28 -translate-x-1/2 -translate-y-1/2 rounded-full border-4 border-yellow-300 bg-white/80 shadow-xl" />
-            <span className="absolute -left-4 top-5 text-5xl animate-bounce">✨</span>
-            <span className="absolute right-0 top-0 text-6xl animate-pulse">💦</span>
-            <span className="absolute bottom-0 right-2 text-5xl animate-bounce">⭐</span>
+            <SparkleDecor className="absolute -left-4 top-5 h-12 w-12 animate-bounce" />
+            <FoamBubbleIcon className="absolute right-0 top-0 h-14 w-14 animate-pulse" />
+            <StarDecor className="absolute bottom-0 right-2 h-12 w-12 animate-bounce" />
             <span className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 whitespace-nowrap rounded-full bg-orange-500 px-4 py-2 text-xl font-black text-white shadow-lg">
               ピカッ!
             </span>
@@ -1356,8 +1454,8 @@ function TireGame({ onComplete, onFail }) {
 
       <div className="mx-auto grid max-w-7xl gap-5 xl:grid-cols-[minmax(0,1.25fr)_minmax(22rem,.75fr)] xl:items-stretch">
         <div className="relative overflow-hidden rounded-[2rem] border-4 border-blue-200 bg-gradient-to-b from-sky-100 to-white p-5 shadow-inner">
-          <div className="absolute left-6 top-6 text-4xl animate-bounce">❄️</div>
-          <div className="absolute right-8 top-8 text-4xl animate-pulse">✨</div>
+          <Snowflake className="absolute left-6 top-6 h-10 w-10 animate-bounce text-sky-300" strokeWidth={2.5} />
+          <SparkleDecor className="absolute right-8 top-8 h-10 w-10 animate-pulse" />
           <OverheadTireCar
             positions={tirePositions}
             activeIndex={currentWheel}
@@ -1394,7 +1492,15 @@ function TireGame({ onComplete, onFail }) {
                         : "border-slate-200 bg-white text-slate-500"
                   }`}
                 >
-                  <span className="block text-4xl">{done ? "✅" : active ? "🛞" : "○"}</span>
+                  <span className="mx-auto mb-1 flex h-12 w-12 items-center justify-center">
+                    {done ? (
+                      <CheckCircle2 className="h-12 w-12 text-emerald-600" strokeWidth={3.5} />
+                    ) : active ? (
+                      <TireImage className="h-12 w-12" fallback="タイヤ" />
+                    ) : (
+                      <span className="h-10 w-10 rounded-full border-4 border-slate-400" aria-hidden="true" />
+                    )}
+                  </span>
                   {position.label}
                 </button>
               );
@@ -1517,7 +1623,7 @@ function KeroseneGame({ onComplete, onFail }) {
         <div className="mb-4 rounded-3xl bg-white p-5 text-center shadow-sm">
           <p className="text-2xl font-black text-amber-700 xl:text-4xl">灯油ローリー雪道チャレンジ</p>
           <div className="mt-3 flex items-center justify-center gap-4">
-            <span className="text-6xl xl:text-7xl">☃️</span>
+            <SnowmanDecor className="h-16 w-16 xl:h-20 xl:w-20" />
             <span className="text-2xl font-black text-slate-800 xl:text-4xl">雪だるまのない道を選ぼう</span>
           </div>
         </div>
@@ -1546,7 +1652,7 @@ function KeroseneGame({ onComplete, onFail }) {
                 top: `${objectTop(obstacleLane) - 8}px`
               }}
             >
-              <span className="relative z-10">☃️</span>
+              <SnowmanDecor className="relative z-10 h-20 w-20" />
             </div>
           ))}
           <div
@@ -1560,8 +1666,7 @@ function KeroseneGame({ onComplete, onFail }) {
           >
             <TankerLorryImage className="h-28 w-56" />
           </div>
-          <div className="absolute right-4 top-[14.25rem] text-8xl">🏠</div>
-          <div className="absolute right-16 top-[10.5rem] text-5xl">♨️</div>
+          <HouseHeatIcon className="absolute right-4 top-[14.25rem] h-24 w-24" />
         </div>
         <div className="mt-4 h-6 overflow-hidden rounded-full bg-white shadow-inner">
           <div className="h-full bg-orange-500 transition-all" style={{ width: `${Math.min(steps * 20, 100)}%` }} />
@@ -2163,21 +2268,21 @@ function UpgradePurchaseToast({ upgrade }) {
       {[...Array(30)].map((_, index) => (
         <span
           key={index}
-          className="absolute animate-upgrade-confetti text-5xl"
+          className="absolute animate-upgrade-confetti"
           style={{
             left: `${(index * 29) % 100}%`,
             top: `${8 + (index * 17) % 76}%`,
             animationDelay: `${index * 0.06}s`
           }}
         >
-          {index % 3 === 0 ? "✨" : index % 3 === 1 ? "⭐" : "🎉"}
+          {index % 3 === 0 ? <SparkleDecor className="h-12 w-12" /> : index % 3 === 1 ? <StarDecor className="h-12 w-12" /> : <ConfettiDecor className="h-12 w-12" />}
         </span>
       ))}
       <div className="relative w-full max-w-4xl animate-upgrade-burst overflow-hidden rounded-[3rem] border-8 border-yellow-300 bg-white p-8 text-center shadow-2xl xl:p-12">
         <div className="absolute -left-16 -top-16 h-48 w-48 rounded-full bg-yellow-300/50 blur-2xl" />
         <div className="absolute -bottom-20 -right-16 h-56 w-56 rounded-full bg-orange-300/50 blur-2xl" />
-        <div className="absolute left-8 top-8 text-6xl animate-bounce">✨</div>
-        <div className="absolute right-10 top-10 text-7xl animate-pulse">⭐</div>
+        <SparkleDecor className="absolute left-8 top-8 h-16 w-16 animate-bounce" />
+        <StarDecor className="absolute right-10 top-10 h-16 w-16 animate-pulse" />
         <div className="mx-auto mb-7 flex justify-center">
           <div className="animate-upgrade-arrive rounded-[3rem] bg-gradient-to-br from-yellow-300 via-orange-300 to-sky-300 p-5 shadow-2xl ring-[14px] ring-yellow-200/80">
             <UpgradeVisual upgrade={upgrade} size="pop" />
@@ -2199,7 +2304,7 @@ function GoodJobClearOverlay() {
       {[...Array(52)].map((_, index) => (
         <span
           key={index}
-          className="absolute animate-upgrade-confetti text-6xl"
+          className="absolute animate-upgrade-confetti"
           style={{
             left: `${(index * 23) % 98}%`,
             top: `${4 + (index * 31) % 82}%`,
@@ -2207,20 +2312,20 @@ function GoodJobClearOverlay() {
           }}
           aria-hidden="true"
         >
-          {index % 4 === 0 ? "✨" : index % 4 === 1 ? "🎉" : index % 4 === 2 ? "⭐" : "🏆"}
+          {index % 4 === 0 ? <SparkleDecor className="h-14 w-14" /> : index % 4 === 1 ? <ConfettiDecor className="h-14 w-14" /> : index % 4 === 2 ? <StarDecor className="h-14 w-14" /> : <MedalDecor className="h-14 w-14" />}
         </span>
       ))}
       <div className="absolute inset-0 bg-white/25" />
-      <div className="absolute left-8 top-8 text-8xl animate-bounce">✨</div>
-      <div className="absolute right-10 top-10 text-8xl animate-pulse">🏆</div>
-      <div className="absolute bottom-8 left-10 text-8xl animate-bounce">🎉</div>
+      <SparkleDecor className="absolute left-8 top-8 h-20 w-20 animate-bounce" />
+      <MedalDecor className="absolute right-10 top-10 h-20 w-20 animate-pulse" />
+      <ConfettiDecor className="absolute bottom-8 left-10 h-20 w-20 animate-bounce" />
       <div className="relative flex min-h-[86vh] w-full max-w-6xl animate-upgrade-burst flex-col items-center justify-center overflow-hidden rounded-[3.5rem] border-8 border-yellow-400 bg-white/96 p-8 text-center shadow-2xl xl:p-12">
         <div className="absolute -left-20 -top-20 h-72 w-72 rounded-full bg-yellow-300/60 blur-3xl" />
         <div className="absolute -bottom-24 -right-20 h-80 w-80 rounded-full bg-orange-300/60 blur-3xl" />
         <div className="relative mx-auto mb-8 flex h-72 w-72 animate-upgrade-arrive items-center justify-center rounded-full bg-gradient-to-br from-yellow-200 via-yellow-400 to-orange-500 text-[11rem] shadow-2xl ring-[18px] ring-yellow-100 xl:h-80 xl:w-80 xl:text-[13rem]">
-          🥇
-          <span className="absolute -right-2 -top-2 animate-bounce text-7xl">✨</span>
-          <span className="absolute -bottom-4 -left-4 animate-pulse text-7xl">⭐</span>
+          <MedalDecor className="h-52 w-52 xl:h-64 xl:w-64" />
+          <SparkleDecor className="absolute -right-2 -top-2 h-16 w-16 animate-bounce" />
+          <StarDecor className="absolute -bottom-4 -left-4 h-16 w-16 animate-pulse" />
         </div>
         <p className="relative text-3xl font-black tracking-[.2em] text-orange-500 xl:text-4xl">
           STAND COMPLETE
