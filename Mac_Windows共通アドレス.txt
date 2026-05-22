@@ -1,19 +1,17 @@
 道エネ WEBアプリ Mac・Windows共通アドレス
 
-同じWi-FiにつないだMac、Windows、スマホで下のアドレスを開いてください。
+Mac、Windows、スマホで下のアドレスを開いてください。
 
-http://192.168.1.7:5173/web-app.html
+https://hc583.github.io/michiene-ss-service-master/
 
 大事:
-このアドレスを使うには、このMacでサーバーを起動しておく必要があります。
-
-Macで起動する方法:
-/Users/takahata/Documents/New project/start-lan.command
+このアドレスはGitHub Pagesの公開URLです。
+他のパソコンでもインターネットにつながっていれば開けます。
 
 Windowsや他のMacから開く方法:
 ブラウザに下のアドレスを入れます。
-http://192.168.1.7:5173/web-app.html
+https://hc583.github.io/michiene-ss-service-master/
 
 注意:
-同じWi-Fiの中で使うアドレスです。
-外出先や別のWi-Fiから開く場合は、VercelなどのHTTPS公開URLが必要です。
+公開URLなので、同じWi-Fiでなくても使えます。
+アプリを修正したら、GitHub DesktopでPush originを押すと反映されます。

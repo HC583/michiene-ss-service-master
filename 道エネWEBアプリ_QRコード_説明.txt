@@ -1,0 +1,15 @@
+道エネWEBアプリ QRコード説明
+
+このQRコードは、Mac・Windows・スマホ共通の公開URLにつながります。
+
+公開URL:
+https://hc583.github.io/michiene-ss-service-master/
+
+使い方:
+1. カメラでQRコードを読み取る
+2. 表示されたURLを開く
+3. 道エネWEBアプリが開きます
+
+注意:
+このURLはGitHub Pagesの公開URLです。
+他のパソコンでもインターネットにつながっていれば開けます。

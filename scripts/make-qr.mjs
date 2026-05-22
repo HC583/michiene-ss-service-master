@@ -1,6 +1,6 @@
 import { readFileSync, writeFileSync } from "node:fs";
 
-const text = "http://192.168.1.7:5173/web-app.html";
+const text = "https://hc583.github.io/michiene-ss-service-master/";
 const out = "/Users/takahata/Documents/New project/道エネWEBアプリ_QRコード.svg";
 const staffImage = readFileSync("/Users/takahata/Documents/New project/public/staff.png").toString("base64");
 const version = 3;
