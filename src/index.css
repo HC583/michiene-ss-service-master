@@ -243,3 +243,23 @@ button {
     border-width: 5px;
   }
 }
+
+/* ── 絵文字・フォントのOS間差異を防ぐ設定 ── */
+/* Windowsでの絵文字の黒いアウトライン（Color Font エッジ）を防ぐ */
+* {
+  font-variant-emoji: text;
+}
+
+/* ただしボタンやspan内の絵文字は通常表示 */
+/* 絵文字を意図的に使う場合は .emoji クラスを付与 */
+
+/* フォントスタック統一：WindowsのYu Gothicで太字が薄くなる問題を修正 */
+body {
+  font-family: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Yu Gothic UI", "Yu Gothic", "Meiryo UI", "Meiryo", system-ui, -apple-system, sans-serif;
+}
+
+/* Windowsで font-black（900）がMacより薄く見える問題を補正 */
+@media (-ms-high-contrast: none), (-ms-high-contrast: active) {
+  .font-black { font-weight: 900; }
+  .font-bold { font-weight: 700; }
+}

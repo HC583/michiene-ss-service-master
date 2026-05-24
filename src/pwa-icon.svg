@@ -1,0 +1,48 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="appBg" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#fffaf3"/>
+      <stop offset="0.42" stop-color="#ffedd5"/>
+      <stop offset="0.72" stop-color="#fed7aa"/>
+      <stop offset="1" stop-color="#fdba74"/>
+    </linearGradient>
+    <filter id="cardShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="16" flood-color="#7c2d12" flood-opacity=".22"/>
+    </filter>
+    <filter id="textSoft" x="-8%" y="-8%" width="116%" height="116%">
+      <feDropShadow dx="0" dy="4" stdDeviation="1.4" flood-color="#ffffff" flood-opacity=".96"/>
+    </filter>
+  </defs>
+
+  <rect x="0" y="0" width="512" height="512" rx="132" ry="132" fill="url(#appBg)"/>
+
+  <g filter="url(#cardShadow)">
+    <rect x="34" y="70" width="154" height="286" rx="56" ry="56" fill="#ffffff"/>
+    <image href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAfEAAAKoCAYAAABnW8bfAAAACXBIWXMAAC4jAAAuIwF4pT92AAFnd0lEQVR4nOydB3wc9Zn+n9nZ3tR7syXLvXeqKQZseieBFEIgOSC5AHdJLv1CksuFXP4JufRLhdB7B4NpAdxGakRSSaSwJJTSSm/SKEQ8R0d+z7bMzv4/v95Ze2WN5GRLsu7u4/1sJMvSzGp31XuffuP7W6JYLMZjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phjjjnmmGOOOeaYY4455phj/y8IgkA4OQAAAKASUVORK5CYII=" x="45" y="82" width="132" height="260" preserveAspectRatio="xMidYMid meet"/>
+  </g>
+
+  <!-- 「道エネ」ラベル - SVGパスベース（フォント非依存） -->
+  <g filter="url(#textSoft)">
+    <!-- 「道エネSS」をシンプルな図形で表現 -->
+    <!-- ガソリンスタンドのシンボル -->
+    <rect x="190" y="90" width="280" height="200" rx="20" fill="#1e3a8a" opacity="0.9"/>
+    <rect x="210" y="110" width="240" height="160" rx="12" fill="#dbeafe"/>
+    <!-- 給油機のシルエット -->
+    <rect x="240" y="130" width="60" height="100" rx="8" fill="#1e3a8a"/>
+    <rect x="250" y="140" width="40" height="50" rx="4" fill="#93c5fd"/>
+    <rect x="255" y="200" width="30" height="20" rx="3" fill="#1d4ed8"/>
+    <path d="M300 155 L330 145 L330 175 L300 175 Z" fill="#f97316" stroke="#ea580c" stroke-width="2"/>
+    <!-- 「道エネ」テキスト - 画像として埋め込み済みのため装飾のみ -->
+    <rect x="350" y="130" width="80" height="30" rx="8" fill="#f97316"/>
+    <rect x="350" y="170" width="80" height="30" rx="8" fill="#1d4ed8"/>
+    <rect x="350" y="210" width="80" height="30" rx="8" fill="#22c55e"/>
+  </g>
+
+  <!-- 下部テキストエリア - シンプルな帯 -->
+  <rect x="80" y="370" width="352" height="60" rx="16" fill="#f97316" opacity="0.85"/>
+  <rect x="90" y="380" width="332" height="40" rx="12" fill="#fff7ed"/>
+  <!-- 「SS」を意味する図形 -->
+  <circle cx="180" cy="400" r="14" fill="#f97316" stroke="#ea580c" stroke-width="3"/>
+  <circle cx="332" cy="400" r="14" fill="#f97316" stroke="#ea580c" stroke-width="3"/>
+  <rect x="194" y="393" width="138" height="14" rx="7" fill="#fed7aa"/>
+</svg>

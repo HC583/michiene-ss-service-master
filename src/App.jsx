@@ -138,7 +138,7 @@ const upgrades = [
     cost: 500,
     effect: "ファミリーのお客さまが増える",
     key: "family",
-    icon: "🧸"
+    visual: "family"
   },
   {
     name: "スタッフを増やす",
@@ -709,11 +709,11 @@ function ServiceSelector({ onChoose }) {
 function ServiceVisualIcon({ visual }) {
   if (visual === "fuelPump") return <span className="flex scale-110 items-center justify-center xl:scale-150"><FuelPumpIcon /></span>;
   if (visual === "carWash") return <CarWashImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="洗" />;
-  if (visual === "winterTire") return <TireImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="🛞" />;
-  if (visual === "tankerTruck") return <TankerLorryImage className="h-24 w-32 xl:h-32 xl:w-44" fallback="🚚" />;
-  if (visual === "evCharger") return <EvChargeIcon className="h-24 w-24 xl:h-32 xl:w-32" fallback="🚙" />;
+  if (visual === "winterTire") return <TireImage className="h-24 w-24 xl:h-32 xl:w-32" />;
+  if (visual === "tankerTruck") return <TankerLorryImage className="h-24 w-32 xl:h-32 xl:w-44" />;
+  if (visual === "evCharger") return <EvChargeIcon className="h-24 w-24 xl:h-32 xl:w-32" />;
   if (visual === "staffBooking") return <InspectionImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="車検" />;
-  if (visual === "insurance") return <InsuranceImage className="h-24 w-24 xl:h-32 xl:w-32" fallback="🛡️" />;
+  if (visual === "insurance") return <InsuranceImage className="h-24 w-24 xl:h-32 xl:w-32" />;
   return <span aria-hidden="true">?</span>;
 }
 
@@ -749,7 +749,19 @@ function ImageIcon({ src, className, fallback }) {
 
 function EvChargeIcon({ className = "h-16 w-16" }) {
   return (
-    <ImageIcon src="/EV.png" className={className} fallback="🚙" />
+    <ImageIcon src="/EV.png" className={className} fallback={<EvSvgFallback />} />
+  );
+}
+
+function EvSvgFallback() {
+  return (
+    <svg viewBox="0 0 80 56" className="h-full w-full" aria-hidden="true">
+      <path d="M8 36h64l-8-18c-2-4-6-7-10-7H26c-4 0-8 3-10 7L8 36Z" fill="#bfdbfe" stroke="#1d4ed8" strokeWidth="3" strokeLinejoin="round" />
+      <rect x="8" y="34" width="64" height="12" rx="6" fill="#93c5fd" stroke="#1d4ed8" strokeWidth="3" />
+      <circle cx="22" cy="46" r="7" fill="#1e3a8a" />
+      <circle cx="58" cy="46" r="7" fill="#1e3a8a" />
+      <path d="M42 6l-8 14h8l-8 14" stroke="#22c55e" strokeWidth="3.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
   );
 }
 
@@ -761,13 +773,7 @@ function CarWashImage({ className = "h-16 w-16", fallback = "洗" }) {
 
 function TankerLorryImage({ className = "h-16 w-16" }) {
   return (
-    <img
-      src={assetPath("/tanker-lorry.png?v=original-tanker")}
-      alt=""
-      aria-hidden="true"
-      className={`${className} object-contain`}
-      draggable="false"
-    />
+    <ImageIcon src="/tanker-lorry.png?v=original-tanker" className={`${className} object-contain`} fallback={<TankerTruckIcon />} />
   );
 }
 
@@ -826,9 +832,21 @@ function WinterTireIcon() {
   );
 }
 
-function TireImage({ className = "h-16 w-16", fallback = "🛞" }) {
+function TireImage({ className = "h-16 w-16", fallback = null }) {
   return (
-    <ImageIcon src="/tire.png" className={className} fallback={fallback} />
+    <ImageIcon src="/tire.png" className={className} fallback={fallback ?? <TireSvgFallback />} />
+  );
+}
+
+function TireSvgFallback() {
+  return (
+    <svg viewBox="0 0 64 64" className="h-full w-full" aria-hidden="true">
+      <circle cx="32" cy="32" r="28" fill="#334155" />
+      <circle cx="32" cy="32" r="18" fill="#1e293b" />
+      <circle cx="32" cy="32" r="10" fill="#475569" />
+      <circle cx="32" cy="32" r="5" fill="#94a3b8" />
+      <path d="M32 6v8M32 50v8M6 32h8M50 32h8M12 12l6 6M46 46l6 6M12 52l6-6M46 18l6-6" stroke="#64748b" strokeWidth="3" strokeLinecap="round" />
+    </svg>
   );
 }
 
@@ -930,9 +948,18 @@ function InsuranceCustomerIcon({ className = "h-16 w-16" }) {
   );
 }
 
-function InsuranceImage({ className = "h-16 w-16", fallback = "🛡️" }) {
+function InsuranceImage({ className = "h-16 w-16", fallback = null }) {
   return (
-    <ImageIcon src="/insurance.png" className={className} fallback={fallback} />
+    <ImageIcon src="/insurance.png" className={className} fallback={fallback ?? <ShieldSvgFallback />} />
+  );
+}
+
+function ShieldSvgFallback() {
+  return (
+    <svg viewBox="0 0 64 72" className="h-full w-full" aria-hidden="true">
+      <path d="M32 4L8 14v18c0 16 10 28 24 32 14-4 24-16 24-32V14L32 4Z" fill="#3b82f6" stroke="#1d4ed8" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M22 36l8 8 14-16" stroke="#ffffff" strokeWidth="4" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
   );
 }
 
@@ -993,9 +1020,9 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
           <InsuranceImage className={classes.image} />
         ) : upgrade.visual === "staff" ? (
           <StaffImage className={classes.staff} />
-        ) : (
-          upgrade.icon
-        )}
+        ) : upgrade.visual === "family" ? (
+          <FamilyIcon className={classes.image} />
+        ) : null}
       </span>
     </span>
   );
@@ -1003,13 +1030,17 @@ function UpgradeVisual({ upgrade, size = "panel" }) {
 
 function StaffImage({ className = "h-16 w-16" }) {
   return (
-    <img
-      src={assetPath("/staff.png?v=original-staff")}
-      alt=""
-      aria-hidden="true"
-      className={className}
-      draggable="false"
-    />
+    <ImageIcon src="/staff.png?v=original-staff" className={className} fallback={<StaffSvgFallback />} />
+  );
+}
+
+function StaffSvgFallback() {
+  return (
+    <svg viewBox="0 0 48 80" className="h-full w-full" aria-hidden="true">
+      <circle cx="24" cy="18" r="13" fill="#fbbf24" stroke="#d97706" strokeWidth="3" />
+      <path d="M4 75c0-17 9-28 20-28s20 11 20 28" fill="#f97316" stroke="#ea580c" strokeWidth="3" strokeLinejoin="round" />
+      <rect x="14" y="47" width="20" height="10" rx="4" fill="#fed7aa" stroke="#d97706" strokeWidth="2" />
+    </svg>
   );
 }
 
@@ -1777,7 +1808,13 @@ function InspectionItemIcon({ icon }) {
   if (icon === "underbody") return <UnderbodyInspectionIcon />;
   if (icon === "sideSlip") return <SideSlipInspectionIcon />;
   if (icon === "identity") return <IdentityInspectionIcon />;
-  return <span>{icon}</span>;
+  if (icon === "brake") return <BrakeIcon />;
+  if (icon === "light") return <LightIcon />;
+  if (icon === "carwash_false") return <CarWashWrongIcon />;
+  if (icon === "gift") return <GiftIcon />;
+  if (icon === "drink") return <DrinkIcon />;
+  if (icon === "broom") return <BroomIcon />;
+  return null;
 }
 
 function EnginePartIcon() {
@@ -1888,6 +1925,98 @@ function IdentityInspectionIcon() {
   );
 }
 
+
+// ── 新規追加SVGコンポーネント（絵文字置換用）───────────────────
+
+function FamilyIcon({ className = "h-16 w-16" }) {
+  return (
+    <svg viewBox="0 0 80 72" className={className} aria-hidden="true">
+      <circle cx="24" cy="16" r="11" fill="#fbbf24" stroke="#d97706" strokeWidth="3" />
+      <path d="M6 55c0-13 8-21 18-21s18 8 18 21" fill="#f97316" stroke="#ea580c" strokeWidth="3" strokeLinejoin="round" />
+      <circle cx="58" cy="20" r="9" fill="#86efac" stroke="#16a34a" strokeWidth="3" />
+      <path d="M44 55c0-10 6-17 14-17s14 7 14 17" fill="#4ade80" stroke="#16a34a" strokeWidth="3" strokeLinejoin="round" />
+      <circle cx="41" cy="50" r="6" fill="#fca5a5" stroke="#ef4444" strokeWidth="2" />
+      <path d="M38 47l3 5 3-5" fill="none" stroke="#ef4444" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BrakeIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <circle cx="48" cy="38" r="26" fill="#ef4444" stroke="#991b1b" strokeWidth="5" />
+      <circle cx="48" cy="38" r="14" fill="#fecaca" stroke="#991b1b" strokeWidth="3" />
+      <circle cx="48" cy="38" r="6" fill="#ef4444" />
+      <rect x="30" y="6" width="36" height="10" rx="5" fill="#dc2626" stroke="#991b1b" strokeWidth="3" />
+      <path d="M48 16v8M22 38H30M66 38h8M30 18l6 6M66 18l-6 6" stroke="#991b1b" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function LightIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <ellipse cx="36" cy="36" rx="22" ry="26" fill="#fef3c7" stroke="#d97706" strokeWidth="4" />
+      <path d="M56 20l14-8M56 36l18 0M56 52l14 8" stroke="#fbbf24" strokeWidth="4" strokeLinecap="round" />
+      <ellipse cx="36" cy="36" rx="12" ry="14" fill="#fde68a" stroke="#d97706" strokeWidth="3" />
+      <ellipse cx="36" cy="36" rx="5" ry="6" fill="#f59e0b" />
+    </svg>
+  );
+}
+
+function CarWashWrongIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <path d="M16 52h64l-8-18c-2-4-6-7-10-7H34c-4 0-8 3-10 7L16 52Z" fill="#bfdbfe" stroke="#1d4ed8" strokeWidth="4" strokeLinejoin="round" />
+      <circle cx="28" cy="58" r="7" fill="#334155" />
+      <circle cx="68" cy="58" r="7" fill="#334155" />
+      <path d="M44 8c-4 6 2 10-2 16M54 6c-4 8 3 12-2 18" stroke="#38bdf8" strokeWidth="4" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function GiftIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <rect x="14" y="30" width="68" height="36" rx="4" fill="#fecdd3" stroke="#e11d48" strokeWidth="4" />
+      <rect x="14" y="18" width="68" height="16" rx="4" fill="#fda4af" stroke="#e11d48" strokeWidth="4" />
+      <path d="M48 18v48" stroke="#e11d48" strokeWidth="4" />
+      <path d="M48 18c-8-6-18-2-12 8 6 4 12-8 12-8Z" fill="#f43f5e" stroke="#be123c" strokeWidth="2" strokeLinejoin="round" />
+      <path d="M48 18c8-6 18-2 12 8-6 4-12-8-12-8Z" fill="#f43f5e" stroke="#be123c" strokeWidth="2" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
+function DrinkIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <path d="M30 12h36l-8 52H38L30 12Z" fill="#bfdbfe" stroke="#1d4ed8" strokeWidth="4" strokeLinejoin="round" />
+      <path d="M30 12h36l-4 16H34L30 12Z" fill="#38bdf8" stroke="#1d4ed8" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M48 4v10" stroke="#475569" strokeWidth="4" strokeLinecap="round" />
+      <rect x="44" y="2" width="8" height="5" rx="2" fill="#64748b" stroke="#334155" strokeWidth="2" />
+      <path d="M36 30h24M35 42h26" stroke="#93c5fd" strokeWidth="3" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function BroomIcon() {
+  return (
+    <svg viewBox="0 0 96 72" className="h-16 w-20 drop-shadow-sm" aria-hidden="true">
+      <path d="M20 8l56 40" stroke="#92400e" strokeWidth="6" strokeLinecap="round" />
+      <path d="M60 40l20 4-8 16-28-8 16-12Z" fill="#d97706" stroke="#92400e" strokeWidth="3" strokeLinejoin="round" />
+      <path d="M64 44l4 14M72 46l2 12M60 42l6 16" stroke="#b45309" strokeWidth="2" strokeLinecap="round" />
+    </svg>
+  );
+}
+
+function CheckedIcon() {
+  return (
+    <svg viewBox="0 0 48 48" className="h-10 w-10" aria-hidden="true">
+      <circle cx="24" cy="24" r="22" fill="#22c55e" stroke="#15803d" strokeWidth="3" />
+      <path d="M12 24l9 9 15-18" stroke="#ffffff" strokeWidth="4.5" strokeLinecap="round" strokeLinejoin="round" fill="none" />
+    </svg>
+  );
+}
 function InspectionGame({ onComplete, onFail }) {
   const correctItems = [
     "ブレーキ",
@@ -1902,8 +2031,8 @@ function InspectionGame({ onComplete, onFail }) {
     "エンジン"
   ];
   const checkItems = [
-    { label: "ブレーキ", icon: "🛑", correct: true, hint: "止まる力" },
-    { label: "車のライト", icon: "💡", correct: true, hint: "夜道の安全" },
+    { label: "ブレーキ", icon: "brake", correct: true, hint: "止まる力" },
+    { label: "車のライト", icon: "light", correct: true, hint: "夜道の安全" },
     { label: "排気ガス検査", icon: "exhaustGas", correct: true, hint: "排気を測る" },
     { label: "スピードメーター検査", icon: "speedometer", correct: true, hint: "速度表示" },
     { label: "外観検査", icon: "exterior", correct: true, hint: "車体チェック" },
@@ -1912,10 +2041,10 @@ function InspectionGame({ onComplete, onFail }) {
     { label: "同一性の確認", icon: "identity", correct: true, hint: "車台番号" },
     { label: "マフラー", icon: "muffler", correct: true, hint: "排気まわり" },
     { label: "エンジン", icon: "engine", correct: true, hint: "走る力" },
-    { label: "洗車", icon: "🚿", correct: false, hint: "きれいにする" },
-    { label: "景品交換", icon: "🎁", correct: false, hint: "プレゼント" },
-    { label: "ドリンク補充", icon: "🥤", correct: false, hint: "お店の準備" },
-    { label: "店内清掃", icon: "🧹", correct: false, hint: "お店そうじ" }
+    { label: "洗車", icon: "carwash_false", correct: false, hint: "きれいにする" },
+    { label: "景品交換", icon: "gift", correct: false, hint: "プレゼント" },
+    { label: "ドリンク補充", icon: "drink", correct: false, hint: "お店の準備" },
+    { label: "店内清掃", icon: "broom", correct: false, hint: "お店そうじ" }
   ];
   const reservationDates = [
     { label: "5/18 13:00", open: false },
@@ -2022,7 +2151,7 @@ function InspectionGame({ onComplete, onFail }) {
               }`}
             >
               <span className="flex h-20 items-center justify-center text-6xl">
-                {checked ? "✅" : <InspectionItemIcon icon={item.icon} />}
+                {checked ? <CheckedIcon /> : <InspectionItemIcon icon={item.icon} />}
               </span>
               <span className="mt-3 block text-xl font-black xl:text-2xl">{item.label}</span>
               <span className="mt-2 block rounded-full bg-blue-50 px-3 py-2 text-base font-black text-blue-500">
@@ -2201,7 +2330,7 @@ function InsuranceMiniCardIcon({ type }) {
         x="45"
         y="31"
         textAnchor="middle"
-        fontFamily="Arial, sans-serif"
+        fontFamily="system-ui, sans-serif"
         fontSize="14"
         fontWeight="900"
         fill="#ffffff"
